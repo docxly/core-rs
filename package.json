@@ -1,0 +1,16 @@
+{
+  "name": "docxly-core-rs-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/npm-core-rs"
+  ],
+  "scripts": {
+    "build:web": "npm run build -w @docxly/core-rs",
+    "build:pages": "npm run build:pages -w @docxly/core-rs",
+    "demo": "npm run demo -w @docxly/core-rs",
+    "test:web": "npm run test:smoke -w @docxly/core-rs",
+    "test:rust": "cargo test -p core-rs",
+    "lint:rust": "cargo clippy -p core-rs --all-targets -- -D warnings",
+    "test:all": "npm run lint:rust && npm run test:rust && npm run test:web"
+  }
+}

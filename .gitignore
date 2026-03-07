@@ -1,6 +1,9 @@
 .DS_Store
 .codex/
+node_modules/
 packages/npm-core-rs/dist/
 packages/npm-core-rs/node_modules/
+packages/npm-core-rs/site-dist/
 packages/npm-core-rs/*.tgz
+packages/npm-core-rs/tmp/
 target/

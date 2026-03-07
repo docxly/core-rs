@@ -1,6 +1,6 @@
 # docxly core-rs
 
-`docxly/core-rs` is a Rust workspace for a Markdown-based DOCX/HWPX generation library, plus an npm-facing WASM wrapper package.
+`docxly/core-rs` is a Rust-first mono repo for a Markdown-based DOCX/HWPX generation library, plus an npm-facing WASM wrapper package.
 
 The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and keeps HWPX generation as a planned follow-up.
 
@@ -9,10 +9,16 @@ The project is being developed with a TDD-first workflow. The current milestone 
 ```text
 .
 ├── Cargo.toml
+├── package.json
 └── packages/
-    └── core-rs/
-        ├── src/
-        ├── tests/
+    ├── core-rs/
+    │   ├── src/
+    │   ├── tests/
+    │   └── README.md
+    └── npm-core-rs/
+        ├── demo/
+        ├── dist/
+        ├── site-dist/
         └── README.md
 ```
 
@@ -49,7 +55,7 @@ Current behavior:
 
 ## Public API
 
-The crate intentionally exposes only the high-level API. Parser, model, generator, and utility modules are internal implementation details.
+The Rust crate intentionally exposes only the high-level API. Parser, model, generator, and utility modules are internal implementation details.
 
 Recommended first flow:
 
@@ -90,6 +96,16 @@ The repository also contains an npm package at `packages/npm-core-rs/`.
 - public npm API: `generateDocx(markdown, options) -> Promise<Uint8Array>`
 - HWPX is intentionally not exposed in npm v0.x
 
+## Rust Crate Status
+
+`packages/core-rs` is the Rust source of truth, but it is not published to `crates.io` in the
+current release flow.
+
+Use cases today:
+
+- use `@docxly/core-rs` from npm for Node and browser runtimes
+- use the Rust crate from this repository workspace or as a path dependency
+
 Current HWPX status:
 
 ```rust
@@ -99,9 +115,35 @@ let result = generate_hwpx("# Hello", HwpxOptions::default());
 assert!(result.is_err());
 ```
 
+## Mono Repo Commands
+
+Install workspace dependencies from the repository root:
+
+```bash
+npm install
+```
+
+Common root commands:
+
+```bash
+npm run build:web
+npm run test:web
+npm run demo
+npm run build:pages
+npm run test:all
+```
+
+What each command does:
+
+- `build:web`: builds the npm WASM wrapper package
+- `test:web`: runs Node, browser bundle, and packed package smoke tests
+- `demo`: builds the Pages artifact and serves the browser demo locally
+- `build:pages`: creates the static GitHub Pages artifact at `packages/npm-core-rs/site-dist`
+- `test:all`: runs Rust lint, Rust tests, and web smoke tests from one root entrypoint
+
 ## Running Tests
 
-Run the full workspace test suite from the repository root:
+Run the Rust workspace tests from the repository root:
 
 ```bash
 cargo test
@@ -163,6 +205,7 @@ hash.txt
 - Keep archive output deterministic so fixture hashes remain stable.
 - Keep new public surface area small. High-level generation functions and option types are the supported API.
 - npm release is gated by a successful WASM build in CI.
+- GitHub Pages deploys the static demo from the mono repo using a dedicated Pages workflow.
 
 ## Roadmap
 
