@@ -1,0 +1,4 @@
+title = "Rich Fixture Title"
+author = "Rich Fixture Author"
+strict_mode = true
+determinism = true

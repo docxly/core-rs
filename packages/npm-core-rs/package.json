@@ -1,0 +1,46 @@
+{
+  "name": "@docxly/core-rs",
+  "version": "0.1.0",
+  "description": "WASM wrapper for docxly core-rs DOCX generation",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docxly/core-rs.git"
+  },
+  "homepage": "https://github.com/docxly/core-rs",
+  "bugs": {
+    "url": "https://github.com/docxly/core-rs/issues"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/node.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/browser.js",
+      "default": "./dist/node.js"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "check:version": "node ./scripts/check-version.mjs",
+    "build": "node ./scripts/build.mjs",
+    "test:node": "node ./scripts/node-smoke.mjs",
+    "test:browser": "node ./scripts/browser-smoke.mjs",
+    "prepack": "npm run check:version && npm run build"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.1"
+  }
+}

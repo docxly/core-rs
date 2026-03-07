@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-bindgen CLI
+        run: cargo install wasm-bindgen-cli --version 0.2.114 --locked
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Install npm package dependencies
+        run: npm install --prefix packages/npm-core-rs
+
+      - name: Check version sync
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: npm run check:version --prefix packages/npm-core-rs
+
+      - name: Detect existing npm release
+        id: npm_release
+        working-directory: packages/npm-core-rs
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "@docxly/core-rs@$VERSION" version >/dev/null 2>&1; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify Rust quality gates
+        run: |
+          cargo clippy -p core-rs --all-targets -- -D warnings
+          cargo test -p core-rs
+
+      - name: Build npm package
+        run: npm run build --prefix packages/npm-core-rs
+
+      - name: Pack npm package
+        working-directory: packages/npm-core-rs
+        run: npm pack
+
+      - name: Publish npm package
+        if: steps.npm_release.outputs.should_publish == 'true'
+        working-directory: packages/npm-core-rs
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: packages/npm-core-rs/*.tgz
+          generate_release_notes: true

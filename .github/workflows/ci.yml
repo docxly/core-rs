@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install wasm-bindgen CLI
+        run: cargo install wasm-bindgen-cli --version 0.2.114 --locked
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install npm package dependencies
+        run: npm install --prefix packages/npm-core-rs
+
+      - name: Lint Rust
+        run: cargo clippy -p core-rs --all-targets -- -D warnings
+
+      - name: Test Rust
+        run: cargo test -p core-rs
+
+      - name: WASM feasibility gate
+        run: cargo build -p core-rs --target wasm32-unknown-unknown --release
+
+      - name: Check cross-package version sync
+        run: npm run check:version --prefix packages/npm-core-rs
+
+      - name: Build npm package
+        run: npm run build --prefix packages/npm-core-rs
+
+      - name: Run Node smoke test
+        run: npm run test:node --prefix packages/npm-core-rs
+
+      - name: Run browser smoke test
+        run: npm run test:browser --prefix packages/npm-core-rs

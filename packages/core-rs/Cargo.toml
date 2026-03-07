@@ -1,0 +1,28 @@
+[package]
+name = "core-rs"
+version = "0.1.0"
+edition = "2024"
+description = "Markdown-based DOCX/HWPX generation library"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/docxly/core-rs"
+homepage = "https://github.com/docxly/core-rs"
+documentation = "https://github.com/docxly/core-rs#readme"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+base64 = "0.22"
+pulldown-cmark = "0.12"
+sha2 = "0.10"
+thiserror = "2"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.114"
+
+[dev-dependencies]
+roxmltree = "0.20"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"

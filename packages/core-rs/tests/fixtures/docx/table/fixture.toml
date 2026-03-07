@@ -1,0 +1,4 @@
+title = "Table Fixture Title"
+author = "Fixture Author"
+strict_mode = true
+determinism = false
