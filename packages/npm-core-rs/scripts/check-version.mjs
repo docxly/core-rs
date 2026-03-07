@@ -15,7 +15,11 @@ if (cargoVersion !== packageJson.version) {
   throw new Error(`Version mismatch: Cargo.toml=${cargoVersion}, package.json=${packageJson.version}`);
 }
 
-const tag = process.env.RELEASE_TAG || process.env.GITHUB_REF_NAME;
+const explicitTag = process.env.RELEASE_TAG;
+const githubRefType = process.env.GITHUB_REF_TYPE;
+const githubRefName = process.env.GITHUB_REF_NAME;
+const tag = explicitTag || (githubRefType === "tag" ? githubRefName : "");
+
 if (tag) {
   const normalized = tag.startsWith("v") ? tag.slice(1) : tag;
   if (normalized !== packageJson.version) {
