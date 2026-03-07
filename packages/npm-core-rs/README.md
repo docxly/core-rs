@@ -8,6 +8,10 @@
 - HWPX generation: not exposed in npm v0.x
 - API style: async only
 
+## Live Demo
+
+- https://docxly.github.io/core-rs/
+
 ## Install
 
 ```bash
@@ -54,6 +58,11 @@ filename can still be correct even if browser download history shows a UUID-like
 ## Local Demo and Pages
 
 The browser demo lives in this repository and is built as a static artifact for GitHub Pages.
+
+Live Pages URL:
+
+- https://docxly.github.io/core-rs/
+
 From the repository root, use:
 
 ```bash

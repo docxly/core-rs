@@ -4,6 +4,14 @@
 
 The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and keeps HWPX generation as a planned follow-up.
 
+## Live Demo
+
+Try the browser demo on GitHub Pages:
+
+- https://docxly.github.io/core-rs/
+
+The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
+
 ## Workspace Layout
 
 ```text
@@ -132,6 +140,10 @@ npm run demo
 npm run build:pages
 npm run test:all
 ```
+
+Live demo URL:
+
+- https://docxly.github.io/core-rs/
 
 What each command does:
 
