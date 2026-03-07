@@ -33,14 +33,19 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist site-dist",
     "check:version": "node ./scripts/check-version.mjs",
     "build": "node ./scripts/build.mjs",
+    "build:pages": "node ./scripts/build-pages.mjs",
+    "demo": "npm run build:pages && node ./scripts/demo-server.mjs",
     "test:node": "node ./scripts/node-smoke.mjs",
     "test:browser": "node ./scripts/browser-smoke.mjs",
+    "test:pack": "node ./scripts/pack-smoke.mjs",
+    "test:smoke": "npm run test:node && npm run test:browser && npm run test:pack",
     "prepack": "npm run check:version && npm run build"
   },
   "devDependencies": {
-    "esbuild": "^0.25.1"
+    "esbuild": "^0.25.1",
+    "fflate": "^0.8.2"
   }
 }

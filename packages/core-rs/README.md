@@ -32,14 +32,16 @@ Supported in the current DOCX implementation:
 
 ## Installation
 
-Add the crate to `Cargo.toml`:
+This crate is not currently published to `crates.io`.
+
+Use it from this repository workspace or as a path dependency:
 
 ```toml
 [dependencies]
-core-rs = "0.1.0"
+core-rs = { path = "/path/to/docxly/core-rs/packages/core-rs" }
 ```
 
-Use it in Rust code with the crate name `core_rs`.
+In Rust code, import it with the crate name `core_rs`.
 
 Current public API:
 
@@ -77,6 +79,7 @@ This crate is configured with `cdylib` output for the npm wrapper build.
 - target package: `@docxly/core-rs`
 - wrapper location: `../npm-core-rs`
 - CI verifies native Rust checks and a `wasm32-unknown-unknown` build before npm publish
+- browser consumers should use the npm wrapper through a bundler that can emit the `.wasm` asset
 
 ## Testing
 

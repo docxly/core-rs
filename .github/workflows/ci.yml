@@ -31,26 +31,23 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install npm package dependencies
-        run: npm install --prefix packages/npm-core-rs
+      - name: Install workspace dependencies
+        run: npm install
 
       - name: Lint Rust
-        run: cargo clippy -p core-rs --all-targets -- -D warnings
+        run: npm run lint:rust
 
       - name: Test Rust
-        run: cargo test -p core-rs
+        run: npm run test:rust
 
       - name: WASM feasibility gate
         run: cargo build -p core-rs --target wasm32-unknown-unknown --release
 
       - name: Check cross-package version sync
-        run: npm run check:version --prefix packages/npm-core-rs
+        run: npm run check:version -w @docxly/core-rs
 
-      - name: Build npm package
-        run: npm run build --prefix packages/npm-core-rs
+      - name: Build web package
+        run: npm run build:web
 
-      - name: Run Node smoke test
-        run: npm run test:node --prefix packages/npm-core-rs
-
-      - name: Run browser smoke test
-        run: npm run test:browser --prefix packages/npm-core-rs
+      - name: Run web smoke tests
+        run: npm run test:web

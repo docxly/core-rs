@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>docxly WASM DOCX Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">docxly / WASM demo</p>
+        <h1>Generate DOCX from Markdown in the browser</h1>
+        <p class="lede">
+          <code>@docxly/core-rs</code> is an open-source Rust core compiled to WebAssembly. This
+          page runs the package directly in the browser and downloads the generated
+          <code>.docx</code> file locally.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="hero-link hero-link-primary"
+            href="https://github.com/docxly/core-rs"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="hero-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.2-3.37-1.2-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.56 2.35 1.11 2.92.84.09-.67.35-1.11.64-1.37-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.34 9.34 0 0 1 12 6.84c.85 0 1.71.12 2.51.35 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.71 1.03 1.62 1.03 2.74 0 3.95-2.33 4.81-4.56 5.07.36.31.68.92.68 1.86 0 1.34-.01 2.42-.01 2.75 0 .27.18.59.69.49A10.26 10.26 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"
+                />
+              </svg>
+            </span>
+            <span class="hero-link-copy">
+              <strong>GitHub</strong>
+              <small>Source, issues, release notes</small>
+            </span>
+          </a>
+          <a
+            class="hero-link hero-link-secondary"
+            href="https://www.npmjs.com/package/@docxly/core-rs"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="hero-link-icon" aria-hidden="true">
+              <svg viewBox="0 0 780 250" role="img" focusable="false">
+                <path fill="currentColor" d="M0 0v250h780V0H0zm716.4 186.6H390v-31.2h93.6V63.6h46.8v91.8h46.8V63.6h139.2v123zM63.6 63.6H343v123h-46.8V110.4h-46.8v76.2h-93.6v-123H63.6v123H63.6z"/>
+              </svg>
+            </span>
+            <span class="hero-link-copy">
+              <strong>npm</strong>
+              <small>Install the published package</small>
+            </span>
+          </a>
+        </div>
+        <div class="hero-grid">
+          <article class="hero-card">
+            <h2>Why docxly</h2>
+            <p>
+              The same Rust core powers fixture-tested DOCX generation in Node and in the browser.
+            </p>
+          </article>
+          <article class="hero-card">
+            <h2>What this page proves</h2>
+            <p>
+              Markdown parsing, DOCX packaging, and download all work on a static page without a
+              backend conversion service.
+            </p>
+          </article>
+          <article class="hero-card hero-card-code">
+            <div class="hero-card-head">
+              <h2>Install</h2>
+              <button id="copy-install-button" class="copy-button" type="button">
+                <span aria-hidden="true">⧉</span>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
+            <p class="hero-card-caption">Use this package in Node or a bundler-backed browser app.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <div>
+            <p class="panel-eyebrow">Try it now</p>
+            <h2>Generate a browser-side DOCX</h2>
+          </div>
+          <p class="panel-copy">
+            Edit the Markdown, tweak metadata, and download a DOCX generated entirely in the
+            browser.
+          </p>
+        </div>
+
+        <label class="field">
+          <span>Markdown</span>
+          <textarea id="markdown-input" spellcheck="false"></textarea>
+        </label>
+
+        <div class="grid">
+          <label class="field">
+            <span>Title</span>
+            <input id="title-input" type="text" value="Browser Demo Document" />
+          </label>
+          <label class="field">
+            <span>Author</span>
+            <input id="author-input" type="text" value="docxly" />
+          </label>
+        </div>
+
+        <label class="checkbox">
+          <input id="strict-mode-input" type="checkbox" checked />
+          <span>Strict mode</span>
+        </label>
+
+        <div class="actions">
+          <button id="generate-button" class="action-button action-button-primary" type="button">
+            <span class="action-symbol" aria-hidden="true">↓</span>
+            <span>Download DOCX</span>
+          </button>
+          <a id="download-link" class="download hidden" role="button">
+            <span class="action-symbol" aria-hidden="true">↺</span>
+            <span>Download again</span>
+          </a>
+        </div>
+
+        <p id="status" class="status">Ready.</p>
+        <p class="note">
+          This static demo uses a browser-generated <code>blob:</code> download. The saved file name
+          is preserved, but some browsers may still show a UUID-like source entry in download
+          history.
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

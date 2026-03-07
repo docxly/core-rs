@@ -9,7 +9,7 @@ use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use zip::ZipArchive;
 
-type FixtureResult<T> = Result<T, Box<dyn Error>>;
+pub(crate) type FixtureResult<T> = Result<T, Box<dyn Error>>;
 
 #[derive(Debug, Deserialize)]
 struct FixtureConfig {
