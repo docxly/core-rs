@@ -1,0 +1,14 @@
+title = "Centered Layout Candidate"
+author = "docxly"
+strict_mode = true
+determinism = true
+
+[style]
+body_font = "함초롬바탕"
+heading_font = "함초롬돋움"
+body_font_size = 1080
+heading_font_size = 1500
+text_color = "#222222"
+heading_color = "#0F4C81"
+link_color = "#0F4C81"
+paragraph_align = "center"

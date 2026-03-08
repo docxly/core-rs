@@ -1,0 +1,4 @@
+title = "HWPX Link Fixture"
+author = "Fixture Author"
+strict_mode = true
+determinism = false

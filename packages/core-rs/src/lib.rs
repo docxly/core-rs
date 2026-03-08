@@ -18,6 +18,26 @@ fn default_document_options() -> (Option<String>, Option<String>, bool) {
     (None, None, true)
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HwpxParagraphAlign {
+    Left,
+    Center,
+    Right,
+    Justify,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct HwpxStyleOptions {
+    pub body_font: Option<String>,
+    pub heading_font: Option<String>,
+    pub body_font_size: Option<u32>,
+    pub heading_font_size: Option<u32>,
+    pub text_color: Option<String>,
+    pub heading_color: Option<String>,
+    pub link_color: Option<String>,
+    pub paragraph_align: Option<HwpxParagraphAlign>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DocxOptions {
     pub title: Option<String>,
@@ -41,6 +61,7 @@ pub struct HwpxOptions {
     pub title: Option<String>,
     pub author: Option<String>,
     pub strict_mode: bool,
+    pub style: HwpxStyleOptions,
 }
 
 impl Default for HwpxOptions {
@@ -50,6 +71,7 @@ impl Default for HwpxOptions {
             title,
             author,
             strict_mode,
+            style: HwpxStyleOptions::default(),
         }
     }
 }

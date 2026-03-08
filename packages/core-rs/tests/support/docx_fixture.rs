@@ -1,15 +1,15 @@
+#![allow(dead_code)]
+
 use std::collections::BTreeMap;
-use std::error::Error;
 use std::fs;
-use std::io::Read;
 use std::path::{Path, PathBuf};
 
 use core_rs::DocxOptions;
 use serde::Deserialize;
-use sha2::{Digest, Sha256};
-use zip::ZipArchive;
+#[path = "archive_fixture.rs"]
+mod archive_fixture;
 
-pub(crate) type FixtureResult<T> = Result<T, Box<dyn Error>>;
+pub(crate) use archive_fixture::{FixtureResult, NormalizedEntry};
 
 #[derive(Debug, Deserialize)]
 struct FixtureConfig {
@@ -48,10 +48,7 @@ pub fn fixtures_root() -> PathBuf {
 
 pub fn discover_fixtures() -> FixtureResult<Vec<DocxFixture>> {
     let root = fixtures_root();
-    let mut fixtures = fs::read_dir(&root)?
-        .map(|entry| entry.map(|entry| entry.path()))
-        .collect::<Result<Vec<_>, _>>()?;
-    fixtures.sort();
+    let fixtures = archive_fixture::discover_fixture_dirs(&root)?;
 
     let mut discovered = Vec::new();
 
@@ -93,122 +90,21 @@ pub fn discover_fixtures() -> FixtureResult<Vec<DocxFixture>> {
 }
 
 pub fn read_fixture_input(fixture: &DocxFixture) -> FixtureResult<String> {
-    Ok(fs::read_to_string(fixture.root.join("input.md"))?)
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum NormalizedEntry {
-    Text(String),
-    BinaryHash(String),
+    archive_fixture::read_fixture_input(&fixture.root)
 }
 
 pub fn normalized_entries(bytes: &[u8]) -> FixtureResult<BTreeMap<String, NormalizedEntry>> {
-    let reader = std::io::Cursor::new(bytes.to_vec());
-    let mut archive = ZipArchive::new(reader)?;
-    let mut entries = BTreeMap::new();
-
-    for index in 0..archive.len() {
-        let mut file = archive.by_index(index)?;
-        let mut contents = Vec::new();
-        file.read_to_end(&mut contents)?;
-        entries.insert(file.name().to_string(), normalize_entry(file.name(), &contents));
-    }
-
-    Ok(entries)
+    archive_fixture::normalized_entries(bytes, is_text_entry)
 }
 
 pub fn read_expected_entries(root: &Path) -> FixtureResult<BTreeMap<String, NormalizedEntry>> {
-    let mut entries = BTreeMap::new();
-    let mut stack = vec![root.to_path_buf()];
-
-    while let Some(dir) = stack.pop() {
-        let mut children = fs::read_dir(&dir)?
-            .map(|entry| entry.map(|entry| entry.path()))
-            .collect::<Result<Vec<_>, _>>()?;
-        children.sort();
-
-        for child in children {
-            if child
-                .file_name()
-                .and_then(|name| name.to_str())
-                .is_some_and(|name| name == ".DS_Store")
-            {
-                continue;
-            }
-            if child.is_dir() {
-                stack.push(child);
-                continue;
-            }
-
-            let relative = child
-                .strip_prefix(root)
-                .unwrap_or(&child)
-                .to_string_lossy()
-                .replace('\\', "/");
-            if relative.ends_with(".sha256") {
-                let normalized_path = relative.trim_end_matches(".sha256").to_string();
-                let contents = fs::read_to_string(&child)?;
-                entries.insert(
-                    normalized_path,
-                    NormalizedEntry::BinaryHash(contents.trim().to_string()),
-                );
-                continue;
-            }
-
-            let contents = fs::read(&child)?;
-            entries.insert(relative.clone(), normalize_entry(&relative, &contents));
-        }
-    }
-
-    Ok(entries)
+    archive_fixture::read_expected_entries(root, &[".DS_Store"], is_text_entry)
 }
 
 pub fn hash_entries(entries: &BTreeMap<String, NormalizedEntry>) -> String {
-    let mut hasher = Sha256::new();
-    for (path, contents) in entries {
-        hasher.update(path.as_bytes());
-        hasher.update([0]);
-        match contents {
-            NormalizedEntry::Text(text) => {
-                hasher.update([0]);
-                hasher.update(text.as_bytes());
-            }
-            NormalizedEntry::BinaryHash(hash) => {
-                hasher.update([1]);
-                hasher.update(hash.as_bytes());
-            }
-        }
-        hasher.update([0]);
-    }
-    format!("{:x}", hasher.finalize())
-}
-
-fn normalize_entry(path: &str, contents: &[u8]) -> NormalizedEntry {
-    if is_text_entry(path) {
-        let text = String::from_utf8(contents.to_vec()).expect("text fixture entry must be UTF-8");
-        return NormalizedEntry::Text(normalize_content(&text));
-    }
-
-    NormalizedEntry::BinaryHash(hash_bytes(contents))
+    archive_fixture::hash_entries(entries)
 }
 
 fn is_text_entry(path: &str) -> bool {
     path.ends_with(".xml") || path.ends_with(".rels") || path.ends_with(".txt") || path.ends_with(".md")
-}
-
-fn normalize_content(contents: &str) -> String {
-    contents
-        .replace("\r\n", "\n")
-        .lines()
-        .map(str::trim_end)
-        .collect::<Vec<_>>()
-        .join("\n")
-        .trim()
-        .to_string()
-}
-
-fn hash_bytes(bytes: &[u8]) -> String {
-    let mut hasher = Sha256::new();
-    hasher.update(bytes);
-    format!("{:x}", hasher.finalize())
 }

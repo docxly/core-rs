@@ -2,7 +2,15 @@
 
 `docxly/core-rs` is a Rust-first mono repo for a Markdown-based DOCX/HWPX generation library, plus an npm-facing WASM wrapper package.
 
-The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and keeps HWPX generation as a planned follow-up.
+The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and is bringing up HWPX compatibility from a minimal package baseline.
+
+## Live Demo
+
+Try the browser demo on GitHub Pages:
+
+- https://docxly.github.io/core-rs/
+
+The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
 
 ## Live Demo
 
@@ -35,7 +43,10 @@ The live page uses the published WASM wrapper and downloads a real `.docx` file 
 - Implemented: Markdown parser, internal shared intermediate model, deterministic DOCX packaging
 - Implemented: fixture-driven integration tests with normalized hash comparison
 - Implemented: strict/fallback handling for unsupported HTML, non-data images, and deep nested lists
-- Not implemented yet: HWPX archive generation
+- In progress: HWPX compatibility bring-up from a minimal Hancom-compatible package baseline
+- Current HWPX CI gates only manually approved fixtures; `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
+- Stale compatibility snapshots are quarantined and used only for reverse-engineering
+- HWPX style options currently apply to body paragraphs and heading paragraphs; future block types such as lists and tables may add more paragraph categories
 
 ## Supported Markdown Today
 
@@ -69,7 +80,7 @@ Recommended first flow:
 
 1. generate a DOCX archive from Markdown
 2. write the returned bytes to `output.docx`
-3. treat HWPX generation as not yet available
+3. use HWPX generation for the current core subset only
 
 ```rust
 use std::fs;
@@ -88,12 +99,62 @@ Current options:
 - `title: Option<String>`
 - `author: Option<String>`
 - `strict_mode: bool`
+- `style: HwpxStyleOptions` on `HwpxOptions` only
 
 Notes:
 
 - `generate_docx` returns a deterministic `.docx` archive as `Vec<u8>`
-- `generate_hwpx` currently returns `CoreRsError::UnsupportedFeature`
+- `generate_hwpx` currently targets a minimal compatibility baseline and is still being validated against Hancom
+- `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
+- Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
 - internal modules such as parser/model/generator helpers are not part of the public contract
+
+## HWPX Supported Today
+
+The current HWPX path is narrower than the DOCX rich slice.
+
+- approved baseline: `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`
+- approved style baseline: `style-typography`, `style-centered-layout`, `style-brand-color`
+- supported content today:
+  - paragraphs
+  - headings
+  - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
+  - document-level HWPX style overrides
+- not yet part of the approved HWPX baseline:
+  - lists
+  - tables
+  - images
+  - blockquotes
+  - fenced code blocks
+
+Example HWPX generation:
+
+```rust
+use std::fs;
+
+use core_rs::{
+    HwpxOptions, HwpxParagraphAlign, HwpxStyleOptions, generate_hwpx,
+};
+
+let hwpx = generate_hwpx(
+    "# Title\n\n본문 **강조** [링크](https://example.com)",
+    HwpxOptions {
+        style: HwpxStyleOptions {
+            body_font: Some("함초롬바탕".to_string()),
+            heading_font: Some("함초롬돋움".to_string()),
+            body_font_size: Some(1050),
+            heading_font_size: Some(1500),
+            text_color: Some("#222222".to_string()),
+            heading_color: Some("#AA2200".to_string()),
+            link_color: Some("#0055AA".to_string()),
+            paragraph_align: Some(HwpxParagraphAlign::Justify),
+        },
+        ..HwpxOptions::default()
+    },
+)?;
+
+fs::write("output.hwpx", hwpx)?;
+```
 
 ## npm Package
 
@@ -102,7 +163,7 @@ The repository also contains an npm package at `packages/npm-core-rs/`.
 - package name: `@docxly/core-rs`
 - runtime target: Node + Browser
 - public npm API: `generateDocx(markdown, options) -> Promise<Uint8Array>`
-- HWPX is intentionally not exposed in npm v0.x
+- HWPX is intentionally not exposed in npm v0.x even though the Rust crate now implements the HWPX core subset
 
 ## Rust Crate Status
 
@@ -114,13 +175,13 @@ Use cases today:
 - use `@docxly/core-rs` from npm for Node and browser runtimes
 - use the Rust crate from this repository workspace or as a path dependency
 
-Current HWPX status:
+Current HWPX status in the Rust crate:
 
 ```rust
 use core_rs::{HwpxOptions, generate_hwpx};
 
-let result = generate_hwpx("# Hello", HwpxOptions::default());
-assert!(result.is_err());
+let hwpx = generate_hwpx("# Hello\n\nThis is *core* HWPX.", HwpxOptions::default())?;
+assert!(!hwpx.is_empty());
 ```
 
 ## Mono Repo Commands
@@ -210,6 +271,13 @@ hash.txt
 
 `golden.docx` is a read-only baseline. There is no general-purpose command in the normal workflow that rewrites approved golden fixtures.
 
+## HWPX Reference Material
+
+- `/Users/limchaesung/Github/docxly/core-rs/packages/core-rs/src/generators/hwpx/docs/README.md`
+- `/Users/limchaesung/Github/docxly/core-rs/packages/core-rs/src/generators/hwpx/docs/schema-md/index.md`
+
+These files are the repository-level reference corpus for HWPX work. They combine curated implementation notes with Markdown conversions of official Hancom PDF references, KS X 6101 source metadata, and a synthetic compatibility corpus.
+
 ## Development Notes
 
 - Keep README content and Git commit messages in English.
@@ -221,5 +289,5 @@ hash.txt
 
 ## Roadmap
 
-- implement HWPX minimum valid package generation
+- extend HWPX support from the current core subset to rich blocks
 - extend conformance coverage with spec-based HWPX fixtures
