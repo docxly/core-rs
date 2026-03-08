@@ -12,6 +12,14 @@ Try the browser demo on GitHub Pages:
 
 The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
 
+## Live Demo
+
+Try the browser demo on GitHub Pages:
+
+- https://docxly.github.io/core-rs/
+
+The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
+
 ## Workspace Layout
 
 ```text
