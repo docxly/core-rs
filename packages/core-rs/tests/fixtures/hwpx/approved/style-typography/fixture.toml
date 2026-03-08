@@ -1,0 +1,14 @@
+title = "Typography Candidate"
+author = "docxly"
+strict_mode = true
+determinism = true
+
+[style]
+body_font = "함초롬바탕"
+heading_font = "함초롬돋움"
+body_font_size = 1120
+heading_font_size = 1560
+text_color = "#444444"
+heading_color = "#AA2200"
+link_color = "#0088CC"
+paragraph_align = "justify"

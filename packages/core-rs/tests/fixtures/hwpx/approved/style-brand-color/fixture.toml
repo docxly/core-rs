@@ -1,0 +1,14 @@
+title = "Brand Color Candidate"
+author = "docxly"
+strict_mode = true
+determinism = true
+
+[style]
+body_font = "함초롬바탕"
+heading_font = "함초롬돋움"
+body_font_size = 1040
+heading_font_size = 1480
+text_color = "#1F2937"
+heading_color = "#C2410C"
+link_color = "#2563EB"
+paragraph_align = "left"

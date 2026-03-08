@@ -1,0 +1,4 @@
+title = "HWPX Mixed Fixture"
+author = "Fixture Author"
+strict_mode = true
+determinism = true

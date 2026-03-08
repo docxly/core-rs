@@ -1,8 +1,8 @@
 # core-rs
 
-`core-rs` is the Rust engine for `docxly`. It turns Markdown into deterministic DOCX and, later, HWPX archives. This crate is also compiled to WASM for the npm package in `../npm-core-rs`.
+`core-rs` is the Rust engine for `docxly`. It turns Markdown into deterministic DOCX and HWPX archives. This crate is also compiled to WASM for the npm package in `../npm-core-rs`.
 
-The crate is developed with a TDD-first workflow. The current milestone covers the DOCX rich slice.
+The crate is developed with a TDD-first workflow. The current milestone covers the DOCX rich slice and HWPX compatibility bring-up.
 
 ## Features
 
@@ -65,12 +65,71 @@ Available options:
 - `title: Option<String>`
 - `author: Option<String>`
 - `strict_mode: bool`
+- `style: HwpxStyleOptions` on `HwpxOptions` only
 
 Current high-level API behavior:
 
 - `generate_docx(...) -> Result<Vec<u8>, CoreRsError>`
 - `generate_hwpx(...) -> Result<Vec<u8>, CoreRsError>`
-- `generate_hwpx` currently returns `UnsupportedFeature` until HWPX generation is implemented
+- `generate_hwpx` currently targets a Hancom-compatible minimal package baseline
+- During the current HWPX bring-up phase, heading and inline styling may be flattened to visible text until compatibility is manually validated
+- `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
+- Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
+
+## HWPX Supported Today
+
+The current HWPX implementation is narrower than the DOCX rich slice.
+
+- approved compatibility fixtures:
+  - `core-paragraph`
+  - `core-heading`
+  - `core-inline-style`
+  - `core-link-text`
+  - `core-mixed`
+- approved style fixtures:
+  - `style-typography`
+  - `style-centered-layout`
+  - `style-brand-color`
+- supported content today:
+  - paragraphs
+  - headings
+  - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
+  - document-level style overrides through `HwpxStyleOptions`
+- not yet approved for HWPX:
+  - lists
+  - tables
+  - images
+  - blockquotes
+  - fenced code blocks
+
+Example:
+
+```rust
+use std::fs;
+
+use core_rs::{
+    HwpxOptions, HwpxParagraphAlign, HwpxStyleOptions, generate_hwpx,
+};
+
+let bytes = generate_hwpx(
+    "# Title\n\n본문 **강조** [링크](https://example.com)",
+    HwpxOptions {
+        style: HwpxStyleOptions {
+            body_font: Some("함초롬바탕".to_string()),
+            heading_font: Some("함초롬돋움".to_string()),
+            body_font_size: Some(1050),
+            heading_font_size: Some(1500),
+            text_color: Some("#222222".to_string()),
+            heading_color: Some("#AA2200".to_string()),
+            link_color: Some("#0055AA".to_string()),
+            paragraph_align: Some(HwpxParagraphAlign::Justify),
+        },
+        ..HwpxOptions::default()
+    },
+)?;
+
+fs::write("output.hwpx", bytes)?;
+```
 
 ## WASM / npm Packaging
 
@@ -123,7 +182,9 @@ Each fixture directory is self-contained:
 ## Status
 
 - DOCX rich: implemented
-- HWPX generation: planned, not implemented yet
+- HWPX core: compatibility bring-up in progress
+- Only manually approved HWPX fixtures are treated as release-gate goldens; `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
+- HWPX `paragraph_align` currently targets body and heading paragraph styles; future paragraph categories may extend that scope
 - Public API: high-level generation functions and option/error types only
 
 For repository-level usage and roadmap details, see the root [`README.md`](../../README.md).
