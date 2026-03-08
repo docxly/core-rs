@@ -195,11 +195,11 @@ fn collect_inline_runs(
 fn merge_adjacent_runs(runs: Vec<RunSpec>) -> Result<Vec<RunSpec>, CoreRsError> {
     let mut merged: Vec<RunSpec> = Vec::new();
     for run in runs {
-        if let Some(last) = merged.last_mut() {
-            if last.char_pr == run.char_pr {
+        if merged.last().is_some_and(|last| last.char_pr == run.char_pr) {
+            if let Some(last) = merged.last_mut() {
                 last.text.push_str(&run.text);
-                continue;
             }
+            continue;
         }
         merged.push(run);
     }
