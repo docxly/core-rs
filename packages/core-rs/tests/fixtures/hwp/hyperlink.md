@@ -1,1 +1,0 @@
-[문서 열기](https://example.com)
