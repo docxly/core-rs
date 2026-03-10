@@ -2,13 +2,13 @@
 
 ## 설치
 
-가장 빠른 시작 경로는 npm 패키지입니다.
+가장 빠르게 시작하는 방법은 npm 패키지를 사용하는 것입니다.
 
 ```bash
 npm install @docxly/core-rs
 ```
 
-Rust crate는 이 저장소의 워크스페이스에서 바로 사용할 수 있습니다.
+Rust crate는 이 저장소의 워크스페이스에서 바로 참조할 수 있습니다.
 
 ```toml
 [dependencies]
@@ -38,14 +38,14 @@ fs::write("output.docx", docx)?;
 
 ## 로컬 데모 실행
 
-저장소 루트에서 아래 명령을 실행합니다.
+저장소 루트에서 아래 명령을 실행하면 로컬 데모를 바로 띄울 수 있습니다.
 
 ```bash
 npm install
 npm run demo
 ```
 
-정적 Pages 산출물만 생성하려면:
+GitHub Pages용 정적 산출물만 만들려면 다음 명령을 사용합니다.
 
 ```bash
 npm run build:pages

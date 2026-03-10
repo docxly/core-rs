@@ -107,54 +107,54 @@ Install docxly if your team wants document generation to be a feature of the pro
   ko: {
     defaultTitle: "Docxly 도입 제안서",
     defaultFormat: "hwpx",
-    sampleMarkdown: `# 왜 지금 docxly를 설치해야 하는가
+    sampleMarkdown: `# 왜 docxly를 도입해야 할까요?
 
-docxly는 별도 변환 단계가 아니라 제품 안에서 직접 DOCX와 HWPX를 생성해야 하는 팀을 위한 **내장형 문서 생성 엔진**입니다.
+docxly는 제품 안에서 바로 DOCX와 HWPX를 만들 수 있게 해주는 **문서 생성 엔진**입니다.
 
-이 보고서는 제품 팀이 더 빠른 문서 생성, 브라우저 로컬 워크플로, 그리고 런타임 전반에서 공유되는 하나의 Rust 코어를 원할 때 왜 docxly 설치가 합리적인지 설명합니다.
+이 문서는 서비스 안에 제안서, 보고서, 다운로드 문서를 넣어야 하는 팀이 왜 docxly를 선택하는지 간단히 정리한 보고서입니다.
 
 ## 핵심 요약
 
-> 문서 생성이 외부 변환 서비스가 아니라 애플리케이션과 브라우저 워크플로 안에 들어가야 한다면 docxly를 설치해야 합니다.
+> 문서 생성을 외부 변환 서버에 맡기지 않고 제품 안에서 직접 처리하려면 docxly가 더 잘 맞습니다.
 
-- 현재 요약 DOCX 벤치마크에서 **Pandoc 대비 105배 빠른 속도**
-- Node와 동일한 Rust 코어를 사용하는 브라우저 로컬 생성
-- 하나의 제품 표면에서 HWPX와 DOCX를 모두 지원
-- [공개 저장소](https://github.com/docxly/core-rs)를 가진 오픈소스 패키지
+- 요약 DOCX 벤치마크에서 **Pandoc 대비 105배 빠른 반복 생성 성능**
+- Node와 브라우저에서 같은 Rust 코어 사용
+- 하나의 흐름으로 DOCX와 HWPX 모두 지원
+- [공개 저장소](https://github.com/docxly/core-rs)와 npm 패키지를 함께 제공
 
-## 설치가 곧 제품 경쟁력이 되는 이유
+## 왜 도입하기 쉬운가
 
-### 1. 제품 안에 들어가는 엔진이 필요합니다
+### 1. 제품 안에 바로 넣을 수 있습니다
 
-제안서, 보고서, 내보내기 문서, 고객용 결과물을 애플리케이션 안에서 생성한다면 문서 엔진도 제품 스택의 일부여야 합니다.
+문서 생성이 사용자 경험의 일부라면, 문서 엔진도 제품 코드 안에 들어오는 편이 자연스럽습니다.
 
-- 메인 흐름에서 별도 백엔드 변환 의존성이 없습니다
-- 핵심 사용자 경험을 위해 별도의 CLI 오케스트레이션이 필요하지 않습니다
-- Node와 브라우저 컨텍스트를 하나의 패키지로 통합할 수 있습니다
+- 별도 변환 서버에 의존하지 않아도 됩니다
+- 핵심 흐름을 CLI 호출로 우회하지 않아도 됩니다
+- Node와 브라우저에서 같은 API 흐름을 유지할 수 있습니다
 
-### 2. 속도는 사용자 경험을 바꿉니다
+### 2. 응답 속도가 사용자 경험을 바꿉니다
 
-현재 벤치마크의 핵심 문장은 명확합니다. docxly는 요약 DOCX 벤치마크에서 Pandoc보다 **105배 빠르게** 측정되었습니다.
+요약 DOCX 벤치마크 기준으로 docxly는 Pandoc보다 **105배 빠르게** 측정됐습니다.
 
-- 반복 생성 구간에서 더 빠른 steady-state 성능
-- 인터랙티브한 제품 워크플로에 더 적합한 응답성
-- 설치 의사결정을 쉽게 만드는 명확한 수치
+- 반복 실행 구간에서 더 빠른 응답 속도
+- 미리보기와 즉시 생성이 필요한 화면에 유리
+- 도입 타당성을 설명하기 쉬운 명확한 수치
 
-### 3. 하나의 코어가 여러 문서 경로를 지원합니다
+### 3. DOCX와 HWPX를 함께 다룰 수 있습니다
 
-docxly는 문서 워크플로 전체에서 같은 코어 아키텍처를 유지합니다.
+같은 코어를 기반으로 문서 형식을 확장할 수 있다는 점도 장점입니다.
 
-- 광범위한 오피스 호환성을 위한 DOCX 생성
-- 한국 문서 워크플로를 위한 HWPX 생성
-- 런타임 전반에서 공유되는 Markdown 문서 모델
+- DOCX 생성으로 일반 오피스 호환성 확보
+- HWPX 생성으로 한국 문서 워크플로 대응
+- Markdown 입력 모델을 여러 런타임에서 공통으로 사용
 
-## 권장 설치 결정
+## 권장 결론
 
 \`\`\`bash
 npm install @docxly/core-rs
 \`\`\`
 
-문서 생성을 별도 변환 단계가 아니라 제품 기능으로 만들고 싶다면 docxly를 설치해야 합니다.`,
+문서 생성을 별도 변환 단계가 아니라 제품 기능으로 만들고 싶다면 docxly를 검토할 가치가 충분합니다.`,
     formatLabels: {
       hwpx: "HWPX",
       docx: "DOCX",
@@ -164,22 +164,22 @@ npm install @docxly/core-rs
       docx: "docxly-브라우저-데모.docx",
     },
     statusDescriptions: {
-      hwpx: "브라우저에서 HWPX를 생성하고 있습니다...",
-      docx: "브라우저에서 DOCX를 생성하고 있습니다...",
+      hwpx: "브라우저에서 HWPX 파일을 만드는 중입니다...",
+      docx: "브라우저에서 DOCX 파일을 만드는 중입니다...",
     },
     comparison: {
       unavailable: "준비 중",
-      unavailableHeadline: "오프라인 벤치마크 데이터를 불러오지 못했습니다.",
-      availableHeadline: "공유 비교 데이터셋으로 측정한 요약 DOCX 벤치마크입니다.",
+      unavailableHeadline: "비교 지표를 아직 불러오지 못했습니다.",
+      availableHeadline: "Pandoc과 비교한 요약 DOCX 벤치마크 결과입니다.",
       fallbackProof:
-        "Node, 브라우저, HWPX 워크플로 전체에서 같은 Rust 코어를 사용하는 내장형 DOCX 엔진을 설치하세요.",
+        "Node와 브라우저에서 같은 Rust 코어를 쓰는 문서 생성 엔진이 필요하다면 docxly를 살펴보세요.",
       installProof: (ratio) =>
-        `요약 벤치마크에서 Pandoc보다 ${ratio} 빠르게 측정된 내장형 DOCX 엔진을 설치하세요.`,
-      label: "브라우저 실행 시간이 아닌, 라이브러리 선택을 위한 Node 벤치마크입니다.",
-      metaUnavailable: "비교 데이터를 불러오지 못했습니다.",
+        `요약 DOCX 벤치마크에서 Pandoc보다 ${ratio} 빠르게 측정됐습니다.`,
+      label: "브라우저 실측이 아니라 라이브러리 선택을 위한 Node 벤치마크입니다.",
+      metaUnavailable: "비교 데이터를 아직 불러오지 못했습니다.",
       meta: (data) =>
-        `${data.machine_label}에서 ${data.measured_at}에 측정했으며, Node ${data.node_version} 및 Pandoc ${data.pandoc_version} 기준입니다.`,
-      badge: "HWPX 지원은 docxly 전용입니다",
+        `${data.machine_label}에서 ${data.measured_at}에 측정했으며 Node ${data.node_version}, Pandoc ${data.pandoc_version} 기준입니다.`,
+      badge: "docxly는 HWPX도 지원합니다",
     },
     copy: {
       idle: "복사",
@@ -188,24 +188,24 @@ npm install @docxly/core-rs
     },
     formatSummary(activeFormat, defaultFormat) {
       if (activeFormat === defaultFormat && defaultFormat === "hwpx") {
-        return "한국어 사용자에게는 HWPX가 기본 경로입니다. 다른 형식이 필요하면 DOCX 탭으로 전환하세요.";
+        return "한국어 페이지에서는 HWPX가 기본 형식입니다. DOCX가 필요하면 탭을 바꿔 생성하세요.";
       }
 
       if (activeFormat === defaultFormat) {
-        return "비한국어 사용자에게는 DOCX가 기본 경로입니다. HWPX가 필요하면 탭을 전환하세요.";
+        return "이 페이지에서는 DOCX가 기본 형식입니다. HWPX가 필요하면 탭을 바꾸세요.";
       }
 
       if (defaultFormat === "hwpx") {
-        return "DOCX는 한국어 기본 경로에서 한 탭 떨어져 있습니다. 기본값으로 돌아가려면 HWPX를 선택하세요.";
+        return "지금은 DOCX를 선택한 상태입니다. 기본 형식으로 돌아가려면 HWPX를 선택하세요.";
       }
 
-      return "HWPX는 언어 기반 기본 경로에서 한 탭 떨어져 있습니다. 기본값으로 돌아가려면 DOCX를 선택하세요.";
+      return "지금은 HWPX를 선택한 상태입니다. 기본 형식으로 돌아가려면 DOCX를 선택하세요.";
     },
     generateLabel: (formatLabel) => `${formatLabel} 생성`,
     ready: (formatLabel) => `${formatLabel}를 생성할 준비가 되었습니다.`,
     success: (filename, elapsed, byteLength) =>
-      `${filename} 생성이 ${elapsed} 만에 시작되었습니다. (${byteLength} bytes)`,
-    failed: (elapsed, message) => `${elapsed} 후 생성에 실패했습니다: ${message}`,
+      `${filename} 파일 생성을 ${elapsed} 만에 시작했습니다. (${byteLength} bytes)`,
+    failed: (elapsed, message) => `${elapsed} 만에 파일 생성에 실패했습니다: ${message}`,
   },
 };
 
