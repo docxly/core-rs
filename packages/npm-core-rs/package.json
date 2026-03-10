@@ -1,6 +1,6 @@
 {
   "name": "@docxly/core-rs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "WASM wrapper for docxly core-rs DOCX generation",
   "type": "module",
   "license": "MIT",

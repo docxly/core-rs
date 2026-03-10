@@ -4,7 +4,7 @@
   "machine_label": "darwin 25.2.0 / arm64",
   "node_version": "v23.7.0",
   "pandoc_version": "3.9",
-  "docxly_version": "0.2.0",
+  "docxly_version": "0.2.1",
   "benchmarks": {
     "small": {
       "label": "Small",
