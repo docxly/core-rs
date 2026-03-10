@@ -59,8 +59,16 @@ pub fn compare_contracts(
     expected: &HwpxContractSnapshot,
     actual: &HwpxContractSnapshot,
 ) -> HwpxContractDiff {
-    let expected_names = expected.entry_names.iter().cloned().collect::<std::collections::BTreeSet<_>>();
-    let actual_names = actual.entry_names.iter().cloned().collect::<std::collections::BTreeSet<_>>();
+    let expected_names = expected
+        .entry_names
+        .iter()
+        .cloned()
+        .collect::<std::collections::BTreeSet<_>>();
+    let actual_names = actual
+        .entry_names
+        .iter()
+        .cloned()
+        .collect::<std::collections::BTreeSet<_>>();
 
     let missing_entries = expected_names
         .difference(&actual_names)
@@ -92,7 +100,9 @@ pub fn compare_contracts(
     }
 }
 
-fn xml_roots(entries: &BTreeMap<String, NormalizedEntry>) -> FixtureResult<BTreeMap<String, XmlRoot>> {
+fn xml_roots(
+    entries: &BTreeMap<String, NormalizedEntry>,
+) -> FixtureResult<BTreeMap<String, XmlRoot>> {
     let mut roots = BTreeMap::new();
 
     for (path, contents) in entries {

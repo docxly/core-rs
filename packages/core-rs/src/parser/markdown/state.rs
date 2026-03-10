@@ -7,9 +7,15 @@ use crate::models::inline::{ImageData, Inline};
 #[derive(Debug)]
 pub(super) enum Container {
     Paragraph(Vec<Inline>),
-    Heading { level: u8, content: Vec<Inline> },
+    Heading {
+        level: u8,
+        content: Vec<Inline>,
+    },
     BlockQuote(Vec<crate::models::block::Block>),
-    CodeBlock { language: Option<String>, code: String },
+    CodeBlock {
+        language: Option<String>,
+        code: String,
+    },
     List(ListBlock),
     ListItem(ListItem),
     Table(TableBuilder),
@@ -66,7 +72,9 @@ pub(super) fn push_inline_merged(content: &mut Vec<Inline>, inline: Inline) {
 
 pub(super) fn append_fallback_separator(content: &mut Vec<Inline>) {
     match content.last_mut() {
-        Some(Inline::Text(existing)) if !existing.ends_with(char::is_whitespace) => existing.push(' '),
+        Some(Inline::Text(existing)) if !existing.ends_with(char::is_whitespace) => {
+            existing.push(' ')
+        }
         Some(Inline::HardBreak) | None => {}
         _ => content.push(Inline::Text(" ".to_string())),
     }
@@ -187,9 +195,5 @@ pub(super) fn heading_level(level: HeadingLevel) -> u8 {
 }
 
 pub(super) fn empty_to_none(value: String) -> Option<String> {
-    if value.is_empty() {
-        None
-    } else {
-        Some(value)
-    }
+    if value.is_empty() { None } else { Some(value) }
 }

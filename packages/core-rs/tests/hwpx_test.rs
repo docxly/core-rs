@@ -1,21 +1,20 @@
 use std::collections::BTreeMap;
 use std::fs;
 
-#[path = "support/hwpx_fixture.rs"]
-mod hwpx_fixture;
-#[path = "support/hwpx_contract.rs"]
-mod hwpx_contract;
-#[path = "support/hwpx_runtime.rs"]
-mod hwpx_runtime;
 #[path = "hwpx/fixture_suite.rs"]
 mod fixture_suite;
+#[path = "support/hwpx_contract.rs"]
+mod hwpx_contract;
+#[path = "support/hwpx_fixture.rs"]
+mod hwpx_fixture;
+#[path = "support/hwpx_runtime.rs"]
+mod hwpx_runtime;
 #[path = "hwpx/regression.rs"]
 mod regression;
 
 use hwpx_fixture::{
     HwpxFixture, NormalizedEntry, archive_entry_names, hash_entries, normalized_entries,
-    read_expected_entries,
-    read_fixture_input,
+    read_expected_entries, read_fixture_input,
 };
 use roxmltree::Document as XmlDocument;
 

@@ -2,7 +2,7 @@
 
 `core-rs` is the Rust engine for `docxly`. It turns Markdown into deterministic DOCX and HWPX archives. This crate is also compiled to WASM for the npm package in `../npm-core-rs`.
 
-The crate is developed with a TDD-first workflow. The current milestone covers the DOCX rich slice and HWPX compatibility bring-up.
+The crate is developed with a TDD-first workflow. The current milestone covers the DOCX rich slice and an approved HWPX baseline backed by manually validated fixtures.
 
 ## Features
 
@@ -71,8 +71,8 @@ Current high-level API behavior:
 
 - `generate_docx(...) -> Result<Vec<u8>, CoreRsError>`
 - `generate_hwpx(...) -> Result<Vec<u8>, CoreRsError>`
-- `generate_hwpx` currently targets a Hancom-compatible minimal package baseline
-- During the current HWPX bring-up phase, heading and inline styling may be flattened to visible text until compatibility is manually validated
+- `generate_hwpx` targets the approved HWPX golden baseline committed under `tests/fixtures/hwpx/approved`
+- approved HWPX fixtures are the release gate; provisional/quarantined artifacts are not
 - `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
 - Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
 
@@ -82,10 +82,14 @@ The current HWPX implementation is narrower than the DOCX rich slice.
 
 - approved compatibility fixtures:
   - `core-paragraph`
+  - `blockquote-basic`
+  - `code-block-basic`
   - `core-heading`
   - `core-inline-style`
   - `core-link-text`
   - `core-mixed`
+  - `list-basic`
+  - `list-nested-depth-2`
 - approved style fixtures:
   - `style-typography`
   - `style-centered-layout`
@@ -96,11 +100,8 @@ The current HWPX implementation is narrower than the DOCX rich slice.
   - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
   - document-level style overrides through `HwpxStyleOptions`
 - not yet approved for HWPX:
-  - lists
   - tables
   - images
-  - blockquotes
-  - fenced code blocks
 
 Example:
 
@@ -182,8 +183,8 @@ Each fixture directory is self-contained:
 ## Status
 
 - DOCX rich: implemented
-- HWPX core: compatibility bring-up in progress
-- Only manually approved HWPX fixtures are treated as release-gate goldens; `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
+- HWPX approved baseline: implemented
+- Only manually approved HWPX fixtures are treated as release-gate goldens; `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `table-basic`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
 - HWPX `paragraph_align` currently targets body and heading paragraph styles; future paragraph categories may extend that scope
 - Public API: high-level generation functions and option/error types only
 

@@ -4,10 +4,7 @@ pub enum Inline {
     Emphasis(Vec<Inline>),
     Strong(Vec<Inline>),
     Code(String),
-    Link {
-        text: Vec<Inline>,
-        url: String,
-    },
+    Link { text: Vec<Inline>, url: String },
     Image(ImageData),
     HardBreak,
 }

@@ -2,15 +2,7 @@
 
 `docxly/core-rs` is a Rust-first mono repo for a Markdown-based DOCX/HWPX generation library, plus an npm-facing WASM wrapper package.
 
-The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and is bringing up HWPX compatibility from a minimal package baseline.
-
-## Live Demo
-
-Try the browser demo on GitHub Pages:
-
-- https://docxly.github.io/core-rs/
-
-The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
+The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and an approved HWPX baseline backed by manually validated golden fixtures.
 
 ## Live Demo
 
@@ -43,9 +35,9 @@ The live page uses the published WASM wrapper and downloads a real `.docx` file 
 - Implemented: Markdown parser, internal shared intermediate model, deterministic DOCX packaging
 - Implemented: fixture-driven integration tests with normalized hash comparison
 - Implemented: strict/fallback handling for unsupported HTML, non-data images, and deep nested lists
-- In progress: HWPX compatibility bring-up from a minimal Hancom-compatible package baseline
-- Current HWPX CI gates only manually approved fixtures; `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
-- Stale compatibility snapshots are quarantined and used only for reverse-engineering
+- Implemented: approved HWPX baseline backed by manually validated fixtures
+- Current HWPX CI gates use these approved fixtures: `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `style-typography`, `style-centered-layout`, and `style-brand-color`
+- Provisional and quarantined HWPX artifacts are excluded from the release gate
 - HWPX style options currently apply to body paragraphs and heading paragraphs; future block types such as lists and tables may add more paragraph categories
 
 ## Supported Markdown Today
@@ -104,7 +96,7 @@ Current options:
 Notes:
 
 - `generate_docx` returns a deterministic `.docx` archive as `Vec<u8>`
-- `generate_hwpx` currently targets a minimal compatibility baseline and is still being validated against Hancom
+- `generate_hwpx` targets the approved HWPX baseline reproduced by the committed golden fixtures
 - `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
 - Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
 - internal modules such as parser/model/generator helpers are not part of the public contract
@@ -113,7 +105,8 @@ Notes:
 
 The current HWPX path is narrower than the DOCX rich slice.
 
-- approved baseline: `core-paragraph`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`
+- approved baseline: `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`
+- approved list baseline: `list-basic`, `list-nested-depth-2`
 - approved style baseline: `style-typography`, `style-centered-layout`, `style-brand-color`
 - supported content today:
   - paragraphs
@@ -121,11 +114,8 @@ The current HWPX path is narrower than the DOCX rich slice.
   - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
   - document-level HWPX style overrides
 - not yet part of the approved HWPX baseline:
-  - lists
   - tables
   - images
-  - blockquotes
-  - fenced code blocks
 
 Example HWPX generation:
 
@@ -273,10 +263,11 @@ hash.txt
 
 ## HWPX Reference Material
 
-- `/Users/limchaesung/Github/docxly/core-rs/packages/core-rs/src/generators/hwpx/docs/README.md`
-- `/Users/limchaesung/Github/docxly/core-rs/packages/core-rs/src/generators/hwpx/docs/schema-md/index.md`
+- `packages/core-rs/src/generators/hwpx/docs/README.md`
+- `packages/core-rs/src/generators/hwpx/docs/schema-md/index.md`
+- `packages/core-rs/src/generators/hwpx/reference/paragraph-only`
 
-These files are the repository-level reference corpus for HWPX work. They combine curated implementation notes with Markdown conversions of official Hancom PDF references, KS X 6101 source metadata, and a synthetic compatibility corpus.
+These files are the repository-level reference corpus for HWPX work. They combine curated implementation notes, Markdown conversions of Hancom reference material, and the local approved/reference fixtures used to keep the package contract stable.
 
 ## Development Notes
 

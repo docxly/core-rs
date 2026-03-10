@@ -105,7 +105,10 @@ impl ResolvedHwpxStyle {
                 .map(validate_and_normalize_color)
                 .transpose()?
                 .unwrap_or_else(|| DEFAULT_LINK_COLOR.to_string()),
-            paragraph_align: match options.style.paragraph_align.unwrap_or(HwpxParagraphAlign::Justify)
+            paragraph_align: match options
+                .style
+                .paragraph_align
+                .unwrap_or(HwpxParagraphAlign::Justify)
             {
                 HwpxParagraphAlign::Left => "LEFT",
                 HwpxParagraphAlign::Center => "CENTER",

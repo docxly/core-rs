@@ -32,7 +32,7 @@ pub fn build_content_hpf(title: Option<&str>) -> String {
             "<opf:meta name=\"creator\" content=\"text\">(주)한글과컴퓨터</opf:meta>",
             "<opf:meta name=\"subject\" content=\"text\"/>",
             "<opf:meta name=\"description\" content=\"text\"/>",
-            "<opf:meta name=\"lastsaveby\" content=\"text\">limchaesung</opf:meta>",
+            "<opf:meta name=\"lastsaveby\" content=\"text\">docxly</opf:meta>",
             "<opf:meta name=\"CreatedDate\" content=\"text\">2004-11-09T15:23:46Z</opf:meta>",
             "<opf:meta name=\"ModifiedDate\" content=\"text\">2026-03-08T07:30:22Z</opf:meta>",
             "<opf:meta name=\"date\" content=\"text\">2017년 8월 3일 목요일 오후 4:55:39</opf:meta>",
