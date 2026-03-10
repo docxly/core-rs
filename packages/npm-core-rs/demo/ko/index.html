@@ -1,58 +1,58 @@
 <!doctype html>
-<html lang="en" translate="no" class="notranslate">
+<html lang="ko" translate="no" class="notranslate">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="google" content="notranslate" />
-    <title>docxly WASM HWPX Demo</title>
+    <title>docxly 브라우저 HWPX 및 DOCX 데모</title>
     <meta
       name="description"
-      content="Embeddable DOCX and HWPX generation in the browser with the docxly Rust/WASM core."
+      content="docxly Rust/WASM 코어로 브라우저에서 DOCX와 HWPX를 직접 생성합니다."
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="docxly" />
-    <meta property="og:title" content="docxly | 105x faster DOCX install proof" />
+    <meta property="og:title" content="docxly | 105배 빠른 문서 생성 설치 근거" />
     <meta
       property="og:description"
-      content="Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark."
+      content="요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을 설치하세요."
     />
-    <meta property="og:url" content="https://docxly.github.io/core-rs/" />
+    <meta property="og:url" content="https://docxly.github.io/core-rs/ko/" />
     <meta property="og:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="docxly | 105x faster DOCX install proof" />
+    <meta name="twitter:title" content="docxly | 105배 빠른 문서 생성 설치 근거" />
     <meta
       name="twitter:description"
-      content="Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark."
+      content="요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을 설치하세요."
     />
     <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
     <link rel="alternate" hreflang="en" href="https://docxly.github.io/core-rs/" />
     <link rel="alternate" hreflang="ko" href="https://docxly.github.io/core-rs/ko/" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="../styles.css" />
   </head>
-  <body data-page-locale="en" data-root-path=".">
+  <body data-page-locale="ko" data-root-path="..">
     <main class="page">
       <section class="panel hero-panel">
         <div class="hero-topbar">
           <div class="brand-lockup">
-            <img class="brand-logo" src="./assets/logo.png" alt="docxly logo" />
+            <img class="brand-logo" src="../assets/logo.png" alt="docxly 로고" />
             <div class="brand-copy">
               <span class="brand-wordmark">docxly</span>
-              <span class="brand-tagline">Embeddable document generation engine</span>
+              <span class="brand-tagline">내장형 문서 생성 엔진</span>
             </div>
           </div>
-          <nav class="lang-switch" aria-label="Language switch">
-            <a class="lang-switch-link is-active" href="./">English</a>
-            <a class="lang-switch-link" href="./ko/">한국어</a>
+          <nav class="lang-switch" aria-label="언어 선택">
+            <a class="lang-switch-link" href="../">English</a>
+            <a class="lang-switch-link is-active" href="./">한국어</a>
           </nav>
         </div>
 
-        <h1>Generate HWPX or DOCX directly in the browser</h1>
+        <h1>브라우저에서 HWPX와 DOCX를 바로 생성하세요</h1>
         <p class="lede">
-          <code>@docxly/core-rs</code> runs the same Rust core in WebAssembly and emits real
-          <code>.hwpx</code> or <code>.docx</code> files locally, without a backend conversion
-          service.
+          <code>@docxly/core-rs</code>는 같은 Rust 코어를 WebAssembly로 실행하고, 백엔드
+          변환 서비스 없이 실제 <code>.hwpx</code> 또는 <code>.docx</code> 파일을 로컬에서
+          생성합니다.
         </p>
 
         <div class="hero-shell">
@@ -79,58 +79,59 @@
             <div id="comparison-section" class="comparison-strip" aria-labelledby="comparison-title">
               <div class="comparison-strip-head">
                 <div>
-                  <p class="panel-eyebrow">Proof</p>
-                  <h2 id="comparison-title">Offline benchmark for library selection.</h2>
+                  <p class="panel-eyebrow">근거</p>
+                  <h2 id="comparison-title">라이브러리 도입을 위한 오프라인 벤치마크</h2>
                 </div>
                 <p id="comparison-headline" class="comparison-headline">
-                  Summary DOCX benchmark powered by the shared comparison dataset.
+                  공유 비교 데이터셋으로 측정한 요약 DOCX 벤치마크입니다.
                 </p>
               </div>
 
               <div class="comparison-kpis">
                 <article class="comparison-kpi">
                   <p class="comparison-kpi-label">docxly steady</p>
-                  <strong id="comparison-docxly-ms" class="comparison-kpi-value">Unavailable</strong>
+                  <strong id="comparison-docxly-ms" class="comparison-kpi-value">준비 중</strong>
                 </article>
                 <article class="comparison-kpi">
                   <p class="comparison-kpi-label">Pandoc steady</p>
-                  <strong id="comparison-pandoc-ms" class="comparison-kpi-value">Unavailable</strong>
+                  <strong id="comparison-pandoc-ms" class="comparison-kpi-value">준비 중</strong>
                 </article>
                 <article class="comparison-kpi">
-                  <p class="comparison-kpi-label">Faster</p>
-                  <strong id="comparison-ratio" class="comparison-kpi-value">Unavailable</strong>
+                  <p class="comparison-kpi-label">더 빠름</p>
+                  <strong id="comparison-ratio" class="comparison-kpi-value">준비 중</strong>
                 </article>
               </div>
 
               <p id="comparison-label" class="comparison-label">
-                Offline Node benchmark for library selection, not browser runtime timing.
+                브라우저 실행 시간이 아닌, 라이브러리 선택을 위한 Node 벤치마크입니다.
               </p>
               <p id="comparison-meta" class="comparison-meta">
-                Comparison data unavailable. Run the benchmark script to populate this section.
+                비교 데이터를 불러오지 못했습니다. 벤치마크 스크립트를 실행하면 이 영역이
+                채워집니다.
               </p>
 
               <div class="comparison-badges">
-                <span id="comparison-hwpx-badge" class="comparison-badge">HWPX support is docxly-only</span>
+                <span id="comparison-hwpx-badge" class="comparison-badge">HWPX 지원은 docxly 전용입니다</span>
               </div>
             </div>
           </div>
 
           <aside class="install-card">
-            <p class="install-card-eyebrow">Install</p>
-            <h2>Start with the 105x proof line</h2>
+            <p class="install-card-eyebrow">설치</p>
+            <h2>105배 근거로 시작하세요</h2>
             <p id="install-proof" class="install-proof">
-              Install the embeddable DOCX engine that measured 105x faster than Pandoc on the
-              summary benchmark.
+              요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을
+              설치하세요.
             </p>
             <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
             <div class="install-card-actions">
               <button id="copy-install-button" class="copy-button" type="button">
                 <span aria-hidden="true">⧉</span>
-                <span>Copy</span>
+                <span>복사</span>
               </button>
             </div>
             <p class="install-card-copy">
-              Use the same Rust core in Node, browser, and HWPX workflows.
+              Node, 브라우저, HWPX 워크플로에 같은 Rust 코어를 사용하세요.
             </p>
           </aside>
         </div>
@@ -139,32 +140,32 @@
       <section class="panel generator-panel">
         <div class="panel-heading">
           <div>
-            <p class="panel-eyebrow">Try it now</p>
-            <h2>Generate a browser-side document</h2>
+            <p class="panel-eyebrow">지금 실행</p>
+            <h2>브라우저에서 문서를 생성해보세요</h2>
           </div>
           <p class="panel-copy">
-            Start with the default document path for your language, then switch tabs when you need
-            the other format.
+            언어에 맞는 기본 문서 형식으로 시작하고, 필요하면 탭을 전환해 다른 형식을
+            생성하세요.
           </p>
         </div>
 
-        <div class="format-tabs" role="tablist" aria-label="Output format">
+        <div class="format-tabs" role="tablist" aria-label="출력 형식">
           <button
             id="format-hwpx-tab"
-            class="format-tab"
+            class="format-tab is-active"
             type="button"
             role="tab"
-            aria-selected="false"
+            aria-selected="true"
             data-format="hwpx"
           >
             HWPX
           </button>
           <button
             id="format-docx-tab"
-            class="format-tab is-active"
+            class="format-tab"
             type="button"
             role="tab"
-            aria-selected="true"
+            aria-selected="false"
             data-format="docx"
           >
             DOCX
@@ -172,8 +173,8 @@
         </div>
 
         <p id="format-summary" class="format-summary">
-          DOCX is the default path for non-Korean users in this demo. Switch tabs to generate HWPX
-          instead.
+          언어에 따라 기본 형식이 바뀝니다. 필요하면 탭을 전환해 다른 문서 경로를
+          선택하세요.
         </p>
 
         <label class="field">
@@ -183,36 +184,36 @@
 
         <div class="grid">
           <label class="field">
-            <span>Title</span>
-            <input id="title-input" type="text" value="Browser Demo Document" />
+            <span>제목</span>
+            <input id="title-input" type="text" value="Docxly 도입 제안서" />
           </label>
           <label class="field">
-            <span>Author</span>
+            <span>작성자</span>
             <input id="author-input" type="text" value="docxly" />
           </label>
         </div>
 
         <label class="checkbox">
           <input id="strict-mode-input" type="checkbox" />
-          <span>Strict mode</span>
+          <span>엄격 모드</span>
         </label>
 
         <div class="actions">
           <button id="generate-button" class="action-button action-button-primary" type="button">
             <span class="action-symbol" aria-hidden="true">+</span>
-            <span id="generate-button-label">Generate DOCX</span>
+            <span id="generate-button-label">HWPX 생성</span>
           </button>
         </div>
 
-        <p id="status" class="status">Ready to generate DOCX.</p>
+        <p id="status" class="status">준비되었습니다.</p>
         <p class="note">
-          This static demo uses a browser-generated <code>blob:</code> file handoff. The saved file
-          name is preserved, but some browsers may still show a UUID-like source entry in file
-          history.
+          이 정적 데모는 브라우저에서 생성한 <code>blob:</code> 파일을 바로 저장합니다.
+          저장 파일명은 유지되지만, 일부 브라우저에서는 파일 기록에 UUID 형태의 원본 항목이
+          보일 수 있습니다.
         </p>
       </section>
     </main>
 
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="../main.js"></script>
   </body>
 </html>

@@ -1,0 +1,112 @@
+{
+  "headline": "Offline Node benchmark for library selection.",
+  "measured_at": "2026-03-10T14:29:12.752Z",
+  "machine_label": "darwin 25.2.0 / arm64",
+  "node_version": "v23.7.0",
+  "pandoc_version": "3.9",
+  "docxly_version": "0.2.0",
+  "benchmarks": {
+    "small": {
+      "label": "Small",
+      "cold_ms": {
+        "docxly": 66,
+        "pandoc": 539
+      },
+      "steady_median_ms": {
+        "docxly": 1,
+        "pandoc": 249
+      },
+      "output_bytes": {
+        "docxly": 9050,
+        "pandoc": 11479
+      },
+      "speed_ratio": 369.84
+    },
+    "medium": {
+      "label": "Medium",
+      "cold_ms": {
+        "docxly": 80,
+        "pandoc": 284
+      },
+      "steady_median_ms": {
+        "docxly": 2,
+        "pandoc": 126
+      },
+      "output_bytes": {
+        "docxly": 89052,
+        "pandoc": 15408
+      },
+      "speed_ratio": 64.85
+    },
+    "large": {
+      "label": "Large",
+      "cold_ms": {
+        "docxly": 88,
+        "pandoc": 219
+      },
+      "steady_median_ms": {
+        "docxly": 4,
+        "pandoc": 210
+      },
+      "output_bytes": {
+        "docxly": 284013,
+        "pandoc": 24027
+      },
+      "speed_ratio": 57.6
+    },
+    "summary": {
+      "label": "Summary",
+      "cold_ms": {
+        "docxly": 80,
+        "pandoc": 284
+      },
+      "steady_median_ms": {
+        "docxly": 2,
+        "pandoc": 210
+      },
+      "output_bytes": {
+        "docxly": 89052,
+        "pandoc": 15408
+      },
+      "speed_ratio": 105
+    }
+  },
+  "feature_matrix": [
+    {
+      "feature": "Embeddable in app",
+      "docxly": "Yes, library-first for Node and browser bundlers",
+      "pandoc": "CLI-first with process invocation"
+    },
+    {
+      "feature": "Browser-local generation",
+      "docxly": "First-party browser package and WASM path",
+      "pandoc": "Possible through pandoc.wasm, not the primary npm workflow"
+    },
+    {
+      "feature": "npm distribution",
+      "docxly": "Published package",
+      "pandoc": "Not a first-party npm package"
+    },
+    {
+      "feature": "HWPX generation",
+      "docxly": "Supported in the Rust core",
+      "pandoc": "Not supported"
+    },
+    {
+      "feature": "Broad format conversion",
+      "docxly": "Focused on DOCX and HWPX generation",
+      "pandoc": "Wide multi-format conversion"
+    },
+    {
+      "feature": "DOCX reference-template workflow",
+      "docxly": "Not a reference.docx workflow",
+      "pandoc": "Supported via reference.docx"
+    }
+  ],
+  "caveats": [
+    "This benchmark measures DOCX generation only and does not compare HWPX.",
+    "The numbers above come from an offline Node environment and are not browser runtime timings.",
+    "Cold timings include WASM initialization for docxly and process startup for Pandoc.",
+    "Steady timings are medians from 15 runs after one warm-up per corpus."
+  ]
+}

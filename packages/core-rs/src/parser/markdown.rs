@@ -621,6 +621,10 @@ impl MarkdownParser {
             return Ok(());
         }
 
+        if Self::push_inline_to_implicit_paragraph(containers, inline.clone()) {
+            return Ok(());
+        }
+
         match inline {
             Inline::Text(text) if !text.is_empty() => {
                 self.push_fallback_text(text, blocks, containers, inline_stack)
@@ -631,6 +635,27 @@ impl MarkdownParser {
             _ => Err(CoreRsError::InvalidMarkdown(
                 "inline content appeared outside a text container".to_string(),
             )),
+        }
+    }
+
+    fn push_inline_to_implicit_paragraph(containers: &mut [Container], inline: Inline) -> bool {
+        match containers.last_mut() {
+            Some(Container::ListItem(item)) => {
+                Self::append_inline_to_paragraph_block(&mut item.blocks, inline);
+                true
+            }
+            Some(Container::BlockQuote(blocks)) => {
+                Self::append_inline_to_paragraph_block(blocks, inline);
+                true
+            }
+            _ => false,
+        }
+    }
+
+    fn append_inline_to_paragraph_block(blocks: &mut Vec<Block>, inline: Inline) {
+        match blocks.last_mut() {
+            Some(Block::Paragraph(content)) => push_inline_merged(content, inline),
+            _ => blocks.push(Block::Paragraph(vec![inline])),
         }
     }
 

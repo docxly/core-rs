@@ -14,6 +14,7 @@ const contentTypes = new Map([
   [".html", "text/html; charset=utf-8"],
   [".js", "text/javascript; charset=utf-8"],
   [".json", "application/json; charset=utf-8"],
+  [".png", "image/png"],
   [".wasm", "application/wasm"],
 ]);
 
@@ -41,8 +42,20 @@ const server = http.createServer(async (req, res) => {
 
   const fileStat = await stat(filePath);
   if (fileStat.isDirectory()) {
-    res.writeHead(404);
-    res.end("Not Found");
+    const indexPath = path.join(filePath, "index.html");
+    if (!existsSync(indexPath)) {
+      res.writeHead(404);
+      res.end("Not Found");
+      return;
+    }
+
+    const indexStat = await stat(indexPath);
+    res.writeHead(200, {
+      "Content-Length": indexStat.size,
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-cache",
+    });
+    createReadStream(indexPath).pipe(res);
     return;
   }
 

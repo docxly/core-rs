@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 
-import init, { generateDocxBytes } from "./generated/core_rs.js";
+import init, { generateDocxBytes, generateHwpxBytes } from "./generated/core_rs.js";
 
 let initPromise;
 
@@ -18,6 +18,16 @@ async function ensureInit() {
 export async function generateDocx(markdown, options = {}) {
   await ensureInit();
   return generateDocxBytes(
+    markdown,
+    options.title ?? null,
+    options.author ?? null,
+    options.strictMode ?? true,
+  );
+}
+
+export async function generateHwpx(markdown, options = {}) {
+  await ensureInit();
+  return generateHwpxBytes(
     markdown,
     options.title ?? null,
     options.author ?? null,

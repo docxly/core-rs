@@ -1,8 +1,66 @@
-# docxly core-rs
+<div align="center">
+  <h1>docxly core-rs</h1>
+  <p><strong>Embeddable Rust/WASM document generation for DOCX and HWPX.</strong></p>
+  <p>Where Pandoc is a general-purpose converter, docxly is designed to live inside Node services, browser workflows, and product surfaces as a library.</p>
+  <p>
+    <a href="https://github.com/docxly/core-rs/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/docxly/core-rs/ci.yml?branch=main&label=ci"></a>
+    <a href="https://www.npmjs.com/package/@docxly/core-rs"><img alt="npm" src="https://img.shields.io/npm/v/%40docxly%2Fcore-rs?label=npm"></a>
+    <a href="https://docxly.github.io/core-rs/"><img alt="demo" src="https://img.shields.io/badge/demo-live-1f7a4c"></a>
+    <a href="https://github.com/docxly/core-rs/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/docxly/core-rs"></a>
+  </p>
+</div>
 
-`docxly/core-rs` is a Rust-first mono repo for a Markdown-based DOCX/HWPX generation library, plus an npm-facing WASM wrapper package.
+Language: [English](/Users/limchaesung/Github/docxly/core-rs/README.md) · [한국어](/Users/limchaesung/Github/docxly/core-rs/docs/ko/README.md) · [Docs](/Users/limchaesung/Github/docxly/core-rs/docs/README.md)
 
-The project is being developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and an approved HWPX baseline backed by manually validated golden fixtures.
+`docxly/core-rs` currently measures at an 80 ms cold start and a 2 ms steady median, versus 284 ms cold and 210 ms steady for Pandoc on the summary DOCX benchmark corpus, a 105x steady-state advantage while also exposing browser-local generation and HWPX support from the same Rust core.
+
+The project is developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and an approved HWPX baseline backed by manually validated golden fixtures.
+
+## Install
+
+The fastest way to start using docxly today is the npm package:
+
+```bash
+npm install @docxly/core-rs
+```
+
+The Rust crate is the source of truth in this repository and can be consumed from the workspace or as a path dependency:
+
+```toml
+[dependencies]
+core-rs = { path = "packages/core-rs" }
+```
+
+## Quick Start
+
+### Node
+
+```js
+import { writeFile } from "node:fs/promises";
+import { generateDocx } from "@docxly/core-rs";
+
+const bytes = await generateDocx("# Hello\n\nThis is **docxly**.");
+await writeFile("output.docx", bytes);
+```
+
+### Rust
+
+```rust
+use std::fs;
+
+use core_rs::{DocxOptions, generate_docx};
+
+let docx = generate_docx("# Hello\n\nThis is **docxly**.", DocxOptions::default())?;
+fs::write("output.docx", docx)?;
+```
+
+## Why docxly
+
+- Build document generation directly into a product instead of shelling out to a converter.
+- On the current summary corpus, generate complex DOCX output in `2 ms` steady median versus Pandoc's `210 ms`, with `80 ms` versus `284 ms` cold start.
+- Use the same Rust core across Node, browser, and HWPX workflows.
+- Start with DOCX today and expand into HWPX from the same repository.
+- Ship deterministic outputs backed by fixture-driven tests and normalized archive checks.
 
 ## Live Demo
 
@@ -11,6 +69,39 @@ Try the browser demo on GitHub Pages:
 - https://docxly.github.io/core-rs/
 
 The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
+
+<!-- comparison:start -->
+
+## Why docxly instead of Pandoc?
+
+Pandoc is a general-purpose converter; docxly is an embeddable generation engine.
+
+Use docxly when document generation must live inside a Node service, browser workflow, or product surface. Use Pandoc when you need broad format conversion and a CLI-first publishing workflow.
+
+| Corpus | docxly cold | Pandoc cold | docxly steady | Pandoc steady | Speed ratio |
+| --- | --- | --- | --- | --- | --- |
+| Small | 66 ms | 539 ms | 1 ms | 249 ms | 369.84x |
+| Medium | 80 ms | 284 ms | 2 ms | 126 ms | 64.85x |
+| Large | 88 ms | 219 ms | 4 ms | 210 ms | 57.60x |
+| Summary | 80 ms | 284 ms | 2 ms | 210 ms | 105.00x |
+
+| Capability | docxly | Pandoc |
+| --- | --- | --- |
+| Embeddable in app | Yes, library-first for Node and browser bundlers | CLI-first with process invocation |
+| Browser-local generation | First-party browser package and WASM path | Possible through pandoc.wasm, not the primary npm workflow |
+| npm distribution | Published package | Not a first-party npm package |
+| HWPX generation | Supported in the Rust core | Not supported |
+| Broad format conversion | Focused on DOCX and HWPX generation | Wide multi-format conversion |
+| DOCX reference-template workflow | Not a reference.docx workflow | Supported via reference.docx |
+
+Measured on darwin 25.2.0 / arm64 at 2026-03-10T14:29:12.752Z with Node v23.7.0 and Pandoc 3.9.
+
+- This benchmark measures DOCX generation only and does not compare HWPX.
+- The numbers above come from an offline Node environment and are not browser runtime timings.
+- Cold timings include WASM initialization for docxly and process startup for Pandoc.
+- Steady timings are medians from 15 runs after one warm-up per corpus.
+
+<!-- comparison:end -->
 
 ## Workspace Layout
 

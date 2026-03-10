@@ -89,6 +89,32 @@ fn parses_rich_blocks() {
 }
 
 #[test]
+fn parses_tight_list_item_with_inline_content() {
+    let markdown = "- **bold** [docs](https://example.com) and `code`";
+    let document = MarkdownParser::new(true).parse(markdown).unwrap();
+
+    assert_eq!(
+        document.blocks,
+        vec![Block::List(ListBlock {
+            ordered: false,
+            start_index: 1,
+            items: vec![ListItem {
+                blocks: vec![Block::Paragraph(vec![
+                    Inline::Strong(vec![Inline::Text("bold".to_string())]),
+                    Inline::Text(" ".to_string()),
+                    Inline::Link {
+                        text: vec![Inline::Text("docs".to_string())],
+                        url: "https://example.com".to_string(),
+                    },
+                    Inline::Text(" and ".to_string()),
+                    Inline::Code("code".to_string()),
+                ])],
+            }],
+        })]
+    );
+}
+
+#[test]
 fn parses_data_uri_image() {
     let markdown = &format!("![tiny]({PNG_DATA_URI})");
     let document = MarkdownParser::new(true).parse(markdown).unwrap();
