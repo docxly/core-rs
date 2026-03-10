@@ -13,4 +13,7 @@ Rules:
 
 Current status:
 
-- No provisional fixtures remain.
+- `image-data-uri-basic`
+- `mixed-rich`
+- `table-alignment`
+- `thematic-break-basic`

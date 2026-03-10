@@ -7,3 +7,4 @@ packages/npm-core-rs/site-dist/
 packages/npm-core-rs/*.tgz
 packages/npm-core-rs/tmp/
 target/
+packages/core-rs/src/generators/hwpx/reference/*-sample.hwpx

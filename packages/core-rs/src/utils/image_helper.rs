@@ -15,7 +15,9 @@ pub(crate) fn image_dimensions(image: &ImageData) -> Result<(u32, u32), CoreRsEr
 
 fn png_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
     if bytes.len() < 24 || &bytes[..8] != b"\x89PNG\r\n\x1a\n" {
-        return Err(CoreRsError::InvalidMarkdown("invalid PNG image data".to_string()));
+        return Err(CoreRsError::InvalidMarkdown(
+            "invalid PNG image data".to_string(),
+        ));
     }
     let width = u32::from_be_bytes([bytes[16], bytes[17], bytes[18], bytes[19]]);
     let height = u32::from_be_bytes([bytes[20], bytes[21], bytes[22], bytes[23]]);
@@ -24,7 +26,9 @@ fn png_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
 
 fn gif_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
     if bytes.len() < 10 || (!bytes.starts_with(b"GIF87a") && !bytes.starts_with(b"GIF89a")) {
-        return Err(CoreRsError::InvalidMarkdown("invalid GIF image data".to_string()));
+        return Err(CoreRsError::InvalidMarkdown(
+            "invalid GIF image data".to_string(),
+        ));
     }
     let width = u16::from_le_bytes([bytes[6], bytes[7]]) as u32;
     let height = u16::from_le_bytes([bytes[8], bytes[9]]) as u32;
@@ -33,7 +37,9 @@ fn gif_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
 
 fn jpeg_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
     if bytes.len() < 4 || bytes[0] != 0xFF || bytes[1] != 0xD8 {
-        return Err(CoreRsError::InvalidMarkdown("invalid JPEG image data".to_string()));
+        return Err(CoreRsError::InvalidMarkdown(
+            "invalid JPEG image data".to_string(),
+        ));
     }
 
     let mut index = 2usize;
@@ -58,7 +64,17 @@ fn jpeg_dimensions(bytes: &[u8]) -> Result<(u32, u32), CoreRsError> {
         }
         if matches!(
             marker,
-            0xC0 | 0xC1 | 0xC2 | 0xC3 | 0xC5 | 0xC6 | 0xC7 | 0xC9 | 0xCA | 0xCB | 0xCD | 0xCE
+            0xC0 | 0xC1
+                | 0xC2
+                | 0xC3
+                | 0xC5
+                | 0xC6
+                | 0xC7
+                | 0xC9
+                | 0xCA
+                | 0xCB
+                | 0xCD
+                | 0xCE
                 | 0xCF
         ) && length >= 7
         {

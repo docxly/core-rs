@@ -39,9 +39,7 @@ impl DataImageError {
                 CoreRsError::UnsupportedFeature("non-base64 data URI image".to_string())
             }
             Self::UnsupportedMime { mime_type } => {
-                CoreRsError::UnsupportedFeature(format!(
-                    "unsupported image mime type: {mime_type}"
-                ))
+                CoreRsError::UnsupportedFeature(format!("unsupported image mime type: {mime_type}"))
             }
             Self::InvalidBase64 => {
                 CoreRsError::InvalidMarkdown("invalid base64 image data".to_string())
@@ -51,11 +49,7 @@ impl DataImageError {
     }
 }
 
-pub(super) fn image_fallback_text(
-    alt_text: &str,
-    url: &str,
-    kind: ImageFallbackKind,
-) -> String {
+pub(super) fn image_fallback_text(alt_text: &str, url: &str, kind: ImageFallbackKind) -> String {
     if alt_text.is_empty() {
         if url.starts_with("data:") {
             match kind {

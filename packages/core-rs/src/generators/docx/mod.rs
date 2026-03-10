@@ -27,7 +27,10 @@ impl Generator for DocxGenerator {
         let max_heading_level = max_heading_level(&document.blocks);
 
         let mut entries = vec![
-            ArchiveEntry::new_text("[Content_Types].xml", templates::content_types(&context.images)),
+            ArchiveEntry::new_text(
+                "[Content_Types].xml",
+                templates::content_types(&context.images),
+            ),
             ArchiveEntry::new_text("_rels/.rels", templates::root_relationships()),
             ArchiveEntry::new_text(
                 "docProps/core.xml",

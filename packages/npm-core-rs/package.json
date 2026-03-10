@@ -33,6 +33,8 @@
     "access": "public"
   },
   "scripts": {
+    "benchmark:pandoc": "node ./scripts/benchmark-pandoc.mjs",
+    "benchmark:pandoc:check": "node ./scripts/benchmark-pandoc-check.mjs",
     "clean": "rm -rf dist site-dist",
     "check:version": "node ./scripts/check-version.mjs",
     "build": "node ./scripts/build.mjs",

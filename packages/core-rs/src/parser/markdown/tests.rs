@@ -1,14 +1,15 @@
-use base64::Engine;
 use super::MarkdownParser;
 use crate::error::CoreRsError;
 use crate::models::block::{Block, ListBlock, ListItem, TableAlignment, TableBlock, TableRow};
 use crate::models::inline::{ImageData, Inline};
+use base64::Engine;
 
 const PNG_DATA_URI: &str = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a7mQAAAAASUVORK5CYII=";
 
 #[test]
 fn parses_heading_and_paragraph() {
-    let markdown = "# Title\n\nHello *world* and **team** with `code` and [docs](https://example.com).";
+    let markdown =
+        "# Title\n\nHello *world* and **team** with `code` and [docs](https://example.com).";
     let document = MarkdownParser::new(true).parse(markdown).unwrap();
 
     assert_eq!(
@@ -44,7 +45,9 @@ fn parses_rich_blocks() {
     assert_eq!(
         document.blocks,
         vec![
-            Block::BlockQuote(vec![Block::Paragraph(vec![Inline::Text("quote".to_string())])]),
+            Block::BlockQuote(vec![Block::Paragraph(vec![Inline::Text(
+                "quote".to_string()
+            )])]),
             Block::CodeBlock {
                 language: Some("rust".to_string()),
                 code: "let answer = 42;\n".to_string(),
@@ -59,7 +62,9 @@ fn parses_rich_blocks() {
                             ordered: false,
                             start_index: 1,
                             items: vec![ListItem {
-                                blocks: vec![Block::Paragraph(vec![Inline::Text("two".to_string())])],
+                                blocks: vec![Block::Paragraph(vec![Inline::Text(
+                                    "two".to_string()
+                                )])],
                             }],
                         }),
                     ],
@@ -80,6 +85,32 @@ fn parses_rich_blocks() {
             }),
             Block::ThematicBreak,
         ]
+    );
+}
+
+#[test]
+fn parses_tight_list_item_with_inline_content() {
+    let markdown = "- **bold** [docs](https://example.com) and `code`";
+    let document = MarkdownParser::new(true).parse(markdown).unwrap();
+
+    assert_eq!(
+        document.blocks,
+        vec![Block::List(ListBlock {
+            ordered: false,
+            start_index: 1,
+            items: vec![ListItem {
+                blocks: vec![Block::Paragraph(vec![
+                    Inline::Strong(vec![Inline::Text("bold".to_string())]),
+                    Inline::Text(" ".to_string()),
+                    Inline::Link {
+                        text: vec![Inline::Text("docs".to_string())],
+                        url: "https://example.com".to_string(),
+                    },
+                    Inline::Text(" and ".to_string()),
+                    Inline::Code("code".to_string()),
+                ])],
+            }],
+        })]
     );
 }
 
@@ -105,7 +136,9 @@ fn falls_back_for_html_when_not_strict() {
 
     assert_eq!(
         document.blocks,
-        vec![Block::Paragraph(vec![Inline::Text("<b>raw</b>".to_string())])]
+        vec![Block::Paragraph(vec![Inline::Text(
+            "<b>raw</b>".to_string()
+        )])]
     );
 }
 
@@ -195,8 +228,7 @@ fn falls_back_for_unsafe_link_scheme_when_not_strict() {
 
 #[test]
 fn errors_for_oversized_data_image_when_strict() {
-    let payload = base64::engine::general_purpose::STANDARD
-        .encode(vec![0_u8; 8 * 1024 * 1024 + 1]);
+    let payload = base64::engine::general_purpose::STANDARD.encode(vec![0_u8; 8 * 1024 * 1024 + 1]);
     let markdown = format!("![huge](data:image/png;base64,{payload})");
     let error = MarkdownParser::new(true).parse(&markdown).unwrap_err();
 

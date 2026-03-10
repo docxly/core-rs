@@ -28,6 +28,9 @@ await cp(distRoot, path.join(siteRoot, "dist"), { recursive: true });
 await cp(path.join(demoRoot, "index.html"), path.join(siteRoot, "index.html"));
 await cp(path.join(demoRoot, "main.js"), path.join(siteRoot, "main.js"));
 await cp(path.join(demoRoot, "styles.css"), path.join(siteRoot, "styles.css"));
+await cp(path.join(demoRoot, "comparison-data.json"), path.join(siteRoot, "comparison-data.json"));
+await cp(path.join(demoRoot, "assets"), path.join(siteRoot, "assets"), { recursive: true });
+await cp(path.join(demoRoot, "ko"), path.join(siteRoot, "ko"), { recursive: true });
 
 const browserClient = await readFile(browserClientSource, "utf8");
 const siteBrowserClient = browserClient.replaceAll("../dist/generated/", "./dist/generated/");

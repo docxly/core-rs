@@ -5,10 +5,15 @@ Only fixtures placed here are treated as CI/release-gate golden files.
 Current status:
 
 - `core-paragraph` is manually validated and approved.
+- `blockquote-basic` is manually validated and approved.
+- `code-block-basic` is manually validated and approved.
 - `core-heading` is manually validated and approved.
 - `core-inline-style` is manually validated and approved.
 - `core-link-text` is manually validated and approved.
 - `core-mixed` is manually validated and approved.
+- `list-basic` is manually validated and approved.
+- `list-nested-depth-2` is manually validated and approved.
+- `table-basic` is manually validated and approved.
 - `style-typography` is manually validated and approved.
 - `style-centered-layout` is manually validated and approved.
 - `style-brand-color` is manually validated and approved.

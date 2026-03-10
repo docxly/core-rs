@@ -14,7 +14,13 @@ pub fn escape_attr(input: &str) -> String {
 fn sanitize_xml_chars(input: &str) -> String {
     input
         .chars()
-        .map(|ch| if is_valid_xml_char(ch) { ch } else { '\u{FFFD}' })
+        .map(|ch| {
+            if is_valid_xml_char(ch) {
+                ch
+            } else {
+                '\u{FFFD}'
+            }
+        })
         .collect()
 }
 

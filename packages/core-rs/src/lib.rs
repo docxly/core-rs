@@ -82,6 +82,46 @@ pub fn generate_docx(markdown: &str, options: DocxOptions) -> Result<Vec<u8>, Co
 }
 
 pub fn generate_hwpx(markdown: &str, options: HwpxOptions) -> Result<Vec<u8>, CoreRsError> {
+    let normalized_markdown;
+    let markdown = if options.strict_mode {
+        markdown
+    } else {
+        normalized_markdown = normalize_hwpx_markdown(markdown);
+        normalized_markdown.as_str()
+    };
     let document = MarkdownParser::new(options.strict_mode).parse(markdown)?;
     HwpxGenerator::new(options).generate(&document)
+}
+
+fn normalize_hwpx_markdown(markdown: &str) -> String {
+    let mut normalized = String::with_capacity(markdown.len());
+    for segment in markdown.split_inclusive('\n') {
+        let (line, newline) = if let Some(line) = segment.strip_suffix('\n') {
+            (line, "\n")
+        } else {
+            (segment, "")
+        };
+
+        let line = if line.starts_with("  ") && is_ordered_list_marker(&line[2..]) {
+            format!(" {line}")
+        } else {
+            line.to_string()
+        };
+
+        normalized.push_str(&line);
+        normalized.push_str(newline);
+    }
+    normalized
+}
+
+fn is_ordered_list_marker(value: &str) -> bool {
+    let digits = value
+        .bytes()
+        .take_while(|byte| byte.is_ascii_digit())
+        .count();
+    digits > 0
+        && value
+            .as_bytes()
+            .get(digits..digits + 2)
+            .is_some_and(|suffix| suffix == b". ")
 }

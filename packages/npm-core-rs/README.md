@@ -1,6 +1,8 @@
 # @docxly/core-rs
 
-`@docxly/core-rs` is the npm package for the `docxly` Rust core. It exposes DOCX generation through a WASM wrapper for Node and browser-based runtimes.
+Language: [English](/Users/limchaesung/Github/docxly/core-rs/packages/npm-core-rs/README.md) · [한국어 문서](/Users/limchaesung/Github/docxly/core-rs/docs/ko/README.md)
+
+`@docxly/core-rs` is the npm package for the `docxly` Rust core, an embeddable document generation engine for app integration. Where Pandoc is a general-purpose converter, this package is designed to expose DOCX generation directly inside Node and browser-based runtimes, with the current offline Node benchmark showing an 80 ms cold start and a 2 ms steady median for docxly versus 284 ms cold and 210 ms steady for Pandoc on the summary corpus.
 
 ## Status
 

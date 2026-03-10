@@ -1,97 +1,181 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>docxly WASM DOCX Demo</title>
+    <meta name="google" content="notranslate" />
+    <title>docxly WASM HWPX Demo</title>
+    <meta
+      name="description"
+      content="Embeddable DOCX and HWPX generation in the browser with the docxly Rust/WASM core."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="docxly" />
+    <meta property="og:title" content="docxly | 105x faster DOCX install proof" />
+    <meta
+      property="og:description"
+      content="Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark."
+    />
+    <meta property="og:url" content="https://docxly.github.io/core-rs/" />
+    <meta property="og:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="docxly | 105x faster DOCX install proof" />
+    <meta
+      name="twitter:description"
+      content="Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark."
+    />
+    <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
+    <link rel="alternate" hreflang="en" href="https://docxly.github.io/core-rs/" />
+    <link rel="alternate" hreflang="ko" href="https://docxly.github.io/core-rs/ko/" />
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicon.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body data-page-locale="en" data-root-path=".">
     <main class="page">
-      <section class="hero">
-        <p class="eyebrow">docxly / WASM demo</p>
-        <h1>Generate DOCX from Markdown in the browser</h1>
-        <p class="lede">
-          <code>@docxly/core-rs</code> is an open-source Rust core compiled to WebAssembly. This
-          page runs the package directly in the browser and downloads the generated
-          <code>.docx</code> file locally.
-        </p>
-        <div class="hero-actions">
-          <a
-            class="hero-link hero-link-primary"
-            href="https://github.com/docxly/core-rs"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span class="hero-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img" focusable="false">
-                <path
-                  fill="currentColor"
-                  d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.2-3.37-1.2-.46-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.56 2.35 1.11 2.92.84.09-.67.35-1.11.64-1.37-2.22-.26-4.55-1.14-4.55-5.08 0-1.12.39-2.03 1.03-2.74-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.34 9.34 0 0 1 12 6.84c.85 0 1.71.12 2.51.35 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.71 1.03 1.62 1.03 2.74 0 3.95-2.33 4.81-4.56 5.07.36.31.68.92.68 1.86 0 1.34-.01 2.42-.01 2.75 0 .27.18.59.69.49A10.26 10.26 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"
-                />
-              </svg>
-            </span>
-            <span class="hero-link-copy">
-              <strong>GitHub</strong>
-              <small>Source, issues, release notes</small>
-            </span>
-          </a>
-          <a
-            class="hero-link hero-link-secondary"
-            href="https://www.npmjs.com/package/@docxly/core-rs"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span class="hero-link-icon" aria-hidden="true">
-              <svg viewBox="0 0 780 250" role="img" focusable="false">
-                <path fill="currentColor" d="M0 0v250h780V0H0zm716.4 186.6H390v-31.2h93.6V63.6h46.8v91.8h46.8V63.6h139.2v123zM63.6 63.6H343v123h-46.8V110.4h-46.8v76.2h-93.6v-123H63.6v123H63.6z"/>
-              </svg>
-            </span>
-            <span class="hero-link-copy">
-              <strong>npm</strong>
-              <small>Install the published package</small>
-            </span>
-          </a>
+      <section class="panel hero-panel">
+        <div class="hero-topbar">
+          <div class="brand-lockup">
+            <img class="brand-logo" src="./assets/logo.png" alt="docxly logo" />
+            <div class="brand-copy">
+              <span class="brand-wordmark">docxly</span>
+              <span class="brand-tagline">Embeddable document generation engine</span>
+            </div>
+          </div>
+          <nav class="lang-switch" aria-label="Language switch">
+            <a class="lang-switch-link is-active" href="./">English</a>
+            <a class="lang-switch-link" href="./ko/">한국어</a>
+          </nav>
         </div>
-        <div class="hero-grid">
-          <article class="hero-card">
-            <h2>Why docxly</h2>
-            <p>
-              The same Rust core powers fixture-tested DOCX generation in Node and in the browser.
+
+        <h1>Generate HWPX or DOCX directly in the browser</h1>
+        <p class="lede">
+          <code>@docxly/core-rs</code> runs the same Rust core in WebAssembly and emits real
+          <code>.hwpx</code> or <code>.docx</code> files locally, without a backend conversion
+          service.
+        </p>
+
+        <div class="hero-shell">
+          <div class="hero-main">
+            <div class="hero-actions">
+              <a
+                class="hero-link hero-link-primary"
+                href="https://github.com/docxly/core-rs"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+              <a
+                class="hero-link hero-link-secondary"
+                href="https://www.npmjs.com/package/@docxly/core-rs"
+                target="_blank"
+                rel="noreferrer"
+              >
+                npm
+              </a>
+            </div>
+
+            <div id="comparison-section" class="comparison-strip" aria-labelledby="comparison-title">
+              <div class="comparison-strip-head">
+                <div>
+                  <p class="panel-eyebrow">Proof</p>
+                  <h2 id="comparison-title">Offline benchmark for library selection.</h2>
+                </div>
+                <p id="comparison-headline" class="comparison-headline">
+                  Summary DOCX benchmark powered by the shared comparison dataset.
+                </p>
+              </div>
+
+              <div class="comparison-kpis">
+                <article class="comparison-kpi">
+                  <p class="comparison-kpi-label">docxly steady</p>
+                  <strong id="comparison-docxly-ms" class="comparison-kpi-value">Unavailable</strong>
+                </article>
+                <article class="comparison-kpi">
+                  <p class="comparison-kpi-label">Pandoc steady</p>
+                  <strong id="comparison-pandoc-ms" class="comparison-kpi-value">Unavailable</strong>
+                </article>
+                <article class="comparison-kpi">
+                  <p class="comparison-kpi-label">Faster</p>
+                  <strong id="comparison-ratio" class="comparison-kpi-value">Unavailable</strong>
+                </article>
+              </div>
+
+              <p id="comparison-label" class="comparison-label">
+                Offline Node benchmark for library selection, not browser runtime timing.
+              </p>
+              <p id="comparison-meta" class="comparison-meta">
+                Comparison data unavailable. Run the benchmark script to populate this section.
+              </p>
+
+              <div class="comparison-badges">
+                <span id="comparison-hwpx-badge" class="comparison-badge">HWPX support is docxly-only</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="install-card">
+            <p class="install-card-eyebrow">Install</p>
+            <h2>Start with the 105x proof line</h2>
+            <p id="install-proof" class="install-proof">
+              Install the embeddable DOCX engine that measured 105x faster than Pandoc on the
+              summary benchmark.
             </p>
-          </article>
-          <article class="hero-card">
-            <h2>What this page proves</h2>
-            <p>
-              Markdown parsing, DOCX packaging, and download all work on a static page without a
-              backend conversion service.
-            </p>
-          </article>
-          <article class="hero-card hero-card-code">
-            <div class="hero-card-head">
-              <h2>Install</h2>
+            <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
+            <div class="install-card-actions">
               <button id="copy-install-button" class="copy-button" type="button">
                 <span aria-hidden="true">⧉</span>
                 <span>Copy</span>
               </button>
             </div>
-            <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
-            <p class="hero-card-caption">Use this package in Node or a bundler-backed browser app.</p>
-          </article>
+            <p class="install-card-copy">
+              Use the same Rust core in Node, browser, and HWPX workflows.
+            </p>
+          </aside>
         </div>
       </section>
 
-      <section class="panel">
+      <section class="panel generator-panel">
         <div class="panel-heading">
           <div>
             <p class="panel-eyebrow">Try it now</p>
-            <h2>Generate a browser-side DOCX</h2>
+            <h2>Generate a browser-side document</h2>
           </div>
           <p class="panel-copy">
-            Edit the Markdown, tweak metadata, and download a DOCX generated entirely in the
-            browser.
+            Start with the default document path for your language, then switch tabs when you need
+            the other format.
           </p>
         </div>
+
+        <div class="format-tabs" role="tablist" aria-label="Output format">
+          <button
+            id="format-hwpx-tab"
+            class="format-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-format="hwpx"
+          >
+            HWPX
+          </button>
+          <button
+            id="format-docx-tab"
+            class="format-tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-format="docx"
+          >
+            DOCX
+          </button>
+        </div>
+
+        <p id="format-summary" class="format-summary">
+          DOCX is the default path for non-Korean users in this demo. Switch tabs to generate HWPX
+          instead.
+        </p>
 
         <label class="field">
           <span>Markdown</span>
@@ -110,25 +194,21 @@
         </div>
 
         <label class="checkbox">
-          <input id="strict-mode-input" type="checkbox" checked />
+          <input id="strict-mode-input" type="checkbox" />
           <span>Strict mode</span>
         </label>
 
         <div class="actions">
           <button id="generate-button" class="action-button action-button-primary" type="button">
-            <span class="action-symbol" aria-hidden="true">↓</span>
-            <span>Download DOCX</span>
+            <span class="action-symbol" aria-hidden="true">+</span>
+            <span id="generate-button-label">Generate DOCX</span>
           </button>
-          <a id="download-link" class="download hidden" role="button">
-            <span class="action-symbol" aria-hidden="true">↺</span>
-            <span>Download again</span>
-          </a>
         </div>
 
-        <p id="status" class="status">Ready.</p>
+        <p id="status" class="status">Ready to generate DOCX.</p>
         <p class="note">
-          This static demo uses a browser-generated <code>blob:</code> download. The saved file name
-          is preserved, but some browsers may still show a UUID-like source entry in download
+          This static demo uses a browser-generated <code>blob:</code> file handoff. The saved file
+          name is preserved, but some browsers may still show a UUID-like source entry in file
           history.
         </p>
       </section>

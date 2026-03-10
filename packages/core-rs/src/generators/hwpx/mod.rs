@@ -10,6 +10,7 @@ use crate::generators::Generator;
 use crate::models::document::Document;
 use crate::utils::zip_archiver::{ArchiveEntry, zip_entries_in_order};
 use style::ResolvedHwpxStyle;
+use zip::CompressionMethod;
 
 const PREVIEW_IMAGE_BYTES: &[u8] = include_bytes!("assets/preview.png");
 
@@ -33,16 +34,52 @@ impl Generator for HwpxGenerator {
 
         let entries = vec![
             ArchiveEntry::new_text("mimetype", package_xml::mimetype()),
-            ArchiveEntry::new_text("version.xml", package_xml::version_xml()),
-            ArchiveEntry::new_text("Contents/header.xml", header),
-            ArchiveEntry::new_text("Contents/section0.xml", section),
-            ArchiveEntry::new_text("Preview/PrvText.txt", preview_text),
-            ArchiveEntry::new_text("settings.xml", package_xml::settings_xml()),
+            ArchiveEntry::new_text_with_compression(
+                "version.xml",
+                package_xml::version_xml(),
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "Contents/header.xml",
+                header,
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "Contents/section0.xml",
+                section,
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "Preview/PrvText.txt",
+                preview_text,
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "settings.xml",
+                package_xml::settings_xml(),
+                CompressionMethod::Deflated,
+            ),
             ArchiveEntry::new_bytes("Preview/PrvImage.png", PREVIEW_IMAGE_BYTES),
-            ArchiveEntry::new_text("META-INF/container.rdf", package_xml::container_rdf_xml()),
-            ArchiveEntry::new_text("Contents/content.hpf", content_hpf),
-            ArchiveEntry::new_text("META-INF/container.xml", package_xml::container_xml()),
-            ArchiveEntry::new_text("META-INF/manifest.xml", package_xml::manifest_xml()),
+            ArchiveEntry::new_text_with_compression(
+                "META-INF/container.rdf",
+                package_xml::container_rdf_xml(),
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "Contents/content.hpf",
+                content_hpf,
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "META-INF/container.xml",
+                package_xml::container_xml(),
+                CompressionMethod::Deflated,
+            ),
+            ArchiveEntry::new_text_with_compression(
+                "META-INF/manifest.xml",
+                package_xml::manifest_xml(),
+                CompressionMethod::Deflated,
+            ),
         ];
 
         zip_entries_in_order(&entries)

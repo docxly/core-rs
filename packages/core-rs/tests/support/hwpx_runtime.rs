@@ -33,5 +33,4 @@ impl GeneratedHwpx {
     pub fn content_hpf(&self) -> FixtureResult<&str> {
         self.text_entry("Contents/content.hpf")
     }
-
 }
