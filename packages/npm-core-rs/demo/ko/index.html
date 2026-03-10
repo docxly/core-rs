@@ -4,29 +4,40 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="google" content="notranslate" />
-    <title>docxly 브라우저 HWPX 및 DOCX 데모</title>
+    <title>docxly | 브라우저 문서 생성 데모</title>
     <meta
       name="description"
-      content="docxly Rust/WASM 코어로 브라우저에서 DOCX와 HWPX를 직접 생성합니다."
+      content="브라우저에서 DOCX와 HWPX를 직접 만들어 보세요. docxly는 Rust/WASM 코어로 동작합니다."
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="docxly" />
-    <meta property="og:title" content="docxly | 105배 빠른 문서 생성 설치 근거" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="docxly | 브라우저 문서 생성 데모" />
     <meta
       property="og:description"
-      content="요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을 설치하세요."
+      content="브라우저에서 DOCX와 HWPX를 직접 생성해 보고, 제품 안에 문서 생성을 넣는 방법을 확인하세요."
     />
     <meta property="og:url" content="https://docxly.github.io/core-rs/ko/" />
-    <meta property="og:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
+    <meta property="og:image" content="https://docxly.github.io/core-rs/assets/og-image-ko.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성과 Pandoc 대비 105배 빠른 벤치마크 근거를 보여줍니다."
+    />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="docxly | 105배 빠른 문서 생성 설치 근거" />
+    <meta name="twitter:title" content="docxly | 브라우저 문서 생성 데모" />
     <meta
       name="twitter:description"
-      content="요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을 설치하세요."
+      content="브라우저에서 DOCX와 HWPX를 직접 생성해 보고, 제품 안에 문서 생성을 넣는 방법을 확인하세요."
     />
-    <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
+    <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image-ko.png" />
+    <meta
+      name="twitter:image:alt"
+      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성과 Pandoc 대비 105배 빠른 벤치마크 근거를 보여줍니다."
+    />
+    <link rel="canonical" href="https://docxly.github.io/core-rs/ko/" />
     <link rel="alternate" hreflang="en" href="https://docxly.github.io/core-rs/" />
     <link rel="alternate" hreflang="ko" href="https://docxly.github.io/core-rs/ko/" />
     <link rel="icon" type="image/png" sizes="64x64" href="../assets/favicon.png" />
@@ -40,7 +51,7 @@
             <img class="brand-logo" src="../assets/logo.png" alt="docxly 로고" />
             <div class="brand-copy">
               <span class="brand-wordmark">docxly</span>
-              <span class="brand-tagline">내장형 문서 생성 엔진</span>
+              <span class="brand-tagline">제품에 넣어 쓰는 문서 생성 엔진</span>
             </div>
           </div>
           <nav class="lang-switch" aria-label="언어 선택">
@@ -49,7 +60,7 @@
           </nav>
         </div>
 
-        <h1>브라우저에서 HWPX와 DOCX를 바로 생성하세요</h1>
+        <h1>브라우저에서 HWPX와 DOCX를 바로 만들어 보세요</h1>
         <p class="lede">
           <code>@docxly/core-rs</code>는 같은 Rust 코어를 WebAssembly로 실행하고, 백엔드
           변환 서비스 없이 실제 <code>.hwpx</code> 또는 <code>.docx</code> 파일을 로컬에서
@@ -81,7 +92,7 @@
               <div class="comparison-strip-head">
                 <div>
                   <p class="panel-eyebrow">근거</p>
-                  <h2 id="comparison-title">라이브러리 도입을 위한 오프라인 벤치마크</h2>
+                  <h2 id="comparison-title">왜 docxly를 선택해야 할까요?</h2>
                 </div>
                 <p id="comparison-headline" class="comparison-headline">
                   공유 비교 데이터셋으로 측정한 요약 DOCX 벤치마크입니다.
@@ -98,7 +109,7 @@
                   <strong id="comparison-pandoc-ms" class="comparison-kpi-value">준비 중</strong>
                 </article>
                 <article class="comparison-kpi">
-                  <p class="comparison-kpi-label">더 빠름</p>
+                  <p class="comparison-kpi-label">속도 차이</p>
                   <strong id="comparison-ratio" class="comparison-kpi-value">준비 중</strong>
                 </article>
               </div>
@@ -119,10 +130,9 @@
 
           <aside class="install-card">
             <p class="install-card-eyebrow">설치</p>
-            <h2>105배 근거로 시작하세요</h2>
+            <h2>설치 판단에 필요한 핵심 수치</h2>
             <p id="install-proof" class="install-proof">
-              요약 벤치마크에서 Pandoc보다 105배 빠르게 측정된 내장형 DOCX 엔진을
-              설치하세요.
+              요약 DOCX 벤치마크에서 Pandoc보다 105배 빠르게 측정됐습니다.
             </p>
             <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
             <div class="install-card-actions">
@@ -132,7 +142,7 @@
               </button>
             </div>
             <p class="install-card-copy">
-              Node, 브라우저, HWPX 워크플로에 같은 Rust 코어를 사용하세요.
+              Node와 브라우저에서 같은 Rust 코어를 그대로 사용할 수 있습니다.
             </p>
           </aside>
         </div>
@@ -141,12 +151,11 @@
       <section class="panel generator-panel">
         <div class="panel-heading">
           <div>
-            <p class="panel-eyebrow">지금 실행</p>
-            <h2>브라우저에서 문서를 생성해보세요</h2>
+            <p class="panel-eyebrow">브라우저 데모</p>
+            <h2>지금 바로 문서를 만들어 보세요</h2>
           </div>
           <p class="panel-copy">
-            언어에 맞는 기본 문서 형식으로 시작하고, 필요하면 탭을 전환해 다른 형식을
-            생성하세요.
+            한국어 페이지에서는 HWPX가 기본입니다. 필요하면 DOCX로 바꿔 바로 생성해 볼 수 있습니다.
           </p>
         </div>
 
@@ -174,8 +183,7 @@
         </div>
 
         <p id="format-summary" class="format-summary">
-          언어에 따라 기본 형식이 바뀝니다. 필요하면 탭을 전환해 다른 문서 경로를
-          선택하세요.
+          기본 형식은 HWPX입니다. DOCX가 필요하면 탭을 바꿔 생성하세요.
         </p>
 
         <label class="field">
@@ -196,7 +204,7 @@
 
         <label class="checkbox">
           <input id="strict-mode-input" type="checkbox" />
-          <span>엄격 모드</span>
+          <span>Strict Mode</span>
         </label>
 
         <div class="actions">
@@ -206,11 +214,10 @@
           </button>
         </div>
 
-        <p id="status" class="status">준비되었습니다.</p>
+        <p id="status" class="status">HWPX를 생성할 준비가 되었습니다.</p>
         <p class="note">
-          이 정적 데모는 브라우저에서 생성한 <code>blob:</code> 파일을 바로 저장합니다.
-          저장 파일명은 유지되지만, 일부 브라우저에서는 파일 기록에 UUID 형태의 원본 항목이
-          보일 수 있습니다.
+          이 데모는 브라우저에서 만든 <code>blob:</code> 파일을 바로 내려받습니다. 저장 이름은
+          유지되지만, 일부 브라우저에서는 파일 기록에 UUID 형태의 원본 항목이 보일 수 있습니다.
         </p>
       </section>
     </main>

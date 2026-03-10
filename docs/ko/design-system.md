@@ -1,124 +1,122 @@
 # docxly 데모 디자인 시스템
 
-`docxly` 데모 UI를 blue-first 제품 스타일로 재구성하기 위한 구현 기준 문서다. 이 문서는 데모 페이지를 바로 다시 설계할 수 있도록 토큰, 위계, 컴포넌트 규칙, 로고 슬롯 규칙을 결정 완료 상태로 정의한다.
+`docxly` 데모를 파란색 중심의 제품형 인터페이스로 정리하기 위한 기준 문서입니다. 구현자가 이 문서만 읽고도 레이아웃, 토큰, 컴포넌트 우선순위를 바로 적용할 수 있도록 결정 사항을 고정했습니다.
 
-## Overview
+## 문서 목적
 
-### 제품 성격
+- 데모 페이지의 시각 언어를 통일합니다.
+- 설치 유도, 성능 근거, 생성기 UI의 우선순위를 정리합니다.
+- 로고가 들어와도 흔들리지 않는 배치 규칙을 제공합니다.
 
-- embeddable document engine
-- Node, browser, Rust 코어를 공유하는 문서 생성 제품
-- CLI 도구가 아니라 앱 내부에 들어가는 라이브러리 경험이 핵심
+## 제품 성격
 
-### 대상 사용자
+- `docxly`는 앱 안에 넣어 쓰는 문서 생성 엔진입니다.
+- Node, 브라우저, Rust 코어가 같은 문서 모델을 공유합니다.
+- CLI 중심 도구보다 라이브러리 경험이 더 중요합니다.
 
-- 앱과 서비스에 문서 생성을 직접 내장하려는 개발자
+## 대상 사용자
+
+- 서비스 안에 문서 생성 기능을 넣으려는 개발자
 - 브라우저와 Node에서 같은 코어를 쓰고 싶은 팀
-- DOCX뿐 아니라 HWPX까지 같은 제품 흐름으로 확장하려는 팀
+- DOCX와 HWPX를 같은 제품 흐름에서 다루고 싶은 팀
 
-### 디자인 목표
+## 디자인 목표
 
-- product-like clarity
-- generator-first usability
-- blue-first technical brand identity
+- 정보 구조가 바로 읽히는 화면
+- 생성기 중심의 사용 흐름
+- 파란색을 중심으로 한 기술 제품 이미지
 
-## Brand Foundation
+## 브랜드 규칙
 
-### 핵심 브랜드 문장
+### 핵심 문장
 
-- `docxly is an embeddable document generation engine.`
-- `docxly brings DOCX and HWPX generation into the product surface, not a separate conversion step.`
+- `docxly는 제품에 넣어 쓰는 문서 생성 엔진이다.`
+- `docxly는 문서 생성을 별도 변환 단계가 아니라 제품 기능으로 가져온다.`
 
-### 로고 슬롯 규칙
+### 로고 배치
 
-- 위치: hero 내부 맨 위 좌측
-- 형태: `logo mark + wordmark` 또는 `docxly` 텍스트 lockup
+- 위치: hero 내부 좌측 상단
+- 형태: `logo mark + wordmark`, 없으면 `docxly` 텍스트 워드마크
 - 최소 높이: desktop 28px, mobile 24px
 - clear space: 로고 높이의 0.5배
-- 기본 배경: 밝은 surface 위 단색 사용
-- dark surface 위 사용 시 단색 역상 버전만 허용
+- 기본 배경: 밝은 surface
 
-### 로고 없는 상태의 fallback
+### 로고가 없을 때
 
-- 실제 로고 자산이 없으면 `docxly` 워드마크 텍스트를 사용한다.
-- fallback 서체는 sans-serif display 계열로 고정한다.
-- fallback은 headline과 분리된 독립 요소여야 하며, hero heading 안에 합치지 않는다.
+- 텍스트 워드마크 `docxly`를 사용합니다.
+- 워드마크는 headline과 합치지 않고 별도 요소로 둡니다.
+- display 계열 sans-serif 서체를 사용합니다.
 
-## Color System
+## 색상 토큰
 
-### Core Tokens
-
-| Token | Value | Role |
+| Token | Value | 용도 |
 | --- | --- | --- |
-| `--color-primary-050` | `#eff6ff` | page tint, subtle highlight |
-| `--color-primary-100` | `#dbeafe` | soft border, soft chip |
-| `--color-primary-500` | `#2563eb` | selected state, active fill |
-| `--color-primary-600` | `#1d4ed8` | primary CTA |
-| `--color-primary-700` | `#1e40af` | hover / pressed CTA |
-| `--color-neutral-950` | `#0f172a` | headline, strong surface |
-| `--color-neutral-700` | `#334155` | body text |
-| `--color-neutral-500` | `#64748b` | muted text |
-| `--color-neutral-200` | `#e2e8f0` | border, divider |
-| `--color-surface` | `#ffffff` | base panel surface |
-| `--color-surface-muted` | `#f8fafc` | muted background |
-| `--color-success` | `#15803d` | success status |
-| `--color-error` | `#b91c1c` | error status |
+| `--color-primary-050` | `#eff6ff` | 옅은 배경, 강조 틴트 |
+| `--color-primary-100` | `#dbeafe` | 보조 경계선, 연한 칩 |
+| `--color-primary-500` | `#2563eb` | 선택 상태, 활성 채움 |
+| `--color-primary-600` | `#1d4ed8` | 기본 CTA |
+| `--color-primary-700` | `#1e40af` | hover, pressed |
+| `--color-neutral-950` | `#0f172a` | 제목, 강한 표면 |
+| `--color-neutral-700` | `#334155` | 본문 |
+| `--color-neutral-500` | `#64748b` | 보조 문구 |
+| `--color-neutral-200` | `#e2e8f0` | 경계선 |
+| `--color-surface` | `#ffffff` | 기본 카드 배경 |
+| `--color-surface-muted` | `#f8fafc` | 옅은 배경 |
+| `--color-success` | `#15803d` | 성공 상태 |
+| `--color-error` | `#b91c1c` | 오류 상태 |
 
-### Usage Rules
+### 사용 규칙
 
-- primary CTA는 `primary-600`
-- primary CTA hover는 `primary-700`
-- selected tab, selected chip, active proof highlight는 `primary-500`
-- soft tint 배경은 `primary-050`
-- border 기본값은 `neutral-200`
-- body text는 `neutral-700`
-- muted helper text는 `neutral-500`
-- dark comparison/proof strip 표면은 `neutral-950` 기반으로 사용
+- 기본 CTA는 `primary-600`
+- hover와 pressed는 `primary-700`
+- 선택된 탭과 활성 칩은 `primary-500`
+- 본문은 `neutral-700`
+- 보조 문구는 `neutral-500`
+- 비교 패널처럼 어두운 표면이 필요하면 `neutral-950` 계열을 사용합니다.
 
-### Explicit Constraints
+### 금지 규칙
 
-- 기존 warm/orange accent는 primary palette에서 제거한다.
-- warning/emphasis 보조색도 이번 문서 기준에서는 정의하지 않는다.
-- text on primary는 white only다.
-- 본문 텍스트 대비는 WCAG AA 이상을 유지한다.
+- 기존 warm/orange 계열을 주 색상으로 쓰지 않습니다.
+- primary 배경 위 텍스트는 흰색만 사용합니다.
+- 본문 대비는 WCAG AA 이상을 유지합니다.
 
-## Typography
+## 타이포그래피
 
-### Type Roles
+### 역할
 
-- display: hero headline 전용
-- heading: section title, card title
-- body: paragraph, helper, note
-- mono: install command, textarea, generated status
-- label: tab, eyebrow, compact metadata
+- display: hero headline
+- heading: 섹션 제목
+- body: 본문, 설명, note
+- mono: 설치 명령, textarea, 상태 문구
+- label: 탭, eyebrow, 보조 메타
 
-### Type Scale
+### 크기 기준
 
-| Token | Desktop | Mobile | Usage |
+| Token | Desktop | Mobile | 용도 |
 | --- | --- | --- | --- |
 | `display-1` | `56/1.0` | `40/1.02` | hero headline |
 | `heading-2` | `32/1.05` | `26/1.08` | section heading |
-| `body-1` | `16/1.6` | `16/1.6` | default paragraph |
-| `body-2` | `14/1.55` | `14/1.55` | helper, note |
-| `label` | `12/1.2` | `12/1.2` | uppercase label |
+| `body-1` | `16/1.6` | `16/1.6` | 기본 본문 |
+| `body-2` | `14/1.55` | `14/1.55` | 도움말, note |
+| `label` | `12/1.2` | `12/1.2` | 소문구 |
 
-### Type Rules
+### 문장 규칙
 
-- hero body는 최대 2문장
-- comparison meta는 1줄만 허용
-- install helper는 1문장만 허용
-- note/debug 문구는 body-2로만 표현
+- hero 본문은 최대 2문장
+- 설치 카드 도움말은 1문장
+- 비교 메타는 1줄
+- note와 디버그 문구는 `body-2`
 
-## Layout
+## 레이아웃
 
-### Page Frame
+### 기본 프레임
 
-- page width: max 1120px
-- panel radius: 20px
-- hero top padding: 40px desktop, 24px mobile
-- section gap: 24px
+- 최대 너비: 1120px
+- 패널 radius: 20px
+- hero 상단 여백: desktop 40px, mobile 24px
+- 섹션 간격: 24px
 
-### Spacing Scale
+### 간격 스케일
 
 - `8`
 - `12`
@@ -127,166 +125,148 @@
 - `32`
 - `48`
 
-### Hero Layout
+### Hero 구조
 
-- desktop: `content column + install card` 2열
-- content column 내부 순서:
-  - logo
-  - one-line value proposition
-  - short supporting sentence
-  - external links max 2개
-  - compact proof strip
-- comparison strip은 content column 내부에만 배치
-- install card는 독립 보조 카드 1개만 허용
+- desktop: `본문 열 + 설치 카드` 2열
+- 본문 열 내부 순서
+  - 로고
+  - 한 줄 가치 제안
+  - 짧은 보조 설명
+  - 외부 링크 최대 2개
+  - 압축된 성능 근거 영역
+- 비교 영역은 본문 열 안에서만 보여줍니다.
+- 설치 카드는 보조 카드 1개만 허용합니다.
 
-### Mobile Layout
+### 모바일 구조
 
-- 모바일 1열 순서:
-  - logo/value proposition
-  - install card
-  - compact proof strip
-  - generator panel
-- `390x844` 기준 first viewport 안에 `logo + headline + install action`이 보여야 한다.
-- first viewport 안에 proof strip 전체가 보일 필요는 없지만, strip 시작부는 보여야 한다.
+- 1열 순서
+  - 로고와 가치 제안
+  - 설치 카드
+  - 성능 근거 영역
+  - 생성기 패널
+- `390x844` 기준 첫 화면에 `logo + headline + install action`이 보여야 합니다.
+- 성능 근거 영역 전체가 한 화면에 다 보일 필요는 없지만 시작부는 보여야 합니다.
 
-## Component Rules
+## 컴포넌트 규칙
 
 ### Hero
 
-- 최대 2개 text paragraph
-- 외부 링크 최대 2개
-- hero 안에 독립 강조 카드 2개 초과 금지
-- value proposition은 1문장으로 끝낸다
+- 텍스트 문단은 최대 2개
+- 외부 링크는 최대 2개
+- 독립 강조 카드가 3개 이상 경쟁하면 안 됩니다.
+- 핵심 가치 제안은 1문장으로 끝냅니다.
 
-### Install Card
+### 설치 카드
 
-- command
-- copy button
-- 1-line helper
-- 1-line proof copy using the benchmark summary headline number
+- 설치 명령
+- 복사 버튼
+- 1줄 도움말
+- 1줄 설치 근거 문구
 
-canonical install proof:
+기본 설치 근거 문구:
 
 - `Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark.`
 
 금지:
 
-- 여러 installation option 동시 노출
-- verbose explanation
-- secondary CTA 추가
+- 설치 옵션을 여러 개 동시에 노출
+- 장황한 설명
+- 보조 CTA 추가
 
-### Proof Strip
+### 성능 근거 영역
 
 - KPI 3개 고정
   - docxly steady
   - pandoc steady
   - speed ratio
-- 1줄 해석 허용
+- 짧은 해석 1줄 허용
 - badge 1개 허용
-- long metadata는 1줄만 허용
+- 긴 메타 정보는 1줄만 허용
 
 금지:
 
-- comparison table
-- dual comparison cards
-- 긴 explanatory paragraph
-- feature matrix
+- 비교 표
+- 긴 설명 문단
+- 기능 매트릭스
+- 선택 카드 2개를 나란히 두는 구성
 
-### Generator Panel
+### 생성기 패널
 
-- 데모의 가장 높은 interaction priority 유지
-- 유지 대상:
-  - format tabs
-  - markdown textarea
-  - title input
-  - author input
-  - strict mode toggle
-  - generate button
-  - status
+- 데모에서 가장 중요한 인터랙션 영역입니다.
+- 유지 요소
+  - 형식 탭
+  - Markdown textarea
+  - 제목 입력
+  - 작성자 입력
+  - Strict Mode 토글
+  - 생성 버튼
+  - 상태 문구
   - note
 
-### Tabs
+### 탭
 
-- active = filled blue
-- inactive = neutral ghost
-- uppercase label
-- tab label은 한 단어 또는 짧은 약어만 허용
+- 활성 상태: 파란색 채움
+- 비활성 상태: 중립색 ghost
+- 라벨은 짧은 약어 또는 한 단어
 
-### Buttons
+### 버튼
 
-- variants:
+- variants
   - primary
   - secondary
   - ghost
-- primary는 blue fill
-- secondary는 neutral tint
-- ghost는 borderless text action
+- primary는 파란색 채움
+- secondary는 연한 중립 배경
+- ghost는 텍스트 중심 액션
 
-## Content Hierarchy
+## 콘텐츠 우선순위
 
-### First Screen Order
+### 첫 화면 순서
 
-1. logo
-2. one-line value proposition
-3. short supporting sentence
-4. primary install action
-5. compact proof strip
+1. 로고
+2. 한 줄 가치 제안
+3. 짧은 보조 설명
+4. 설치 행동
+5. 성능 근거 영역
 
-install proof line은 comparison strip보다 먼저 읽히는 핵심 설치 유도 문장으로 배치한다.
+설치 근거 문구는 비교 영역보다 먼저 읽히는 핵심 메시지로 배치합니다.
 
-### Comparison Handling
+### 비교 정보 처리
 
-- comparison은 landing에서 제거하지 않는다.
-- 하지만 역할은 `compact support proof`로만 제한한다.
-- `Choose docxly / Choose Pandoc` 장문 카피는 기본 landing에서 제거 대상이다.
-- feature matrix와 장문 포지셔닝 설명은 docs 또는 하단 secondary content로 이동한다.
+- 비교 영역은 랜딩에서 제거하지 않습니다.
+- 다만 역할은 `짧은 신뢰 근거`로 제한합니다.
+- `Choose docxly / Choose Pandoc` 같은 장문 카피는 기본 랜딩에서 뺍니다.
+- 자세한 포지셔닝 설명과 기능 비교 표는 문서나 하단 보조 영역으로 보냅니다.
 
 ## Do / Don't
 
 ### Do
 
-- hero에서 한 가지 핵심 행동만 강조한다.
-- proof는 숫자 중심으로 압축한다.
-- blue tokens만으로 CTA와 active state를 통일한다.
-- generator panel을 가장 중요한 작업 영역으로 유지한다.
-- 로고를 headline과 별도 계층으로 분리한다.
+- hero에서는 한 가지 핵심 행동만 강조합니다.
+- 성능 근거는 숫자 중심으로 압축합니다.
+- CTA와 활성 상태는 파란색 계열로 통일합니다.
+- 생성기 패널을 가장 중요한 작업 영역으로 유지합니다.
+- 로고는 headline과 분리된 독립 계층으로 둡니다.
 
 ### Don't
 
-- 상단에 독립 강조 카드 3개 이상 배치하지 않는다.
-- comparison table을 landing first screen에 노출하지 않는다.
-- warm/orange palette를 primary accent로 사용하지 않는다.
-- 긴 비교 카피를 generator보다 먼저 배치하지 않는다.
-- install card와 comparison strip을 같은 강도의 경쟁 블록으로 만들지 않는다.
+- 상단에 독립 강조 카드 3개 이상을 놓지 않습니다.
+- 첫 화면에 비교 표를 올리지 않습니다.
+- warm/orange 계열을 주 색상으로 다시 쓰지 않습니다.
+- 긴 비교 설명을 생성기보다 먼저 배치하지 않습니다.
+- 설치 카드와 성능 근거 영역을 같은 강도의 경쟁 블록으로 만들지 않습니다.
 
-## Acceptance Criteria
+## 완료 기준
 
-이 문서만 읽고 구현자는 추가 질문 없이 다음을 수행할 수 있어야 한다.
+이 문서만 읽고 구현자는 다음을 추가 판단 없이 수행할 수 있어야 합니다.
 
 - CSS custom property 정의
 - hero 구조 재배치
-- install card / compact proof strip / generator panel 위계 적용
-- 로고 자산 도입 전 fallback lockup 구현
+- 설치 카드, 성능 근거 영역, 생성기 패널 위계 적용
+- 로고 자산이 없을 때 텍스트 워드마크 적용
 
-추가 완료 조건:
+추가 기준:
 
-- 모바일 `390x844` 기준 first screen에 `logo + headline + install action`이 모두 보여야 한다는 기준이 명시돼 있어야 한다.
-- comparison은 `support proof`로만 남고, 장문 설명과 표는 기본 landing에서 제거 대상으로 명시돼 있어야 한다.
-- primary accent가 blue token family로 통일된다고 명시돼 있어야 한다.
-
-## Migration Notes
-
-현재 데모 UI에서 제거 또는 축소해야 하는 요소:
-
-- warm/orange 중심 accent
-- landing 상단의 장문 comparison explanation
-- feature matrix table
-- dual comparison choice blocks
-- hero에서 경쟁하는 다중 강조 카드
-
-새 UI로 옮길 때 유지해야 하는 요소:
-
-- install command 복사 흐름
-- summary benchmark proof
-- HWPX/DOCX format switching
-- browser-local generation 메시지
+- 모바일 `390x844`에서 첫 화면에 `logo + headline + install action`이 보여야 합니다.
+- 비교 정보는 신뢰 근거 수준으로만 남아야 합니다.
+- primary accent는 모두 blue token family를 사용해야 합니다.
