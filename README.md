@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="./packages/npm-core-rs/demo/assets/logo.png" alt="docxly logo" width="96">
   <h1>docxly core-rs</h1>
   <p><strong>Embeddable Rust/WASM document generation for DOCX and HWPX.</strong></p>
   <p>Where Pandoc is a general-purpose converter, docxly is designed to live inside Node services, browser workflows, and product surfaces as a library.</p>
@@ -10,7 +11,7 @@
   </p>
 </div>
 
-Language: [English](/Users/limchaesung/Github/docxly/core-rs/README.md) · [한국어](/Users/limchaesung/Github/docxly/core-rs/docs/ko/README.md) · [Docs](/Users/limchaesung/Github/docxly/core-rs/docs/README.md)
+Language: [English](./README.md) · [한국어](./docs/ko/README.md) · [Docs](./docs/README.md)
 
 `docxly/core-rs` currently measures at an 80 ms cold start and a 2 ms steady median, versus 284 ms cold and 210 ms steady for Pandoc on the summary DOCX benchmark corpus, a 105x steady-state advantage while also exposing browser-local generation and HWPX support from the same Rust core.
 

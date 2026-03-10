@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="../../packages/npm-core-rs/demo/assets/logo.png" alt="docxly logo" width="96">
+</div>
+
 # docxly 문서
 
 `docxly`는 DOCX와 HWPX 생성을 애플리케이션 내부에 직접 내장하기 위한 Rust/WASM 문서 생성 엔진입니다.
@@ -6,10 +10,10 @@ Pandoc이 범용 문서 변환기라면, `docxly`는 Node 서비스, 브라우�
 
 ## 시작하기
 
-- [빠른 시작](/Users/limchaesung/Github/docxly/core-rs/docs/ko/getting-started.md)
-- [런타임 가이드](/Users/limchaesung/Github/docxly/core-rs/docs/ko/runtime.md)
-- [성능 비교와 포지셔닝](/Users/limchaesung/Github/docxly/core-rs/docs/ko/benchmark.md)
-- [디자인 시스템](/Users/limchaesung/Github/docxly/core-rs/docs/ko/design-system.md)
+- [빠른 시작](./getting-started.md)
+- [런타임 가이드](./runtime.md)
+- [성능 비교와 포지셔닝](./benchmark.md)
+- [디자인 시스템](./design-system.md)
 
 ## 핵심 수치
 
@@ -26,6 +30,6 @@ Pandoc이 범용 문서 변환기라면, `docxly`는 Node 서비스, 브라우�
 
 ## 바로 가기
 
-- [루트 README](/Users/limchaesung/Github/docxly/core-rs/README.md)
-- [npm package README](/Users/limchaesung/Github/docxly/core-rs/packages/npm-core-rs/README.md)
+- [루트 README](../../README.md)
+- [npm package README](../../packages/npm-core-rs/README.md)
 - [라이브 데모](https://docxly.github.io/core-rs/)
