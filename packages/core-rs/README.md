@@ -83,6 +83,19 @@ Current high-level API behavior:
 
 The current HWPX implementation is narrower than the DOCX rich slice.
 
+| Capability | DOCX | HWPX strict | HWPX compat |
+| --- | --- | --- | --- |
+| Headings and paragraphs | Yes | Yes | Yes |
+| Blockquotes | Yes | Yes | Yes |
+| Inline emphasis, strong, code, links | Yes | Yes | Yes |
+| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
+| Unordered lists up to depth 2 | Yes | Yes | Yes |
+| Tables | Yes | Yes | Yes |
+| `data:` URI images | Yes | No | Degraded fallback to alt text |
+| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
+| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
+| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
+
 - approved compatibility fixtures:
   - `core-paragraph`
   - `blockquote-basic`

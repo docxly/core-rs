@@ -256,6 +256,20 @@ Notes:
 
 The current HWPX path is narrower than the DOCX rich slice and remains beta on both Rust and npm surfaces.
 
+- The npm HWPX path is still exposed as an Experimental API while the approved baseline continues to expand.
+
+| Capability | DOCX | HWPX strict | HWPX compat |
+| --- | --- | --- | --- |
+| Headings and paragraphs | Yes | Yes | Yes |
+| Inline emphasis, strong, code, links | Yes | Yes | Yes |
+| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
+| Unordered lists up to depth 2 | Yes | Yes | Yes |
+| Tables | Yes | Yes | Yes |
+| `data:` URI images | Yes | No | Degraded fallback to alt text |
+| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
+| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
+| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
+
 - Rust HWPX includes the approved compatibility, list, table, and style baselines.
 - Ordered-list fixtures are approved compatibility fixtures, but they remain compat-only rather than strict-mode guarantees.
 - npm HWPX uses the same core path, but exposes only `title`, `author`, and `strictMode`.
