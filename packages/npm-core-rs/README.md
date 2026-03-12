@@ -8,7 +8,7 @@ Language: [English](./README.md) · [한국어 문서](../../docs/ko/README.md)
 
 - DOCX generation: supported
 - report APIs: recommended for user-generated Markdown
-- HWPX generation: available as a beta surface for the approved baseline
+- HWPX generation: available as an experimental HWPX API for the approved baseline
 - API style: async only
 
 ## Live Demo

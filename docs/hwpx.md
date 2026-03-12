@@ -63,7 +63,6 @@ Current parser assumptions:
 - tables only inside the approved table fixtures
 - table cells with a single paragraph only
 - no images, equations, charts, notes, or broader control/layout coverage
-
 npm HWPX currently exposes:
 
 - `title`
@@ -107,7 +106,6 @@ Current HWPX validation in the repository covers both generation and reverse par
 - malformed archive and XML rejection tests
 - unsupported-feature rejection tests
 - generated-HWPX round-trip smoke tests for the approved fixture set
-
 ## npm Example
 
 ```js

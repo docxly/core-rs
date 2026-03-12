@@ -66,7 +66,6 @@ Run only the internal HWPX parser tests:
 ```bash
 cargo test -p core-rs parser::hwpx
 ```
-
 Run a single integration test target:
 
 ```bash
@@ -90,7 +89,6 @@ Useful flags:
 - `--help`: print CLI usage
 - `--parse`: print the internal semantic dump instead of raw XML console output
 - `--out <directory>`: extract the package to disk for inspection
-
 ## Test Strategy
 
 The project uses golden DOCX fixtures plus normalized hashing instead of comparing raw archive bytes.
@@ -128,7 +126,6 @@ HWPX adds a second repository-level strategy on top of the golden generation che
 - the internal parser reverse-parses approved `golden.hwpx` files back into the internal `Document` model
 - parser tests use fixture-specific expected documents instead of relying on the Markdown parser as a runtime oracle
 - malformed archives and unsupported HWPX structures are expected to fail fast
-
 ## Development Notes
 
 - Keep README content and Git commit messages in English.
