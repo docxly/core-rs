@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import * as esbuild from "esbuild";
-import { mkdir, readdir, rm } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -28,16 +28,22 @@ try {
       ".wasm": "file",
     },
     stdin: {
-      contents: `import { generateDocx } from "./browser.js"; console.log(typeof generateDocx);`,
+      contents: [
+        'import { analyzeMarkdown, generateDocx, generateDocxWithReport, generateHwpxWithReport } from "./browser.js";',
+        "console.log(typeof analyzeMarkdown, typeof generateDocx, typeof generateDocxWithReport, typeof generateHwpxWithReport);",
+      ].join("\n"),
       resolveDir: distDir,
       sourcefile: "browser-smoke-entry.js",
     },
   });
 
   const outputPaths = (await readdir(outdir)).map((file) => path.join(outdir, file));
+  const jsBundles = outputPaths.filter((file) => file.endsWith(".js"));
 
-  assert.ok(outputPaths.some((file) => file.endsWith(".js")), "browser smoke must emit a bundle entry");
-  assert.ok(outputPaths.some((file) => file.endsWith(".wasm")), "browser smoke must emit a wasm asset");
+  assert.ok(jsBundles.length > 0, "browser smoke must emit a bundle entry");
+
+  const bundleSource = await readFile(jsBundles[0], "utf8");
+  assert.match(bundleSource, /core_rs_bg\.wasm/, "browser bundle must reference the wasm runtime asset");
 } finally {
   await rm(outdir, { recursive: true, force: true });
 }

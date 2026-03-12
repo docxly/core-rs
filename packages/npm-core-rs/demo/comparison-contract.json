@@ -1,0 +1,71 @@
+{
+  "headline": "Offline Node benchmark for library selection.",
+  "feature_matrix": [
+    {
+      "feature": "Headings and paragraphs",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
+    },
+    {
+      "feature": "Inline emphasis, strong, code, links",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
+    },
+    {
+      "feature": "Ordered lists up to depth 2",
+      "docx": "Yes",
+      "hwpx_strict": "No",
+      "hwpx_compat": "Yes, semantic contract"
+    },
+    {
+      "feature": "Unordered lists up to depth 2",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
+    },
+    {
+      "feature": "Tables",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
+    },
+    {
+      "feature": "`data:` URI images",
+      "docx": "Yes",
+      "hwpx_strict": "No",
+      "hwpx_compat": "Degraded fallback to alt text"
+    },
+    {
+      "feature": "Unsupported HTML",
+      "docx": "Strict: error, compat: literal text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded literal text fallback"
+    },
+    {
+      "feature": "Footnotes, task lists, math",
+      "docx": "Strict: error, compat: visible text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded visible text fallback"
+    },
+    {
+      "feature": "Deep nested lists",
+      "docx": "Strict: error, compat: plain text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded plain text fallback"
+    },
+    {
+      "feature": "HWPX API in npm",
+      "docx": "N/A",
+      "hwpx_strict": "Experimental API",
+      "hwpx_compat": "Experimental API"
+    }
+  ],
+  "caveats": [
+    "This benchmark measures DOCX generation only and does not compare HWPX.",
+    "The numbers above come from an offline Node environment and are not browser runtime timings.",
+    "Cold timings include WASM initialization for docxly and process startup for Pandoc.",
+    "Steady timings are medians from 15 runs after one warm-up per corpus."
+  ]
+}

@@ -7,7 +7,8 @@ use std::time::{SystemTime, UNIX_EPOCH};
 mod archive_fixture;
 
 use archive_fixture::{
-    ArchiveEntry, hash_entries, normalized_entries, read_expected_entries, refresh_fixture_metadata,
+    ArchiveEntry, hash_entries, normalized_archives_equivalent, normalized_entries,
+    read_expected_entries, refresh_fixture_metadata,
 };
 
 const AUXILIARY_NAMES: &[&str] = &[".DS_Store", "README.md", "provenance.md"];
@@ -142,6 +143,43 @@ fn cli_fails_for_unknown_fixture_name() {
     assert!(stderr.contains("unknown HWPX approved fixture: does-not-exist"));
 }
 
+#[test]
+fn cli_prints_equivalent_status_for_matching_generated_output() {
+    let _guard = GeneratedOutputGuard::backup("core-paragraph");
+    let generated = generated_output_root("core-paragraph");
+    fs::create_dir_all(generated.parent().unwrap()).unwrap();
+    fs::copy(
+        fixture_root().join("core-paragraph/golden.hwpx"),
+        &generated,
+    )
+    .unwrap();
+
+    let output = Command::new(env!("CARGO_BIN_EXE_refresh_hwpx_fixture_metadata"))
+        .arg("core-paragraph")
+        .output()
+        .unwrap();
+
+    assert!(output.status.success());
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    assert!(stdout.contains("📦 fixture: core-paragraph"));
+    assert!(stdout.contains(
+        "golden: /Users/limchaesung/Github/docxly/core-rs/packages/core-rs/tests/fixtures/hwpx/approved/core-paragraph/golden.hwpx"
+    ));
+    assert!(
+        stdout.contains(
+            "compare: ✅ /tmp/hwpx-generator-outputs/core-paragraph/generated.hwpx equivalent /Users/limchaesung/Github/docxly/core-rs/packages/core-rs/tests/fixtures/hwpx/approved/core-paragraph/golden.hwpx"
+        )
+    );
+}
+
+#[test]
+fn normalized_archive_comparison_detects_differences() {
+    let left = fs::read(fixture_root().join("core-paragraph/golden.hwpx")).unwrap();
+    let right = fs::read(fixture_root().join("table-basic/golden.hwpx")).unwrap();
+
+    assert!(!normalized_archives_equivalent(&left, &right, is_text_entry).unwrap());
+}
+
 fn fixture_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("tests")
@@ -203,5 +241,57 @@ impl TestTempDir {
 impl Drop for TestTempDir {
     fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.path);
+    }
+}
+
+fn generated_output_root(name: &str) -> PathBuf {
+    Path::new("/tmp")
+        .join("hwpx-generator-outputs")
+        .join(name)
+        .join("generated.hwpx")
+}
+
+struct GeneratedOutputGuard {
+    target_dir: PathBuf,
+    backup_dir: Option<PathBuf>,
+}
+
+impl GeneratedOutputGuard {
+    fn backup(name: &str) -> Self {
+        let target_dir = Path::new("/tmp").join("hwpx-generator-outputs").join(name);
+        let backup_dir = if target_dir.exists() {
+            let backup = std::env::temp_dir().join(format!(
+                "hwpx-generator-outputs-backup-{name}-{}-{}",
+                std::process::id(),
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_nanos()
+            ));
+            if let Some(parent) = backup.parent() {
+                fs::create_dir_all(parent).unwrap();
+            }
+            fs::rename(&target_dir, &backup).unwrap();
+            Some(backup)
+        } else {
+            None
+        };
+
+        Self {
+            target_dir,
+            backup_dir,
+        }
+    }
+}
+
+impl Drop for GeneratedOutputGuard {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.target_dir);
+        if let Some(backup_dir) = &self.backup_dir {
+            if let Some(parent) = self.target_dir.parent() {
+                let _ = fs::create_dir_all(parent);
+            }
+            let _ = fs::rename(backup_dir, &self.target_dir);
+        }
     }
 }

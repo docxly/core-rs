@@ -1,6 +1,6 @@
 {
   "headline": "Offline Node benchmark for library selection.",
-  "measured_at": "2026-03-10T14:29:12.752Z",
+  "measured_at": "2026-03-11T08:19:00.589Z",
   "machine_label": "darwin 25.2.0 / arm64",
   "node_version": "v23.7.0",
   "pandoc_version": "3.9",
@@ -9,98 +9,128 @@
     "small": {
       "label": "Small",
       "cold_ms": {
-        "docxly": 66,
-        "pandoc": 539
+        "docxly": 63,
+        "pandoc": 454
       },
       "steady_median_ms": {
         "docxly": 1,
-        "pandoc": 249
+        "pandoc": 253
       },
       "output_bytes": {
         "docxly": 9050,
         "pandoc": 11479
       },
-      "speed_ratio": 369.84
+      "speed_ratio": 379.53
     },
     "medium": {
       "label": "Medium",
       "cold_ms": {
-        "docxly": 80,
-        "pandoc": 284
+        "docxly": 83,
+        "pandoc": 306
       },
       "steady_median_ms": {
         "docxly": 2,
-        "pandoc": 126
+        "pandoc": 95
       },
       "output_bytes": {
         "docxly": 89052,
         "pandoc": 15408
       },
-      "speed_ratio": 64.85
+      "speed_ratio": 60.33
     },
     "large": {
       "label": "Large",
       "cold_ms": {
-        "docxly": 88,
-        "pandoc": 219
+        "docxly": 83,
+        "pandoc": 192
       },
       "steady_median_ms": {
         "docxly": 4,
-        "pandoc": 210
+        "pandoc": 193
       },
       "output_bytes": {
         "docxly": 284013,
-        "pandoc": 24027
+        "pandoc": 24026
       },
-      "speed_ratio": 57.6
+      "speed_ratio": 53.92
     },
     "summary": {
       "label": "Summary",
       "cold_ms": {
-        "docxly": 80,
-        "pandoc": 284
+        "docxly": 83,
+        "pandoc": 306
       },
       "steady_median_ms": {
         "docxly": 2,
-        "pandoc": 210
+        "pandoc": 193
       },
       "output_bytes": {
         "docxly": 89052,
         "pandoc": 15408
       },
-      "speed_ratio": 105
+      "speed_ratio": 96.5
     }
   },
   "feature_matrix": [
     {
-      "feature": "Embeddable in app",
-      "docxly": "Yes, library-first for Node and browser bundlers",
-      "pandoc": "CLI-first with process invocation"
+      "feature": "Headings and paragraphs",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
     },
     {
-      "feature": "Browser-local generation",
-      "docxly": "First-party browser package and WASM path",
-      "pandoc": "Possible through pandoc.wasm, not the primary npm workflow"
+      "feature": "Inline emphasis, strong, code, links",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
     },
     {
-      "feature": "npm distribution",
-      "docxly": "Published package",
-      "pandoc": "Not a first-party npm package"
+      "feature": "Ordered lists up to depth 2",
+      "docx": "Yes",
+      "hwpx_strict": "No",
+      "hwpx_compat": "Yes, semantic contract"
     },
     {
-      "feature": "HWPX generation",
-      "docxly": "Supported in the Rust core",
-      "pandoc": "Not supported"
+      "feature": "Unordered lists up to depth 2",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
     },
     {
-      "feature": "Broad format conversion",
-      "docxly": "Focused on DOCX and HWPX generation",
-      "pandoc": "Wide multi-format conversion"
+      "feature": "Tables",
+      "docx": "Yes",
+      "hwpx_strict": "Yes",
+      "hwpx_compat": "Yes"
     },
     {
-      "feature": "DOCX reference-template workflow",
-      "docxly": "Not a reference.docx workflow",
-      "pandoc": "Supported via reference.docx"
+      "feature": "`data:` URI images",
+      "docx": "Yes",
+      "hwpx_strict": "No",
+      "hwpx_compat": "Degraded fallback to alt text"
+    },
+    {
+      "feature": "Unsupported HTML",
+      "docx": "Strict: error, compat: literal text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded literal text fallback"
+    },
+    {
+      "feature": "Footnotes, task lists, math",
+      "docx": "Strict: error, compat: visible text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded visible text fallback"
+    },
+    {
+      "feature": "Deep nested lists",
+      "docx": "Strict: error, compat: plain text fallback",
+      "hwpx_strict": "Error",
+      "hwpx_compat": "Degraded plain text fallback"
+    },
+    {
+      "feature": "HWPX API in npm",
+      "docx": "N/A",
+      "hwpx_strict": "Experimental API",
+      "hwpx_compat": "Experimental API"
     }
   ],
   "caveats": [

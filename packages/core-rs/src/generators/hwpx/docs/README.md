@@ -13,13 +13,14 @@ The current status is an approved HWPX baseline plus a smaller provisional area 
 
 1. `packages/core-rs/tests/fixtures/hwpx/approved/*/expected`
 2. [`../reference/paragraph-only`](../reference/paragraph-only)
-3. [`HWP_DocInfo_Structure.md`](./HWP_DocInfo_Structure.md)
-4. [`HWP_CharShape_Structure.md`](./HWP_CharShape_Structure.md)
-5. [`HWP_Document_Data_Records.md`](./HWP_Document_Data_Records.md)
+3. [`schema-md/index.md`](./schema-md/index.md)
+4. [`HWP_DocInfo_Structure.md`](./HWP_DocInfo_Structure.md)
+5. [`HWP_CharShape_Structure.md`](./HWP_CharShape_Structure.md)
+6. [`HWP_Document_Data_Records.md`](./HWP_Document_Data_Records.md)
 
 ## Scope note
 
-There is currently no checked-in `schema-md/` corpus in this repository. For HWPX package-level details such as `content.hpf`, `header.xml`, and `section0.xml`, use:
+This repository includes a checked-in `schema-md/` corpus for spec reference, but package-level HWPX files such as `content.hpf`, `header.xml`, and `section0.xml` still need to be validated against local approved fixtures and reference unzip trees. For those package-level details, use:
 
 - the manually approved `.hwpx` fixtures under `packages/core-rs/tests/fixtures/hwpx/approved`
 - the synthetic compatibility corpus under `../reference/`
@@ -74,7 +75,7 @@ cargo run -p core-rs --bin refresh_hwpx_fixture_metadata -- core-paragraph table
 
 ## Approved baseline note
 
-- `approved/` fixtures are the only CI/release gate for HWPX. `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `table-basic`, `style-typography`, `style-centered-layout`, and `style-brand-color` are currently approved.
+- `approved/` fixtures are the only CI/release gate for HWPX. `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `ordered-list-basic`, `ordered-list-nested-depth-2`, `table-basic`, `table-alignment`, `style-typography`, `style-centered-layout`, and `style-brand-color` are currently approved.
 - `provisional/` fixtures are not part of the release gate and currently contain unapproved candidates such as images, thematic breaks, alignment-rich tables, and mixed rich documents.
 - `quarantine/` stores stale or known-broken generated artifacts kept only for reverse-engineering.
 - Approved style fixtures use Hancom-safe built-in fonts only. External fonts remain best-effort because the current HWPX path does not embed font binaries.

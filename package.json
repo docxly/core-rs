@@ -9,10 +9,12 @@
     "build:pages": "npm run build:pages -w @docxly/core-rs",
     "benchmark:pandoc": "npm run benchmark:pandoc -w @docxly/core-rs",
     "benchmark:pandoc:check": "npm run benchmark:pandoc:check -w @docxly/core-rs",
+    "changeset:add": "npx @changesets/cli@2.29.7 add",
     "demo": "npm run demo -w @docxly/core-rs",
     "test:web": "npm run build:web && npm run test:smoke -w @docxly/core-rs",
     "test:rust": "cargo test -p core-rs",
     "lint:rust": "cargo clippy -p core-rs --all-targets -- -D warnings",
-    "test:all": "npm run lint:rust && npm run test:rust && npm run test:web"
+    "test:all": "npm run lint:rust && npm run test:rust && npm run test:web",
+    "version:packages": "npx @changesets/cli@2.29.7 version && node ./packages/npm-core-rs/scripts/sync-version.mjs && npm install --package-lock-only -w @docxly/core-rs"
   }
 }

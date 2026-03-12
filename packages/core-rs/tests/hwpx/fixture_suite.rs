@@ -31,3 +31,15 @@ fn deterministic_fixtures_generate_same_hash() {
         assert_same_input_same_hash(fixture);
     }
 }
+
+#[test]
+fn all_approved_hwpx_fixtures_are_manually_verified() {
+    let fixtures = discover_fixtures().unwrap();
+    for fixture in &fixtures {
+        assert!(
+            fixture.manual_verified,
+            "approved HWPX fixture must set manual_verified = true: {}",
+            fixture.name
+        );
+    }
+}

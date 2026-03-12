@@ -3,8 +3,8 @@ use crate::models::inline::{ImageData, Inline};
 use crate::utils::image_helper::image_dimensions;
 use crate::utils::xml_helper::escape_attr;
 
-use super::{ImageAsset, RenderContext, RunStyle};
 use super::super::xml_builder;
+use super::{ImageAsset, RenderContext, RunStyle};
 
 pub(super) fn run_properties(style: RunStyle) -> String {
     let mut parts = Vec::new();

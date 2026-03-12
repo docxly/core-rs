@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 export const packageRoot = path.dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 export const repoRoot = path.resolve(packageRoot, "..", "..");
 export const comparisonDataPath = path.join(packageRoot, "demo", "comparison-data.json");
+export const comparisonContractPath = path.join(packageRoot, "demo", "comparison-contract.json");
 export const readmePath = path.join(repoRoot, "README.md");
 export const demoIndexPath = path.join(packageRoot, "demo", "index.html");
 export const demoMainPath = path.join(packageRoot, "demo", "main.js");
@@ -25,30 +26,38 @@ export function decodeUtf8(bytes) {
   return decoder.decode(bytes);
 }
 
+export function validateComparisonContract(contract) {
+  assert.equal(typeof contract, "object", "comparison contract must be an object");
+  assert.equal(typeof contract.headline, "string", "headline must be a string");
+  assert.equal(Array.isArray(contract.feature_matrix), true, "feature_matrix must be an array");
+  assert.equal(Array.isArray(contract.caveats), true, "caveats must be an array");
+
+  for (const entry of contract.feature_matrix) {
+    assert.equal(typeof entry.feature, "string", "feature name must be a string");
+    assert.equal(typeof entry.docx, "string", "feature docx value must be a string");
+    assert.equal(typeof entry.hwpx_strict, "string", "feature hwpx_strict value must be a string");
+    assert.equal(typeof entry.hwpx_compat, "string", "feature hwpx_compat value must be a string");
+  }
+
+  for (const caveat of contract.caveats) {
+    assert.equal(typeof caveat, "string", "caveat must be a string");
+  }
+
+  return contract;
+}
+
 export function validateComparisonData(data) {
   assert.equal(typeof data, "object", "comparison data must be an object");
-  assert.equal(typeof data.headline, "string", "headline must be a string");
   assert.equal(typeof data.measured_at, "string", "measured_at must be a string");
   assert.equal(typeof data.machine_label, "string", "machine_label must be a string");
   assert.equal(typeof data.node_version, "string", "node_version must be a string");
   assert.equal(typeof data.pandoc_version, "string", "pandoc_version must be a string");
   assert.equal(typeof data.docxly_version, "string", "docxly_version must be a string");
   assert.equal(typeof data.benchmarks, "object", "benchmarks must be present");
-  assert.equal(Array.isArray(data.feature_matrix), true, "feature_matrix must be an array");
-  assert.equal(Array.isArray(data.caveats), true, "caveats must be an array");
+  validateComparisonContract(data);
 
   for (const key of ["small", "medium", "large", "summary"]) {
     validateBenchmarkEntry(data.benchmarks[key], key);
-  }
-
-  for (const entry of data.feature_matrix) {
-    assert.equal(typeof entry.feature, "string", "feature name must be a string");
-    assert.equal(typeof entry.docxly, "string", "feature docxly value must be a string");
-    assert.equal(typeof entry.pandoc, "string", "feature pandoc value must be a string");
-  }
-
-  for (const caveat of data.caveats) {
-    assert.equal(typeof caveat, "string", "caveat must be a string");
   }
 
   return data;
@@ -70,8 +79,21 @@ function validateDuelMetric(metric, name) {
 }
 
 export async function loadComparisonData() {
-  const raw = await readFile(comparisonDataPath, "utf8");
-  return validateComparisonData(JSON.parse(raw));
+  return loadValidatedJson(comparisonDataPath, validateComparisonData);
+}
+
+export async function loadComparisonContract() {
+  return loadValidatedJson(comparisonContractPath, validateComparisonContract);
+}
+
+export function assertComparisonDataMatchesContract(data, contract) {
+  assert.equal(data.headline, contract.headline, "comparison headline drifted from contract");
+  assert.deepEqual(
+    data.feature_matrix,
+    contract.feature_matrix,
+    "comparison feature matrix drifted from contract",
+  );
+  assert.deepEqual(data.caveats, contract.caveats, "comparison caveats drifted from contract");
 }
 
 export function renderReadmeBlock(data) {
@@ -95,7 +117,7 @@ export function renderReadmeBlock(data) {
   const featureRows = data.feature_matrix
     .map(
       (entry) =>
-        `| ${escapeCell(entry.feature)} | ${escapeCell(entry.docxly)} | ${escapeCell(entry.pandoc)} |`,
+        `| ${escapeCell(entry.feature)} | ${escapeCell(entry.docx)} | ${escapeCell(entry.hwpx_strict)} | ${escapeCell(entry.hwpx_compat)} |`,
     )
     .join("\n");
 
@@ -112,8 +134,8 @@ export function renderReadmeBlock(data) {
     "| --- | --- | --- | --- | --- | --- |",
     benchmarkRows,
     "",
-    "| Capability | docxly | Pandoc |",
-    "| --- | --- | --- |",
+    "| Capability | DOCX | HWPX strict | HWPX compat |",
+    "| --- | --- | --- | --- |",
     featureRows,
     "",
     `Measured on ${data.machine_label} at ${data.measured_at} with Node ${data.node_version} and Pandoc ${data.pandoc_version}.`,
@@ -149,10 +171,18 @@ export async function assertDemoWiring() {
 
   assert.ok(indexHtml.includes('id="comparison-section"'), "demo comparison section is missing");
   assert.ok(indexHtml.includes('id="comparison-ratio"'), "demo comparison KPI is missing");
-  assert.ok(mainJs.includes('fetch("./comparison-data.json"'), "demo must fetch comparison JSON");
+  assert.ok(
+    mainJs.includes("fetch(comparisonDataUrl") || mainJs.includes('fetch("./comparison-data.json"'),
+    "demo must fetch comparison JSON",
+  );
   assert.ok(mainJs.includes("comparison data unavailable"), "demo fallback copy is missing");
 }
 
 function escapeCell(value) {
   return value.replaceAll("|", "\\|");
+}
+
+async function loadValidatedJson(filePath, validate) {
+  const raw = await readFile(filePath, "utf8");
+  return validate(JSON.parse(raw));
 }

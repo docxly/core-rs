@@ -9,9 +9,8 @@
 
 ## 현재 요약 벤치마크
 
-- `docxly`: `80 ms cold / 2 ms steady`
-- `Pandoc`: `284 ms cold / 210 ms steady`
-- 반복 실행 기준 `105x`
+- 최신 수치는 루트 README의 comparison block과 `packages/npm-core-rs/demo/comparison-data.json`을 기준으로 봅니다.
+- 이 문서에는 고정 숫자를 복제하지 않고, 어떤 환경에서 어떤 의미의 수치인지 해석만 남깁니다.
 
 측정 환경은 다음과 같습니다.
 
@@ -19,6 +18,7 @@
 - Node: `v23.7.0`
 - Pandoc: `3.9`
 - 기준: 복잡한 DOCX 벤치마크 코퍼스
+- 범위: DOCX generation only
 
 ## 해석
 
@@ -27,6 +27,7 @@
   - `Pandoc`: process startup 포함
 - steady median은 warm-up 이후 반복 생성 비용을 뜻합니다.
 - 이 수치는 브라우저 실측이 아니라 오프라인 Node 벤치마크 결과입니다.
+- HWPX 비교나 브라우저 런타임 수치로 일반화하면 안 됩니다.
 
 ## 언제 Pandoc이 더 적합한가
 

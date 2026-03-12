@@ -2,6 +2,9 @@ title = "Typography Candidate"
 author = "docxly"
 strict_mode = true
 determinism = true
+comparison_excludes = ["Contents/content.hpf", "Preview/PrvImage.png", "version.xml"]
+manual_verified = true
+verified_at = "2026-03-11"
 
 [style]
 body_font = "함초롬바탕"

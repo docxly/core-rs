@@ -11,6 +11,12 @@ use zip::ZipArchive;
 
 pub type FixtureResult<T> = Result<T, Box<dyn Error>>;
 
+const NONDETERMINISTIC_ENTRY_EXCLUDES: &[&str] = &[
+    "Contents/content.hpf",
+    "Preview/PrvImage.png",
+    "version.xml",
+];
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NormalizedEntry {
     Text(String),
@@ -70,6 +76,91 @@ pub fn normalized_entries(
         bytes,
         is_text_entry,
     )?))
+}
+
+pub fn filtered_normalized_entries(
+    bytes: &[u8],
+    is_text_entry: fn(&str) -> bool,
+    excluded_paths: &[impl AsRef<str>],
+) -> FixtureResult<BTreeMap<String, NormalizedEntry>> {
+    let mut entries = normalized_entries(bytes, is_text_entry)?;
+    for path in excluded_paths {
+        entries.remove(path.as_ref());
+    }
+    Ok(entries)
+}
+
+pub fn normalized_archives_equivalent(
+    left: &[u8],
+    right: &[u8],
+    is_text_entry: fn(&str) -> bool,
+) -> FixtureResult<bool> {
+    Ok(normalized_entries(left, is_text_entry)? == normalized_entries(right, is_text_entry)?)
+}
+
+pub fn fixture_is_deterministic(root: &Path) -> FixtureResult<bool> {
+    Ok(read_fixture_comparison_config(root)?.determinism)
+}
+
+pub fn comparison_excludes_for_fixture(root: &Path) -> FixtureResult<Vec<String>> {
+    let config = read_fixture_comparison_config(root)?;
+    let mut excludes = Vec::new();
+
+    if !config.determinism {
+        excludes.extend(
+            NONDETERMINISTIC_ENTRY_EXCLUDES
+                .iter()
+                .map(|path| (*path).to_string()),
+        );
+    }
+
+    for path in config.comparison_excludes {
+        if !excludes.contains(&path) {
+            excludes.push(path);
+        }
+    }
+
+    Ok(excludes)
+}
+
+struct FixtureComparisonConfig {
+    determinism: bool,
+    comparison_excludes: Vec<String>,
+}
+
+fn read_fixture_comparison_config(root: &Path) -> FixtureResult<FixtureComparisonConfig> {
+    let contents = fs::read_to_string(root.join("fixture.toml"))?;
+    Ok(FixtureComparisonConfig {
+        determinism: !contents
+            .lines()
+            .any(|line| line.trim() == "determinism = false"),
+        comparison_excludes: parse_comparison_excludes(&contents)?,
+    })
+}
+
+fn parse_comparison_excludes(contents: &str) -> FixtureResult<Vec<String>> {
+    let Some(line) = contents
+        .lines()
+        .map(str::trim)
+        .find(|line| line.starts_with("comparison_excludes = ["))
+    else {
+        return Ok(Vec::new());
+    };
+
+    let values = line
+        .strip_prefix("comparison_excludes = [")
+        .and_then(|line| line.strip_suffix(']'))
+        .ok_or("invalid comparison_excludes syntax")?;
+
+    if values.trim().is_empty() {
+        return Ok(Vec::new());
+    }
+
+    Ok(values
+        .split(',')
+        .map(str::trim)
+        .map(|value| value.trim_matches('"').to_string())
+        .collect())
 }
 
 pub fn normalized_entries_from_archive(

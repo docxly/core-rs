@@ -40,7 +40,9 @@ fn normalizes_binary_entries_without_panicking() {
     writer.start_file("word/document.xml", options).unwrap();
     writer.write_all(b"<root/>").unwrap();
     writer.start_file("word/media/image1.png", options).unwrap();
-    writer.write_all(&[0x89, b'P', b'N', b'G', 0x00, 0x01]).unwrap();
+    writer
+        .write_all(&[0x89, b'P', b'N', b'G', 0x00, 0x01])
+        .unwrap();
     let bytes = writer.finish().unwrap().into_inner();
 
     let normalized = normalized_entries(&bytes).unwrap();

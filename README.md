@@ -13,7 +13,7 @@
 
 Language: [English](./README.md) · [한국어](./docs/ko/README.md) · [Docs](./docs/README.md)
 
-`docxly/core-rs` currently measures at an 80 ms cold start and a 2 ms steady median, versus 284 ms cold and 210 ms steady for Pandoc on the summary DOCX benchmark corpus, a 105x steady-state advantage while also exposing browser-local generation and HWPX support from the same Rust core.
+`docxly/core-rs` is an embeddable Rust/WASM document generation engine for DOCX and HWPX. Current benchmark details live in the comparison block below so the published README stays aligned with the checked-in benchmark dataset.
 
 The project is developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and an approved HWPX baseline backed by manually validated golden fixtures.
 
@@ -58,7 +58,7 @@ fs::write("output.docx", docx)?;
 ## Why docxly
 
 - Build document generation directly into a product instead of shelling out to a converter.
-- On the current summary corpus, generate complex DOCX output in `2 ms` steady median versus Pandoc's `210 ms`, with `80 ms` versus `284 ms` cold start.
+- Keep benchmark numbers in the checked-in comparison block below instead of scattering stale point-in-time claims through the README.
 - Use the same Rust core across Node, browser, and HWPX workflows.
 - Start with DOCX today and expand into HWPX from the same repository.
 - Ship deterministic outputs backed by fixture-driven tests and normalized archive checks.
@@ -69,7 +69,7 @@ Try the browser demo on GitHub Pages:
 
 - https://docxly.github.io/core-rs/
 
-The live page uses the published WASM wrapper and downloads a real `.docx` file directly in the browser.
+The live page uses the published WASM wrapper and downloads real `.docx` and `.hwpx` files directly in the browser.
 
 <!-- comparison:start -->
 
@@ -81,21 +81,25 @@ Use docxly when document generation must live inside a Node service, browser wor
 
 | Corpus | docxly cold | Pandoc cold | docxly steady | Pandoc steady | Speed ratio |
 | --- | --- | --- | --- | --- | --- |
-| Small | 66 ms | 539 ms | 1 ms | 249 ms | 369.84x |
-| Medium | 80 ms | 284 ms | 2 ms | 126 ms | 64.85x |
-| Large | 88 ms | 219 ms | 4 ms | 210 ms | 57.60x |
-| Summary | 80 ms | 284 ms | 2 ms | 210 ms | 105.00x |
+| Small | 63 ms | 454 ms | 1 ms | 253 ms | 379.53x |
+| Medium | 83 ms | 306 ms | 2 ms | 95 ms | 60.33x |
+| Large | 83 ms | 192 ms | 4 ms | 193 ms | 53.92x |
+| Summary | 83 ms | 306 ms | 2 ms | 193 ms | 96.50x |
 
-| Capability | docxly | Pandoc |
-| --- | --- | --- |
-| Embeddable in app | Yes, library-first for Node and browser bundlers | CLI-first with process invocation |
-| Browser-local generation | First-party browser package and WASM path | Possible through pandoc.wasm, not the primary npm workflow |
-| npm distribution | Published package | Not a first-party npm package |
-| HWPX generation | Supported in the Rust core | Not supported |
-| Broad format conversion | Focused on DOCX and HWPX generation | Wide multi-format conversion |
-| DOCX reference-template workflow | Not a reference.docx workflow | Supported via reference.docx |
+| Capability | DOCX | HWPX strict | HWPX compat |
+| --- | --- | --- | --- |
+| Headings and paragraphs | Yes | Yes | Yes |
+| Inline emphasis, strong, code, links | Yes | Yes | Yes |
+| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
+| Unordered lists up to depth 2 | Yes | Yes | Yes |
+| Tables | Yes | Yes | Yes |
+| `data:` URI images | Yes | No | Degraded fallback to alt text |
+| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
+| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
+| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
+| HWPX API in npm | N/A | Experimental API | Experimental API |
 
-Measured on darwin 25.2.0 / arm64 at 2026-03-10T14:29:12.752Z with Node v23.7.0 and Pandoc 3.9.
+Measured on darwin 25.2.0 / arm64 at 2026-03-11T08:19:00.589Z with Node v23.7.0 and Pandoc 3.9.
 
 - This benchmark measures DOCX generation only and does not compare HWPX.
 - The numbers above come from an offline Node environment and are not browser runtime timings.
@@ -126,11 +130,11 @@ Measured on darwin 25.2.0 / arm64 at 2026-03-10T14:29:12.752Z with Node v23.7.0 
 
 - Implemented: Markdown parser, internal shared intermediate model, deterministic DOCX packaging
 - Implemented: fixture-driven integration tests with normalized hash comparison
-- Implemented: strict/fallback handling for unsupported HTML, non-data images, and deep nested lists
+- Implemented: strict/fallback handling plus report APIs for unsupported HTML, images, task lists, math, and deep nested lists
 - Implemented: approved HWPX baseline backed by manually validated fixtures
-- Current HWPX CI gates use these approved fixtures: `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `style-typography`, `style-centered-layout`, and `style-brand-color`
-- Provisional and quarantined HWPX artifacts are excluded from the release gate
-- HWPX style options currently apply to body paragraphs and heading paragraphs; future block types such as lists and tables may add more paragraph categories
+- Approved HWPX fixtures are the release gate; provisional and quarantined artifacts are not
+- Approved fixture status is separate from strict/compat support claims; ordered lists are compat-only, while tables are supported in strict mode
+- Package-specific details such as the current approved fixture set and Rust API notes live in `packages/core-rs/README.md` and `packages/core-rs/src/generators/hwpx/docs/README.md`
 
 ## Supported Markdown Today
 
@@ -159,6 +163,7 @@ Current behavior:
 ## Public API
 
 The Rust crate intentionally exposes only the high-level API. Parser, model, generator, and utility modules are internal implementation details.
+Repository-level guidance stays high level here; concrete Rust API details live in `packages/core-rs/README.md`, and npm/browser usage lives in `packages/npm-core-rs/README.md`.
 
 Recommended first flow:
 
@@ -178,36 +183,33 @@ let docx = generate_docx(
 fs::write("output.docx", docx)?;
 ```
 
-Current options:
-
-- `title: Option<String>`
-- `author: Option<String>`
-- `strict_mode: bool`
-- `style: HwpxStyleOptions` on `HwpxOptions` only
-
 Notes:
 
 - `generate_docx` returns a deterministic `.docx` archive as `Vec<u8>`
+- `analyze_markdown`, `generate_docx_with_report`, and `generate_hwpx_with_report` surface strict/compat compatibility issues without widening the core generation API
 - `generate_hwpx` targets the approved HWPX baseline reproduced by the committed golden fixtures
 - `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
 - Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
-- internal modules such as parser/model/generator helpers are not part of the public contract
+- Internal modules such as parser/model/generator helpers are not part of the public contract
 
 ## HWPX Supported Today
 
 The current HWPX path is narrower than the DOCX rich slice.
 
-- approved baseline: `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`
-- approved list baseline: `list-basic`, `list-nested-depth-2`
-- approved style baseline: `style-typography`, `style-centered-layout`, `style-brand-color`
-- supported content today:
-  - paragraphs
-  - headings
-  - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
-  - document-level HWPX style overrides
-- not yet part of the approved HWPX baseline:
+- approved fixture details: see `packages/core-rs/README.md` and `packages/core-rs/src/generators/hwpx/docs/README.md`
+- strict-supported today:
+  - paragraphs and headings
+  - blockquotes
+  - visible-text emphasis/strong/code/link rendering
+  - unordered lists up to depth 2
   - tables
+  - document-level HWPX style overrides
+- compat-only semantic support:
+  - ordered lists up to depth 2
+- compat degraded fallback:
   - images
+  - unsupported rich blocks such as code blocks and thematic breaks
+  - deep nested lists
 
 Example HWPX generation:
 
@@ -244,8 +246,8 @@ The repository also contains an npm package at `packages/npm-core-rs/`.
 
 - package name: `@docxly/core-rs`
 - runtime target: Node + Browser
-- public npm API: `generateDocx(markdown, options) -> Promise<Uint8Array>`
-- HWPX is intentionally not exposed in npm v0.x even though the Rust crate now implements the HWPX core subset
+- public npm APIs: `generateDocx`, `generateHwpx`, `analyzeMarkdown`, `generateDocxWithReport`, `generateHwpxWithReport`
+- HWPX is exposed as an experimental API in npm, with support differing between strict and compat mode
 
 ## Rust Crate Status
 
@@ -282,6 +284,7 @@ npm run test:web
 npm run demo
 npm run build:pages
 npm run test:all
+npm run changeset:add
 ```
 
 Live demo URL:
@@ -295,6 +298,14 @@ What each command does:
 - `demo`: builds the Pages artifact and serves the browser demo locally
 - `build:pages`: creates the static GitHub Pages artifact at `packages/npm-core-rs/site-dist`
 - `test:all`: runs Rust lint, Rust tests, and web smoke tests from one root entrypoint
+- `changeset:add`: creates a release note entry that feeds the automated npm version PR workflow
+
+## Release Flow
+
+- Add a changeset for npm-facing changes with `npm run changeset:add`
+- When that changeset lands on `main`, the `Version Packages` workflow opens or updates a version PR
+- That PR updates `packages/npm-core-rs/package.json`, syncs `packages/core-rs/Cargo.toml`, and refreshes `packages/npm-core-rs/package-lock.json`
+- Publishing still happens from the existing tag-based `Release` workflow when a matching `v*.*.*` tag is pushed
 
 ## Running Tests
 
@@ -359,7 +370,7 @@ hash.txt
 - `packages/core-rs/src/generators/hwpx/docs/schema-md/index.md`
 - `packages/core-rs/src/generators/hwpx/reference/paragraph-only`
 
-These files are the repository-level reference corpus for HWPX work. They combine curated implementation notes, Markdown conversions of Hancom reference material, and the local approved/reference fixtures used to keep the package contract stable.
+These files are contributor-facing HWPX references. They combine curated implementation notes, Markdown conversions of Hancom reference material, and the local approved/reference fixtures used to keep the package contract stable.
 
 ## Development Notes
 

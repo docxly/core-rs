@@ -2,9 +2,9 @@ use crate::error::CoreRsError;
 use crate::models::block::{Block, ListBlock, ListItem, TableAlignment, TableBlock};
 use crate::models::inline::Inline;
 
-use super::{ParagraphRenderOptions, RenderContext, heading_style_id};
-use super::text::{has_quote_border, render_text_paragraph};
 use super::super::{RunStyle, inline::render_inlines};
+use super::text::{has_quote_border, render_text_paragraph};
+use super::{ParagraphRenderOptions, RenderContext, heading_style_id};
 use crate::generators::docx::xml_builder;
 
 pub(super) fn render_list(
@@ -20,7 +20,7 @@ pub(super) fn render_list(
         Option<&str>,
         &str,
     ) -> Result<String, CoreRsError>
-        + Copy,
+    + Copy,
 ) -> Result<String, CoreRsError> {
     let mut xml = String::new();
     for (index, item) in list.items.iter().enumerate() {
@@ -56,7 +56,7 @@ fn render_list_item(
         Option<&str>,
         &str,
     ) -> Result<String, CoreRsError>
-        + Copy,
+    + Copy,
 ) -> Result<String, CoreRsError> {
     let mut xml = String::new();
     let mut prefix_consumed = false;
@@ -82,9 +82,7 @@ fn render_list_item(
                 let style_id = heading_style_id(*level);
                 let extra = format!(
                     "<w:pStyle w:val=\"{}\"/><w:ind w:left=\"{}\" w:hanging=\"360\"/>{}",
-                    style_id,
-                    left_indent,
-                    extra_paragraph_properties
+                    style_id, left_indent, extra_paragraph_properties
                 );
                 xml.push_str(&render_text_paragraph(
                     content,
@@ -142,9 +140,19 @@ pub(super) fn render_table(
     }
 
     let mut table_xml_rows = String::new();
-    table_xml_rows.push_str(&render_table_row(&table.headers, &table.aligns, true, context)?);
+    table_xml_rows.push_str(&render_table_row(
+        &table.headers,
+        &table.aligns,
+        true,
+        context,
+    )?);
     for row in &table.rows {
-        table_xml_rows.push_str(&render_table_row(&row.cells, &table.aligns, false, context)?);
+        table_xml_rows.push_str(&render_table_row(
+            &row.cells,
+            &table.aligns,
+            false,
+            context,
+        )?);
     }
 
     let grid = "<w:gridCol w:w=\"2400\"/>".repeat(table.aligns.len().max(table.headers.len()));
@@ -158,7 +166,10 @@ pub(super) fn render_table(
         "<w:tblW w:w=\"0\" w:type=\"auto\"/><w:tblBorders><w:top w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"A0A0A0\"/>{left_border}<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"A0A0A0\"/><w:right w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"A0A0A0\"/><w:insideH w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"D0D0D0\"/><w:insideV w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"D0D0D0\"/></w:tblBorders>",
     );
     if left_indent > 0 {
-        table_properties.push_str(&format!("<w:tblInd w:w=\"{}\" w:type=\"dxa\"/>", left_indent));
+        table_properties.push_str(&format!(
+            "<w:tblInd w:w=\"{}\" w:type=\"dxa\"/>",
+            left_indent
+        ));
     }
 
     xml.push_str(&format!(
@@ -199,7 +210,10 @@ fn render_table_row(
         } else {
             ""
         };
-        xml.push_str(&format!("<w:tc><w:tcPr>{}</w:tcPr>{}</w:tc>", cell_props, paragraph));
+        xml.push_str(&format!(
+            "<w:tc><w:tcPr>{}</w:tcPr>{}</w:tc>",
+            cell_props, paragraph
+        ));
     }
     Ok(format!("<w:tr>{}</w:tr>", xml))
 }
@@ -211,7 +225,10 @@ fn render_list_marker_paragraph(
 ) -> String {
     let mut properties = String::new();
     if left_indent > 0 {
-        properties.push_str(&format!("<w:ind w:left=\"{}\" w:hanging=\"360\"/>", left_indent));
+        properties.push_str(&format!(
+            "<w:ind w:left=\"{}\" w:hanging=\"360\"/>",
+            left_indent
+        ));
     }
     properties.push_str(extra_paragraph_properties);
     let marker = format!("{prefix}\u{200B}");

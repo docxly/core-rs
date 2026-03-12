@@ -24,7 +24,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="docxly browser demo preview showing DOCX and HWPX generation with a 105x faster benchmark proof."
+      content="docxly browser demo preview showing DOCX and HWPX generation with benchmark-backed proof."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="docxly | Browser DOCX and HWPX Demo" />
@@ -35,7 +35,7 @@
     <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image.png" />
     <meta
       name="twitter:image:alt"
-      content="docxly browser demo preview showing DOCX and HWPX generation with a 105x faster benchmark proof."
+      content="docxly browser demo preview showing DOCX and HWPX generation with benchmark-backed proof."
     />
     <link rel="canonical" href="https://docxly.github.io/core-rs/" />
     <link rel="alternate" hreflang="en" href="https://docxly.github.io/core-rs/" />
@@ -129,10 +129,9 @@
 
           <aside class="install-card">
             <p class="install-card-eyebrow">Install</p>
-            <h2>Start with the 105x proof line</h2>
+            <h2>Start with benchmark-backed proof</h2>
             <p id="install-proof" class="install-proof">
-              Install the embeddable DOCX engine that measured 105x faster than Pandoc on the
-              summary benchmark.
+              Install the embeddable DOCX engine backed by the shared benchmark dataset.
             </p>
             <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
             <div class="install-card-actions">
@@ -217,6 +216,9 @@
         </div>
 
         <p id="status" class="status">Ready to generate DOCX.</p>
+        <p id="compatibility-note" class="note" hidden>
+          Compatibility notes will appear here when strict mode fails or compat mode degrades output.
+        </p>
         <p class="note">
           This static demo uses a browser-generated <code>blob:</code> file handoff. The saved file
           name is preserved, but some browsers may still show a UUID-like source entry in file

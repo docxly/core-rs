@@ -106,5 +106,8 @@ pub fn hash_entries(entries: &BTreeMap<String, NormalizedEntry>) -> String {
 }
 
 fn is_text_entry(path: &str) -> bool {
-    path.ends_with(".xml") || path.ends_with(".rels") || path.ends_with(".txt") || path.ends_with(".md")
+    path.ends_with(".xml")
+        || path.ends_with(".rels")
+        || path.ends_with(".txt")
+        || path.ends_with(".md")
 }

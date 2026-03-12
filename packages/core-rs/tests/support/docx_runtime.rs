@@ -6,7 +6,10 @@ pub struct GeneratedDocx {
     entries: std::collections::BTreeMap<String, NormalizedEntry>,
 }
 
-fn generate_normalized(markdown: &str, options: DocxOptions) -> FixtureResult<std::collections::BTreeMap<String, NormalizedEntry>> {
+fn generate_normalized(
+    markdown: &str,
+    options: DocxOptions,
+) -> FixtureResult<std::collections::BTreeMap<String, NormalizedEntry>> {
     let bytes = generate_docx(markdown, options)?;
     normalized_entries(&bytes)
 }

@@ -79,7 +79,10 @@ fn walk_blocks<T>(blocks: &[Block], visitor: &mut impl FnMut(&Block) -> T) {
                     walk_blocks(&item.blocks, visitor);
                 }
             }
-            Block::Paragraph(_) | Block::Heading { .. } | Block::CodeBlock { .. } | Block::Table(_)
+            Block::Paragraph(_)
+            | Block::Heading { .. }
+            | Block::CodeBlock { .. }
+            | Block::Table(_)
             | Block::ThematicBreak => {}
         }
     }

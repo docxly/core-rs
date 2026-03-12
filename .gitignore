@@ -1,6 +1,8 @@
 .DS_Store
 .codex/
+.playwright-cli/
 node_modules/
+output/
 packages/npm-core-rs/dist/
 packages/npm-core-rs/node_modules/
 packages/npm-core-rs/site-dist/

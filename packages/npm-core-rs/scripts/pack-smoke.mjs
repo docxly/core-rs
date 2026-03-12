@@ -66,9 +66,11 @@ try {
     path.join(tempRoot, "run-smoke.mjs"),
     [
       'import { writeFile } from "node:fs/promises";',
-      'import { generateDocx } from "@docxly/core-rs";',
-      `const bytes = await generateDocx(${JSON.stringify(SMOKE_MARKDOWN)});`,
-      'await writeFile("output.docx", bytes);',
+      'import { analyzeMarkdown, generateDocxWithReport } from "@docxly/core-rs";',
+      `const report = await analyzeMarkdown("<b>raw</b>", "docx");`,
+      'if (report.fallbackCount !== 1) throw new Error("analyzeMarkdown contract changed");',
+      `const result = await generateDocxWithReport(${JSON.stringify(SMOKE_MARKDOWN)});`,
+      'await writeFile("output.docx", result.bytes);',
     ].join("\n"),
   );
 

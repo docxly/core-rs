@@ -2,10 +2,10 @@ use crate::error::CoreRsError;
 use crate::models::block::Block;
 use crate::models::inline::Inline;
 
-use super::{ParagraphRenderOptions, RenderContext, heading_style_id};
 use super::super::{
     QUOTE_BORDER_PROPERTIES, QUOTE_LEFT_BORDER_FRAGMENT, RunStyle, inline::render_inlines,
 };
+use super::{ParagraphRenderOptions, RenderContext, heading_style_id};
 use crate::generators::docx::xml_builder;
 
 pub(super) fn render_text_paragraph(
@@ -112,7 +112,10 @@ pub(super) fn render_code_block_with_properties(
         left_indent + 360,
         extra_properties
     );
-    Ok(xml_builder::paragraph_with_properties(&properties, &content))
+    Ok(xml_builder::paragraph_with_properties(
+        &properties,
+        &content,
+    ))
 }
 
 pub(super) fn render_thematic_break(
@@ -124,7 +127,10 @@ pub(super) fn render_thematic_break(
         .map(|value| xml_builder::text_run(value, RunStyle::default()))
         .unwrap_or_default();
     let properties = thematic_break_properties(left_indent, extra_paragraph_properties);
-    Ok(xml_builder::paragraph_with_properties(&properties, &content))
+    Ok(xml_builder::paragraph_with_properties(
+        &properties,
+        &content,
+    ))
 }
 
 pub(super) fn join_properties(first: &str, second: &str) -> String {

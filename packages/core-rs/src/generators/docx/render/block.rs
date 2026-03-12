@@ -8,7 +8,10 @@ use crate::models::block::Block;
 
 use super::{ParagraphRenderOptions, RenderContext, heading_style_id, walk_blocks};
 use list_table::{render_list, render_table};
-use text::{render_block_quote, render_code_block_with_properties, render_text_paragraph, render_thematic_break};
+use text::{
+    render_block_quote, render_code_block_with_properties, render_text_paragraph,
+    render_thematic_break,
+};
 
 pub(super) fn render_blocks(
     blocks: &[Block],
@@ -65,16 +68,14 @@ fn render_block_with_prefix(
                 context,
             )
         }
-        Block::BlockQuote(blocks) => {
-            render_block_quote(
-                blocks,
-                context,
-                left_indent,
-                prefix,
-                extra_paragraph_properties,
-                render_block_with_prefix,
-            )
-        }
+        Block::BlockQuote(blocks) => render_block_quote(
+            blocks,
+            context,
+            left_indent,
+            prefix,
+            extra_paragraph_properties,
+            render_block_with_prefix,
+        ),
         Block::CodeBlock { code, .. } => {
             render_code_block_with_properties(code, left_indent, prefix, extra_paragraph_properties)
         }
@@ -86,9 +87,15 @@ fn render_block_with_prefix(
             extra_paragraph_properties,
             render_block_with_prefix,
         ),
-        Block::Table(table) => {
-            render_table(table, context, left_indent, prefix, extra_paragraph_properties)
+        Block::Table(table) => render_table(
+            table,
+            context,
+            left_indent,
+            prefix,
+            extra_paragraph_properties,
+        ),
+        Block::ThematicBreak => {
+            render_thematic_break(left_indent, prefix, extra_paragraph_properties)
         }
-        Block::ThematicBreak => render_thematic_break(left_indent, prefix, extra_paragraph_properties),
     }
 }

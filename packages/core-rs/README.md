@@ -71,6 +71,9 @@ Current high-level API behavior:
 
 - `generate_docx(...) -> Result<Vec<u8>, CoreRsError>`
 - `generate_hwpx(...) -> Result<Vec<u8>, CoreRsError>`
+- `analyze_markdown(...) -> ConversionReport`
+- `generate_docx_with_report(...) -> Result<GenerationResult, GenerationFailure>`
+- `generate_hwpx_with_report(...) -> Result<GenerationResult, GenerationFailure>`
 - `generate_hwpx` targets the approved HWPX golden baseline committed under `tests/fixtures/hwpx/approved`
 - approved HWPX fixtures are the release gate; provisional/quarantined artifacts are not
 - `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
@@ -80,28 +83,22 @@ Current high-level API behavior:
 
 The current HWPX implementation is narrower than the DOCX rich slice.
 
-- approved compatibility fixtures:
-  - `core-paragraph`
-  - `blockquote-basic`
-  - `code-block-basic`
-  - `core-heading`
-  - `core-inline-style`
-  - `core-link-text`
-  - `core-mixed`
-  - `list-basic`
-  - `list-nested-depth-2`
-- approved style fixtures:
-  - `style-typography`
-  - `style-centered-layout`
-  - `style-brand-color`
-- supported content today:
-  - paragraphs
-  - headings
-  - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
-  - document-level style overrides through `HwpxStyleOptions`
-- not yet approved for HWPX:
-  - tables
-  - images
+| Capability | DOCX | HWPX strict | HWPX compat |
+| --- | --- | --- | --- |
+| Headings and paragraphs | Yes | Yes | Yes |
+| Blockquotes | Yes | Yes | Yes |
+| Inline emphasis, strong, code, links | Yes | Yes | Yes |
+| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
+| Unordered lists up to depth 2 | Yes | Yes | Yes |
+| Tables | Yes | Yes | Yes |
+| `data:` URI images | Yes | No | Degraded fallback to alt text |
+| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
+| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
+| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
+
+Approved HWPX fixtures are the release gate, but approved fixture status does not imply strict-mode
+support. For the current approved fixture inventory, use
+`tests/fixtures/hwpx/approved/README.md` and `src/generators/hwpx/docs/README.md`.
 
 Example:
 
@@ -139,7 +136,10 @@ This crate is configured with `cdylib` output for the npm wrapper build.
 - target package: `@docxly/core-rs`
 - wrapper location: `../npm-core-rs`
 - CI verifies native Rust checks and a `wasm32-unknown-unknown` build before npm publish
-- browser consumers should use the npm wrapper through a bundler that can emit the `.wasm` asset
+- npm version PRs sync this crate's `Cargo.toml` version from the npm package version on `main`
+- browser consumers should use the npm wrapper through either:
+  - a bundler/runtime that can emit the `.wasm` asset
+  - a static host that serves the emitted `.wasm` asset alongside the ESM wrapper
 
 ## Testing
 
@@ -184,8 +184,8 @@ Each fixture directory is self-contained:
 
 - DOCX rich: implemented
 - HWPX approved baseline: implemented
-- Only manually approved HWPX fixtures are treated as release-gate goldens; `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `table-basic`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
+- Only manually approved HWPX fixtures are treated as release-gate goldens; see `tests/fixtures/hwpx/approved/README.md` for the current inventory
 - HWPX `paragraph_align` currently targets body and heading paragraph styles; future paragraph categories may extend that scope
-- Public API: high-level generation functions and option/error types only
+- Public API: high-level generation functions, report types, and option/error types only
 
 For repository-level usage and roadmap details, see the root [`README.md`](../../README.md).
