@@ -1,0 +1,56 @@
+name: Bug report
+description: Report broken or regressed behavior in a documented docxly surface.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      description: Which public surface is affected?
+      options:
+        - npm DOCX API
+        - Rust DOCX API
+        - Rust HWPX API
+        - Demo / Docs
+        - Release / Packaging
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime
+      options:
+        - Node
+        - Browser
+        - Rust
+        - CI / GitHub Actions
+    validations:
+      required: true
+  - type: textarea
+    id: markdown_input
+    attributes:
+      label: Sample input
+      description: Paste the Markdown or fixture input that reproduces the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include package version, OS, runtime version, and any bundler details.
+    validations:
+      required: true

@@ -96,9 +96,38 @@ The current HWPX implementation is narrower than the DOCX rich slice.
 | Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
 | Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
 
-Approved HWPX fixtures are the release gate, but approved fixture status does not imply strict-mode
-support. For the current approved fixture inventory, use
-`tests/fixtures/hwpx/approved/README.md` and `src/generators/hwpx/docs/README.md`.
+- approved compatibility fixtures:
+  - `core-paragraph`
+  - `blockquote-basic`
+  - `code-block-basic`
+  - `core-heading`
+  - `core-inline-style`
+  - `core-link-text`
+  - `core-mixed`
+  - `list-basic`
+  - `list-nested-depth-2`
+  - `ordered-list-basic`
+  - `ordered-list-nested-depth-2`
+- approved table fixtures:
+  - `table-basic`
+  - `table-alignment`
+- approved style fixtures:
+  - `style-typography`
+  - `style-centered-layout`
+  - `style-brand-color`
+- supported content today:
+  - paragraphs
+  - headings
+  - blockquotes
+  - code blocks
+  - visible-text emphasis/strong/code/link rendering inside the approved compatibility contract
+  - ordered and unordered lists inside the approved list fixtures
+  - tables inside the approved table fixtures
+  - document-level style overrides through `HwpxStyleOptions`
+- ordered-list fixtures are approved compatibility fixtures rather than strict-mode guarantees
+- not yet approved for HWPX:
+  - images
+  - broader table coverage beyond the approved table fixtures
 
 Example:
 
@@ -184,7 +213,7 @@ Each fixture directory is self-contained:
 
 - DOCX rich: implemented
 - HWPX approved baseline: implemented
-- Only manually approved HWPX fixtures are treated as release-gate goldens; see `tests/fixtures/hwpx/approved/README.md` for the current inventory
+- Only manually approved HWPX fixtures are treated as release-gate goldens; `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `ordered-list-basic`, `ordered-list-nested-depth-2`, `table-basic`, `table-alignment`, `style-typography`, `style-centered-layout`, and `style-brand-color` are the current approved baselines
 - HWPX `paragraph_align` currently targets body and heading paragraph styles; future paragraph categories may extend that scope
 - Public API: high-level generation functions, report types, and option/error types only
 

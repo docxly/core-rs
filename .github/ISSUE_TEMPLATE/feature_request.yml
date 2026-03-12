@@ -1,0 +1,42 @@
+name: Feature request
+description: Propose a focused improvement to a docxly public surface.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: Request type
+      options:
+        - New document capability
+        - New runtime / packaging support
+        - Public API addition
+        - Docs / examples
+        - Release / distribution
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the real integration problem, not only the proposed solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: Contract impact
+      description: Explain whether this changes DOCX, HWPX, npm, Rust, or docs behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
