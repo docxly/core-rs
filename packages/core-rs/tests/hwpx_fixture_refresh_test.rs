@@ -161,15 +161,15 @@ fn cli_prints_equivalent_status_for_matching_generated_output() {
 
     assert!(output.status.success());
     let stdout = String::from_utf8(output.stdout).unwrap();
+    let golden_path = fixture_root().join("core-paragraph/golden.hwpx");
+    let generated_path = generated_output_root("core-paragraph");
     assert!(stdout.contains("📦 fixture: core-paragraph"));
-    assert!(stdout.contains(
-        "golden: /Users/limchaesung/Github/docxly/core-rs/packages/core-rs/tests/fixtures/hwpx/approved/core-paragraph/golden.hwpx"
-    ));
-    assert!(
-        stdout.contains(
-            "compare: ✅ /tmp/hwpx-generator-outputs/core-paragraph/generated.hwpx equivalent /Users/limchaesung/Github/docxly/core-rs/packages/core-rs/tests/fixtures/hwpx/approved/core-paragraph/golden.hwpx"
-        )
-    );
+    assert!(stdout.contains(&format!("golden: {}", golden_path.display())));
+    assert!(stdout.contains(&format!(
+        "compare: ✅ {} equivalent {}",
+        generated_path.display(),
+        golden_path.display()
+    )));
 }
 
 #[test]
