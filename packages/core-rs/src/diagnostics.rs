@@ -20,10 +20,10 @@ const HWPX_UNSUPPORTED_RICH_BLOCK_FEATURE: &str = "HWPX unsupported rich block";
 
 pub(crate) fn analyze_markdown_impl(markdown: &str, target: ConversionTarget) -> ConversionReport {
     let mut issues = collect_parser_issues(markdown);
-    if matches!(target, ConversionTarget::Hwpx) {
-        if let Ok(document) = MarkdownParser::new(false).parse(markdown) {
-            collect_hwpx_issues_from_document(&document, &mut issues);
-        }
+    if let (ConversionTarget::Hwpx, Ok(document)) =
+        (target, MarkdownParser::new(false).parse(markdown))
+    {
+        collect_hwpx_issues_from_document(&document, &mut issues);
     }
     ConversionReport::from_issues(issues)
 }

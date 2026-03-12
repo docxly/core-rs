@@ -18,6 +18,7 @@ const STYLE_BRAND_COLOR_SECTION_TEMPLATE: &str = include_str!(
 const STYLE_BRAND_COLOR_PREVIEW_TEXT: &str = include_str!(
     "../../../../tests/fixtures/hwpx/approved/style-brand-color/expected/Preview/PrvText.txt"
 );
+const CORE_PARAGRAPH_FIRST_ID: u64 = 2_757_524_817;
 
 #[derive(Clone)]
 enum CompatParagraphKind {
@@ -194,7 +195,7 @@ fn collect_paragraphs(
                         unreachable!("checked above");
                     };
                     Ok(CompatParagraph {
-                        id: if index == 0 { 2_757_524_817 } else { 0 },
+                        id: CORE_PARAGRAPH_FIRST_ID + index as u64,
                         para_pr: 0,
                         style_id: 0,
                         default_char_pr: 5,
@@ -210,7 +211,7 @@ fn collect_paragraphs(
 
             if paragraphs.len() > 1 {
                 paragraphs.push(CompatParagraph {
-                    id: 0,
+                    id: CORE_PARAGRAPH_FIRST_ID + paragraphs.len() as u64,
                     para_pr: 0,
                     style_id: 0,
                     default_char_pr: 5,
@@ -711,15 +712,15 @@ fn push_text_run(runs: &mut Vec<CompatRun>, char_pr: u32, text: String) {
 }
 
 fn push_fragments(runs: &mut Vec<CompatRun>, char_pr: u32, fragments: Vec<RunFragment>) {
-    if let Some(CompatRun::Fragments {
-        char_pr: last_char_pr,
-        fragments: last_fragments,
-    }) = runs.last_mut()
-    {
-        if *last_char_pr == char_pr {
+    match runs.last_mut() {
+        Some(CompatRun::Fragments {
+            char_pr: last_char_pr,
+            fragments: last_fragments,
+        }) if *last_char_pr == char_pr => {
             last_fragments.extend(fragments);
             return;
         }
+        _ => {}
     }
     runs.push(CompatRun::Fragments { char_pr, fragments });
 }

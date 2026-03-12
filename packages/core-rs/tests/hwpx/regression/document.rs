@@ -305,11 +305,24 @@ fn plain_multi_paragraph_profile_does_not_fall_back_to_fixture_metadata() {
     let content_hpf = generated.content_hpf().unwrap();
     let version = generated.text_entry("version.xml").unwrap();
     let settings = generated.text_entry("settings.xml").unwrap();
+    let section = generated.section_xml().unwrap();
+    let doc = XmlDocument::parse(section).unwrap();
+    let paragraph_ids = doc
+        .descendants()
+        .filter(|node| node.is_element() && node.tag_name().name() == "p")
+        .filter_map(|node| node.attribute("id"))
+        .collect::<Vec<_>>();
+    let unique_ids = paragraph_ids
+        .iter()
+        .copied()
+        .collect::<std::collections::BTreeSet<_>>();
 
     assert!(content_hpf.contains("<opf:title>Runtime Title</opf:title>"));
     assert!(version.contains("version=\"1.0\""));
     assert!(settings.contains("paraIDRef=\"2\""));
     assert!(settings.contains("pos=\"0\""));
+    assert_eq!(paragraph_ids.len(), 3);
+    assert_eq!(unique_ids.len(), paragraph_ids.len());
 }
 
 #[test]

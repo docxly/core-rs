@@ -349,17 +349,18 @@ fn collect_inline_runs(
 fn merge_adjacent_runs(runs: Vec<RunSpec>) -> Vec<RunSpec> {
     let mut merged = Vec::new();
     for run in runs {
-        if let Some(RunSpec::Text {
-            char_pr: last_char_pr,
-            text: last_text,
-        }) = merged.last_mut()
-        {
-            if let RunSpec::Text { char_pr, text } = &run {
-                if *last_char_pr == *char_pr {
-                    last_text.push_str(text);
-                    continue;
-                }
+        match (merged.last_mut(), &run) {
+            (
+                Some(RunSpec::Text {
+                    char_pr: last_char_pr,
+                    text: last_text,
+                }),
+                RunSpec::Text { char_pr, text },
+            ) if *last_char_pr == *char_pr => {
+                last_text.push_str(text);
+                continue;
             }
+            _ => {}
         }
         merged.push(run);
     }
