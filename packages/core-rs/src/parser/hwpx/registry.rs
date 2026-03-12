@@ -222,14 +222,15 @@ fn apply_quote_contracts(
     }
 
     for definition in para_definitions {
-        if definition.border_fill_id_ref == Some(3)
-            && definition.heading == HeadingType::None
-            && definition.left_margin.unwrap_or(0) >= 2_000
+        if definition.border_fill_id_ref != Some(3)
+            || definition.heading != HeadingType::None
+            || definition.left_margin.unwrap_or(0) < 2_000
         {
-            if let Some(contract) = paragraphs.get_mut(&definition.id) {
-                contract.quote_depth = 1;
-                contract.legacy_quote = true;
-            }
+            continue;
+        }
+        if let Some(contract) = paragraphs.get_mut(&definition.id) {
+            contract.quote_depth = 1;
+            contract.legacy_quote = true;
         }
     }
 
