@@ -6,6 +6,8 @@ pub enum CoreRsError {
     UnsupportedFeature(String),
     #[error("invalid markdown: {0}")]
     InvalidMarkdown(String),
+    #[error("invalid HWPX: {0}")]
+    InvalidHwpx(String),
     #[error("invalid option: {0}")]
     InvalidOption(String),
     #[error("zip packaging failed: {0}")]

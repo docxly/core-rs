@@ -343,7 +343,8 @@ fn legacy_report_like_documents_keep_hyperlinks_and_viewer_reflow_contract() {
         "<hp:stringParam name=\"Path\">https://docxly.github.io/core-rs/</hp:stringParam>"
     ));
     assert!(
-        section.contains("<hp:stringParam name=\"Path\">https://example.com/guide</hp:stringParam>")
+        section
+            .contains("<hp:stringParam name=\"Path\">https://example.com/guide</hp:stringParam>")
     );
     assert!(section.contains("<hp:t>저장소</hp:t>"));
     assert!(section.contains("<hp:t>데모</hp:t>"));

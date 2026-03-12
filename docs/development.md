@@ -61,6 +61,12 @@ Run tests for the crate only:
 cargo test -p core-rs
 ```
 
+Run only the internal HWPX parser tests:
+
+```bash
+cargo test -p core-rs parser::hwpx
+```
+
 Run a single integration test target:
 
 ```bash
@@ -72,6 +78,18 @@ Run strict lint checks for the crate:
 ```bash
 cargo clippy -p core-rs --all-targets -- -D warnings
 ```
+
+Inspect an HWPX archive from the repository tooling path:
+
+```bash
+cargo run -p core-rs --bin decode_hwpx -- --parse path/to/sample.hwpx
+```
+
+Useful flags:
+
+- `--help`: print CLI usage
+- `--parse`: print the internal semantic dump instead of raw XML console output
+- `--out <directory>`: extract the package to disk for inspection
 
 ## Test Strategy
 
@@ -104,11 +122,19 @@ hash.txt
 
 `golden.docx` is a read-only baseline. There is no general-purpose command in the normal workflow that rewrites approved golden fixtures.
 
+HWPX adds a second repository-level strategy on top of the golden generation checks:
+
+- approved HWPX fixtures are release-gate goldens
+- the internal parser reverse-parses approved `golden.hwpx` files back into the internal `Document` model
+- parser tests use fixture-specific expected documents instead of relying on the Markdown parser as a runtime oracle
+- malformed archives and unsupported HWPX structures are expected to fail fast
+
 ## Development Notes
 
 - Keep README content and Git commit messages in English.
 - Prefer adding tests before implementation changes.
 - Keep archive output deterministic so fixture hashes remain stable.
 - Keep new public surface area small. High-level generation functions and option types are the supported API.
+- Keep repo-only debugging paths such as `decode_hwpx --parse` out of the stable public contract.
 - npm release is gated by a successful WASM build in CI.
 - GitHub Pages deploys the static demo from the mono repo using a dedicated Pages workflow.

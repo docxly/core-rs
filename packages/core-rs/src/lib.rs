@@ -104,6 +104,12 @@ fn error_issue(error: &CoreRsError) -> ConversionIssue {
             severity: IssueSeverity::Error,
             degraded: false,
         },
+        CoreRsError::InvalidHwpx(_) => ConversionIssue {
+            feature: "invalid HWPX".to_string(),
+            message: error.to_string(),
+            severity: IssueSeverity::Error,
+            degraded: false,
+        },
         CoreRsError::InvalidOption(_) => ConversionIssue {
             feature: "invalid option".to_string(),
             message: error.to_string(),
@@ -143,6 +149,7 @@ fn issue_matches_error(issue: &ConversionIssue, error: &CoreRsError) -> bool {
             _ => false,
         },
         CoreRsError::InvalidMarkdown(_)
+        | CoreRsError::InvalidHwpx(_)
         | CoreRsError::InvalidOption(_)
         | CoreRsError::Zip(_)
         | CoreRsError::Io(_) => false,
@@ -276,6 +283,11 @@ pub fn generate_hwpx_with_report(
             error,
         }),
     }
+}
+
+#[doc(hidden)]
+pub fn debug_parse_hwpx(bytes: &[u8]) -> Result<String, CoreRsError> {
+    parser::hwpx::debug_dump(bytes)
 }
 
 fn normalize_hwpx_markdown(markdown: &str) -> String {
