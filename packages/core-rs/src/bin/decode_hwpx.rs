@@ -145,10 +145,10 @@ where
                 return Err(format!("unknown argument: {arg}\n\n{}", usage()));
             }
             _ => {
-                if input_path.is_some() {
+                if let Some(existing) = &input_path {
                     return Err(format!(
                         "multiple input paths provided: {} and {arg}\n\n{}",
-                        input_path.as_ref().expect("checked above").display(),
+                        existing.display(),
                         usage()
                     ));
                 }
