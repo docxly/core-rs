@@ -160,9 +160,6 @@ pub fn build_header_xml(
     profile: ResolvedHwpxCompatibilityProfile,
 ) -> String {
     match profile {
-        ResolvedHwpxCompatibilityProfile::CoreParagraphFixture => {
-            return CORE_PARAGRAPH_HEADER_TEMPLATE.to_string();
-        }
         ResolvedHwpxCompatibilityProfile::CoreParagraph => {
             return CORE_PARAGRAPH_HEADER_TEMPLATE.to_string();
         }

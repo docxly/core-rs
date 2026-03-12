@@ -16,8 +16,6 @@ use style::ResolvedHwpxStyle;
 use zip::CompressionMethod;
 
 const PREVIEW_IMAGE_BYTES: &[u8] = include_bytes!("assets/preview.png");
-const CORE_PARAGRAPH_PREVIEW_IMAGE_BYTES: &[u8] =
-    include_bytes!("assets/core-paragraph-preview.png");
 
 pub struct HwpxGenerator {
     options: HwpxOptions,
@@ -39,12 +37,6 @@ impl Generator for HwpxGenerator {
         let content_hpf = content_hpf::build_content_hpf(self.options.title.as_deref(), profile);
         let preview_text =
             section_xml::build_preview_text(document, self.options.strict_mode, profile, &style)?;
-        let preview_image_bytes = match profile {
-            profile::ResolvedHwpxCompatibilityProfile::CoreParagraphFixture => {
-                CORE_PARAGRAPH_PREVIEW_IMAGE_BYTES
-            }
-            _ => PREVIEW_IMAGE_BYTES,
-        };
 
         let entries = vec![
             ArchiveEntry::new_text("mimetype", package_xml::mimetype()),
@@ -73,7 +65,7 @@ impl Generator for HwpxGenerator {
                 package_xml::settings_xml(),
                 CompressionMethod::Deflated,
             ),
-            ArchiveEntry::new_bytes("Preview/PrvImage.png", preview_image_bytes),
+            ArchiveEntry::new_bytes("Preview/PrvImage.png", PREVIEW_IMAGE_BYTES),
             ArchiveEntry::new_text_with_compression(
                 "META-INF/container.rdf",
                 package_xml::container_rdf_xml(),

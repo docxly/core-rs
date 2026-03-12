@@ -3,8 +3,6 @@ use std::cell::Cell;
 use super::profile::ResolvedHwpxCompatibilityProfile;
 
 const SETTINGS_TEMPLATE: &str = include_str!("reference/paragraph-only/settings.xml");
-const CORE_PARAGRAPH_VERSION_TEMPLATE: &str =
-    include_str!("../../../tests/fixtures/hwpx/approved/core-paragraph/expected/version.xml");
 
 #[derive(Clone, Copy)]
 struct CaretPosition {
@@ -24,12 +22,8 @@ pub fn mimetype() -> &'static str {
 }
 
 pub fn version_xml(profile: ResolvedHwpxCompatibilityProfile) -> String {
-    match profile {
-        ResolvedHwpxCompatibilityProfile::CoreParagraphFixture => {
-            CORE_PARAGRAPH_VERSION_TEMPLATE.to_string()
-        }
-        _ => include_str!("reference/paragraph-only/version.xml").to_string(),
-    }
+    let _ = profile;
+    include_str!("reference/paragraph-only/version.xml").to_string()
 }
 
 pub fn settings_xml() -> String {

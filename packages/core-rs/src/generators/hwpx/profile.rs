@@ -7,7 +7,6 @@ use super::style::ResolvedHwpxStyle;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ResolvedHwpxCompatibilityProfile {
     LegacyDefault,
-    CoreParagraphFixture,
     CoreParagraph,
     CoreInlineStyle,
     CoreLinkText,
@@ -22,9 +21,6 @@ pub(crate) fn resolve_compatibility_profile(
     style: &ResolvedHwpxStyle,
 ) -> ResolvedHwpxCompatibilityProfile {
     if style.is_default() {
-        if is_core_paragraph_fixture(document) {
-            return ResolvedHwpxCompatibilityProfile::CoreParagraphFixture;
-        }
         if is_core_link_text(document) {
             return ResolvedHwpxCompatibilityProfile::CoreLinkText;
         }
@@ -55,17 +51,12 @@ pub(crate) fn resolve_compatibility_profile(
     ResolvedHwpxCompatibilityProfile::LegacyDefault
 }
 
-fn is_core_paragraph_fixture(document: &Document) -> bool {
-    matches!(
-        document.blocks.as_slice(),
-        [Block::Paragraph(first), Block::Paragraph(second)]
-            if plain_inline_text(first) == Some(CORE_PARAGRAPH_FIXTURE_FIRST)
-                && plain_inline_text(second) == Some(CORE_PARAGRAPH_FIXTURE_SECOND)
-    )
-}
-
 fn is_core_paragraph(document: &Document) -> bool {
-    matches!(document.blocks.as_slice(), [Block::Paragraph(inlines)] if is_plain_inline_slice(inlines))
+    !document.blocks.is_empty()
+        && document
+            .blocks
+            .iter()
+            .all(|block| matches!(block, Block::Paragraph(inlines) if is_plain_inline_slice(inlines)))
 }
 
 fn is_core_inline_style(document: &Document) -> bool {
@@ -157,13 +148,3 @@ fn contains_link(inlines: &[Inline]) -> bool {
         .iter()
         .any(|inline| matches!(inline, Inline::Link { .. }))
 }
-
-fn plain_inline_text(inlines: &[Inline]) -> Option<&str> {
-    match inlines {
-        [Inline::Text(text)] => Some(text.as_str()),
-        _ => None,
-    }
-}
-
-const CORE_PARAGRAPH_FIXTURE_FIRST: &str = "브라우저와 Rust 코어를 공유하는 기본 문단입니다. 브라우저와 Rust 코어를 공유하는 기본 문단입니다. 브라우저와 Rust 코어를 공유하는 기본 문단입니다.";
-const CORE_PARAGRAPH_FIXTURE_SECOND: &str = "This is Second Contents. This is Second Contents. This is Second Contents. This is Second Contents. This is Second Contents.";

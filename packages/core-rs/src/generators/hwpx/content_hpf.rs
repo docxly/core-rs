@@ -1,17 +1,9 @@
-use super::profile::ResolvedHwpxCompatibilityProfile;
 use crate::utils::xml_helper::escape_text;
 
-const CORE_PARAGRAPH_CONTENT_HPF_TEMPLATE: &str = include_str!(
-    "../../../tests/fixtures/hwpx/approved/core-paragraph/expected/Contents/content.hpf"
-);
-
-pub fn build_content_hpf(title: Option<&str>, profile: ResolvedHwpxCompatibilityProfile) -> String {
-    if profile == ResolvedHwpxCompatibilityProfile::CoreParagraphFixture
-        && title.unwrap_or("").trim().is_empty()
-    {
-        return CORE_PARAGRAPH_CONTENT_HPF_TEMPLATE.to_string();
-    }
-
+pub fn build_content_hpf(
+    title: Option<&str>,
+    _profile: super::profile::ResolvedHwpxCompatibilityProfile,
+) -> String {
     let title = match title.unwrap_or("").trim() {
         "" => "<opf:title/>".to_string(),
         value => format!("<opf:title>{}</opf:title>", escape_text(value)),

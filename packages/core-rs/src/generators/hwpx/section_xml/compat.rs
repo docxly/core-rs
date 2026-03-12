@@ -18,12 +18,6 @@ const STYLE_BRAND_COLOR_SECTION_TEMPLATE: &str = include_str!(
 const STYLE_BRAND_COLOR_PREVIEW_TEXT: &str = include_str!(
     "../../../../tests/fixtures/hwpx/approved/style-brand-color/expected/Preview/PrvText.txt"
 );
-const CORE_PARAGRAPH_SECTION_TEMPLATE: &str = include_str!(
-    "../../../../tests/fixtures/hwpx/approved/core-paragraph/expected/Contents/section0.xml"
-);
-const CORE_PARAGRAPH_PREVIEW_TEXT: &str = include_str!(
-    "../../../../tests/fixtures/hwpx/approved/core-paragraph/expected/Preview/PrvText.txt"
-);
 
 #[derive(Clone)]
 enum CompatParagraphKind {
@@ -93,10 +87,6 @@ pub(super) fn build_section_xml(
     profile: ResolvedHwpxCompatibilityProfile,
     style: &ResolvedHwpxStyle,
 ) -> Result<String, CoreRsError> {
-    if profile == ResolvedHwpxCompatibilityProfile::CoreParagraphFixture {
-        return Ok(CORE_PARAGRAPH_SECTION_TEMPLATE.to_string());
-    }
-
     if profile == ResolvedHwpxCompatibilityProfile::StyleBrandColor {
         return Ok(STYLE_BRAND_COLOR_SECTION_TEMPLATE.to_string());
     }
@@ -125,11 +115,6 @@ pub(super) fn build_preview_text(
     profile: ResolvedHwpxCompatibilityProfile,
     style: &ResolvedHwpxStyle,
 ) -> Result<String, CoreRsError> {
-    if profile == ResolvedHwpxCompatibilityProfile::CoreParagraphFixture {
-        set_settings_caret(2, 0);
-        return Ok(CORE_PARAGRAPH_PREVIEW_TEXT.to_string());
-    }
-
     if profile == ResolvedHwpxCompatibilityProfile::StyleBrandColor {
         set_settings_caret(2, 0);
         return Ok(STYLE_BRAND_COLOR_PREVIEW_TEXT.to_string());
@@ -144,8 +129,21 @@ pub(super) fn build_preview_text(
         .collect::<Vec<_>>();
 
     match profile {
-        ResolvedHwpxCompatibilityProfile::CoreParagraphFixture => set_settings_caret(2, 0),
-        ResolvedHwpxCompatibilityProfile::CoreParagraph => set_settings_caret_pos(45),
+        ResolvedHwpxCompatibilityProfile::CoreParagraph => {
+            let has_terminal_empty = paragraphs
+                .iter()
+                .any(|paragraph| matches!(paragraph.kind, CompatParagraphKind::TerminalEmpty));
+            if has_terminal_empty {
+                set_settings_caret(preview_lines.len(), 0);
+            } else {
+                set_settings_caret_pos(45);
+            }
+
+            let preview = preview_lines.join("\n");
+            if has_terminal_empty {
+                return Ok(format!("{preview}\n"));
+            }
+        }
         ResolvedHwpxCompatibilityProfile::CoreInlineStyle => set_settings_caret(0, 28),
         ResolvedHwpxCompatibilityProfile::CoreLinkText => set_settings_caret(1, 0),
         ResolvedHwpxCompatibilityProfile::CoreMixed => {
@@ -176,29 +174,53 @@ fn collect_paragraphs(
     style: &ResolvedHwpxStyle,
 ) -> Result<Vec<CompatParagraph>, CoreRsError> {
     match profile {
-        ResolvedHwpxCompatibilityProfile::CoreParagraphFixture => {
-            Err(CoreRsError::UnsupportedFeature(
-                "core-paragraph fixture uses exact compat templates".to_string(),
-            ))
-        }
         ResolvedHwpxCompatibilityProfile::CoreParagraph => {
-            let [Block::Paragraph(inlines)] = document.blocks.as_slice() else {
+            if !document
+                .blocks
+                .iter()
+                .all(|block| matches!(block, Block::Paragraph(_)))
+            {
                 return Err(CoreRsError::UnsupportedFeature(
                     "unexpected CoreParagraph shape".to_string(),
                 ));
-            };
-            Ok(vec![CompatParagraph {
-                id: 2_757_524_817,
-                para_pr: 0,
-                style_id: 0,
-                default_char_pr: 5,
-                kind: CompatParagraphKind::Normal,
-                runs: vec![CompatRun::Fragments {
-                    char_pr: 5,
-                    fragments: vec![RunFragment::Text(plain_text(inlines)?)],
-                }],
-                metric: body_metric(1000, 600, 0),
-            }])
+            }
+
+            let mut paragraphs = document
+                .blocks
+                .iter()
+                .enumerate()
+                .map(|(index, block)| {
+                    let Block::Paragraph(inlines) = block else {
+                        unreachable!("checked above");
+                    };
+                    Ok(CompatParagraph {
+                        id: if index == 0 { 2_757_524_817 } else { 0 },
+                        para_pr: 0,
+                        style_id: 0,
+                        default_char_pr: 5,
+                        kind: CompatParagraphKind::Normal,
+                        runs: vec![CompatRun::Fragments {
+                            char_pr: 5,
+                            fragments: vec![RunFragment::Text(plain_text(inlines)?)],
+                        }],
+                        metric: core_paragraph_metric(&plain_text(inlines)?),
+                    })
+                })
+                .collect::<Result<Vec<_>, CoreRsError>>()?;
+
+            if paragraphs.len() > 1 {
+                paragraphs.push(CompatParagraph {
+                    id: 0,
+                    para_pr: 0,
+                    style_id: 0,
+                    default_char_pr: 5,
+                    kind: CompatParagraphKind::TerminalEmpty,
+                    runs: vec![CompatRun::Empty { char_pr: 5 }],
+                    metric: body_metric(1000, 600, 0),
+                });
+            }
+
+            Ok(paragraphs)
         }
         ResolvedHwpxCompatibilityProfile::CoreInlineStyle => {
             let [Block::Paragraph(inlines)] = document.blocks.as_slice() else {
@@ -439,6 +461,42 @@ fn collect_paragraphs(
             "legacy profile must use the default section renderer".to_string(),
         )),
     }
+}
+
+fn core_paragraph_metric(text: &str) -> ParaMetric {
+    let wrap_positions = core_paragraph_wrap_positions(text);
+    let extra_lines = wrap_positions
+        .iter()
+        .enumerate()
+        .map(|(index, textpos)| ExtraLine {
+            textpos: *textpos,
+            vert_offset: 1_600 * (index as u32 + 1),
+        })
+        .collect::<Vec<_>>();
+
+    ParaMetric {
+        height: 1_000,
+        spacing: 600,
+        horzpos: 0,
+        horzsize: 42_520,
+        flags: 393_216,
+        next_gap: 1_600 * extra_lines.len() as u32,
+        extra_lines,
+    }
+}
+
+fn core_paragraph_wrap_positions(text: &str) -> Vec<u32> {
+    let max_chars = if text.is_ascii() { 83 } else { 69 };
+    let char_count = text.chars().count();
+    let mut positions = Vec::new();
+    let mut next = max_chars;
+
+    while next < char_count {
+        positions.push(next as u32);
+        next += max_chars;
+    }
+
+    positions
 }
 
 fn render_paragraph(paragraph: &CompatParagraph, is_first: bool, vertpos: u32) -> String {

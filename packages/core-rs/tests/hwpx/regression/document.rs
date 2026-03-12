@@ -291,6 +291,28 @@ fn legacy_list_items_omit_linesegarray_to_avoid_spacing_compression() {
 }
 
 #[test]
+fn plain_multi_paragraph_profile_does_not_fall_back_to_fixture_metadata() {
+    let markdown = "브라우저와 Rust 코어를 공유하는 기본 문단입니다. 브라우저와 Rust 코어를 공유하는 기본 문단입니다. 브라우저와 Rust 코어를 공유하는 기본 문단입니다.\n\nThis is Second Contents. This is Second Contents. This is Second Contents. This is Second Contents. This is Second Contents.";
+    let generated = generate(
+        markdown,
+        HwpxOptions {
+            title: Some("Runtime Title".to_string()),
+            ..HwpxOptions::default()
+        },
+    )
+    .unwrap();
+
+    let content_hpf = generated.content_hpf().unwrap();
+    let version = generated.text_entry("version.xml").unwrap();
+    let settings = generated.text_entry("settings.xml").unwrap();
+
+    assert!(content_hpf.contains("<opf:title>Runtime Title</opf:title>"));
+    assert!(version.contains("version=\"1.0\""));
+    assert!(settings.contains("paraIDRef=\"2\""));
+    assert!(settings.contains("pos=\"0\""));
+}
+
+#[test]
 fn legacy_report_like_documents_keep_hyperlinks_and_viewer_reflow_contract() {
     let markdown = "# Adoption Report\n\n\
 이 문서는 [저장소](https://github.com/docxly/core-rs)와 [데모](https://docxly.github.io/core-rs/)를 함께 안내합니다.\n\n\
