@@ -12,6 +12,18 @@
 - 최신 수치는 루트 README의 comparison block과 `packages/npm-core-rs/demo/comparison-data.json`을 기준으로 봅니다.
 - 이 문서에는 고정 숫자를 복제하지 않고, 어떤 환경에서 어떤 의미의 수치인지 해석만 남깁니다.
 
+재현 명령:
+
+```bash
+npm run benchmark:pandoc
+npm run benchmark:pandoc:check
+```
+
+관련 스크립트:
+
+- `packages/npm-core-rs/scripts/benchmark-pandoc.mjs`
+- `packages/npm-core-rs/scripts/benchmark-pandoc-check.mjs`
+
 측정 환경은 다음과 같습니다.
 
 - 환경: `darwin 25.2.0 / arm64`
@@ -28,6 +40,7 @@
 - steady median은 warm-up 이후 반복 생성 비용을 뜻합니다.
 - 이 수치는 브라우저 실측이 아니라 오프라인 Node 벤치마크 결과입니다.
 - HWPX 비교나 브라우저 런타임 수치로 일반화하면 안 됩니다.
+- 숫자만 보지 말고, 위 명령으로 현재 저장소 상태에서 다시 확인하는 것이 좋습니다.
 
 ## 언제 Pandoc이 더 적합한가
 

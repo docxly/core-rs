@@ -165,7 +165,7 @@
 
 기본 설치 근거 문구:
 
-- `Install the embeddable DOCX engine backed by the shared benchmark dataset.`
+- `공유 벤치마크 데이터셋으로 검증하는 임베디드 DOCX 엔진을 설치하세요.`
 
 금지:
 

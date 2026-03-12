@@ -2,13 +2,13 @@
 
 Language: [English](./README.md) · [한국어 문서](../../docs/ko/README.md)
 
-`@docxly/core-rs` is the npm package for the `docxly` Rust core, an embeddable document generation engine for app integration. Where Pandoc is a general-purpose converter, this package is designed to expose DOCX generation directly inside Node and browser-based runtimes, with current benchmark details maintained in the shared comparison dataset and README comparison block.
+`@docxly/core-rs` is the npm package for the `docxly` Rust core, an embeddable document generation engine for app integration. Where Pandoc is a general-purpose converter, this package is designed to expose DOCX generation directly inside Node and browser-based runtimes, while also shipping a narrower beta HWPX path from the same Rust core. The current offline Node benchmark shows an 80 ms cold start and a 2 ms steady median for docxly versus 284 ms cold and 210 ms steady for Pandoc on the summary corpus.
 
 ## Status
 
 - DOCX generation: supported
-- HWPX generation: experimental HWPX API
 - report APIs: recommended for user-generated Markdown
+- HWPX generation: available as a beta surface for the approved baseline
 - API style: async only
 
 ## Live Demo
@@ -66,6 +66,20 @@ const report = await analyzeMarkdown("<b>raw</b>", "docx");
 console.log(report.fallbackCount);
 ```
 
+Beta HWPX example:
+
+```js
+import { generateHwpx } from "@docxly/core-rs";
+
+const bytes = await generateHwpx("# Title\n\n본문 **강조**");
+```
+
+Current npm HWPX notes:
+
+- `generateHwpx` is beta and narrower than the DOCX path.
+- The public npm HWPX options currently expose `title`, `author`, and `strictMode` only.
+- Rust-only HWPX style overrides are not part of the npm public contract yet.
+
 Requirements for browser usage:
 
 - ESM-aware bundler/runtime or static host
@@ -105,7 +119,14 @@ export interface DocxOptions {
   strictMode?: boolean;
 }
 
+export interface HwpxOptions {
+  title?: string;
+  author?: string;
+  strictMode?: boolean;
+}
+
 export function generateDocx(markdown: string, options?: DocxOptions): Promise<Uint8Array>;
+export function generateHwpx(markdown: string, options?: HwpxOptions): Promise<Uint8Array>;
 ```
 
 ```ts

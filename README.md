@@ -17,6 +17,17 @@ Language: [English](./README.md) · [한국어](./docs/ko/README.md) · [Docs](.
 
 The project is developed with a TDD-first workflow. The current milestone implements the DOCX rich slice and an approved HWPX baseline backed by manually validated golden fixtures.
 
+## Who This Project Is For
+
+`docxly` is for product teams that need document generation inside an application, not as a separate CLI step.
+
+- backend teams generating DOCX files from Node services
+- browser products that need client-side document export
+- teams serving Korean market workflows that may need HWPX from the same Rust core
+- platform teams that need deterministic output and fixture-based regression checks
+
+`docxly` is not trying to replace Pandoc as a universal document conversion tool. It is a library-first engine for app-embedded generation.
+
 ## Install
 
 The fastest way to start using docxly today is the npm package:
@@ -25,12 +36,8 @@ The fastest way to start using docxly today is the npm package:
 npm install @docxly/core-rs
 ```
 
-The Rust crate is the source of truth in this repository and can be consumed from the workspace or as a path dependency:
-
-```toml
-[dependencies]
-core-rs = { path = "packages/core-rs" }
-```
+If you are evaluating `docxly` for the first time, start with the npm package and verify the DOCX path first.
+Rust consumers can use the workspace crate described in [packages/core-rs/README.md](./packages/core-rs/README.md).
 
 ## Quick Start
 
@@ -42,6 +49,25 @@ import { generateDocx } from "@docxly/core-rs";
 
 const bytes = await generateDocx("# Hello\n\nThis is **docxly**.");
 await writeFile("output.docx", bytes);
+```
+
+### Browser
+
+Use a bundler/runtime that can emit the `.wasm` asset.
+
+```js
+import { generateDocx } from "@docxly/core-rs";
+
+const bytes = await generateDocx("# Hello\n\nBrowser-local DOCX.");
+const blob = new Blob([bytes], {
+  type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+});
+const url = URL.createObjectURL(blob);
+const anchor = document.createElement("a");
+anchor.href = url;
+anchor.download = "docxly-browser.docx";
+anchor.click();
+URL.revokeObjectURL(url);
 ```
 
 ### Rust
@@ -63,13 +89,50 @@ fs::write("output.docx", docx)?;
 - Start with DOCX today and expand into HWPX from the same repository.
 - Ship deterministic outputs backed by fixture-driven tests and normalized archive checks.
 
+## Adoption Path
+
+Choose the entrypoint that matches your deployment target:
+
+- First evaluation or production DOCX path: start with `@docxly/core-rs`
+- Browser-local generation: use `@docxly/core-rs` with a bundler that emits `.wasm`
+- Rust integration inside this repository or a sibling workspace: use `packages/core-rs`
+- HWPX exploration: use the npm or Rust HWPX beta path today and stay inside the approved baseline for that surface
+
+If you need broad format conversion, document publishing pipelines, or `reference.docx` template workflows, use Pandoc instead.
+
+## Can You Use It Today?
+
+- npm DOCX: yes, this is the primary production recommendation
+- npm HWPX: yes, but treat it as beta and stay inside the approved baseline
+- Rust DOCX: yes, for repository or workspace consumers
+- Rust HWPX: yes, but treat it as beta and use the documented approved contract
+
+## Support Matrix
+
+For a fuller version, see [docs/support-matrix.md](./docs/support-matrix.md) and [docs/ko/support-matrix.md](./docs/ko/support-matrix.md).
+
+| Surface | Status | Contract |
+| --- | --- | --- |
+| npm DOCX API (`generateDocx`) | Stable in `0.x` | Public package API, smoke-tested in Node and browser packaging flows |
+| npm HWPX API (`generateHwpx`) | Beta | Shipped in the npm package, but limited to the current approved HWPX content baseline and default HWPX options |
+| Rust DOCX API (`generate_docx`) | Stable in repository scope | High-level API only; internal modules remain private |
+| Rust HWPX API (`generate_hwpx`) | Beta | Supported for the approved baseline and style contract documented in this README |
+| Internal parser / model / generator modules | Private | May change at any time without notice |
+
+Operational expectations:
+
+- DOCX is the primary production path today.
+- HWPX is available in both Rust and npm, but should be treated as beta and kept inside the approved fixture contract for each surface.
+- Provisional and quarantined HWPX fixtures are not release-gate guarantees.
+- Browser support assumes a modern bundler that can emit `.wasm` assets.
+
 ## Live Demo
 
 Try the browser demo on GitHub Pages:
 
 - https://docxly.github.io/core-rs/
 
-The live page uses the published WASM wrapper and downloads real `.docx` and `.hwpx` files directly in the browser.
+The live page uses the published WASM wrapper and downloads real DOCX output directly in the browser, with a beta HWPX path available for the current approved baseline.
 
 <!-- comparison:start -->
 
@@ -86,18 +149,14 @@ Use docxly when document generation must live inside a Node service, browser wor
 | Large | 83 ms | 192 ms | 4 ms | 193 ms | 53.92x |
 | Summary | 83 ms | 306 ms | 2 ms | 193 ms | 96.50x |
 
-| Capability | DOCX | HWPX strict | HWPX compat |
-| --- | --- | --- | --- |
-| Headings and paragraphs | Yes | Yes | Yes |
-| Inline emphasis, strong, code, links | Yes | Yes | Yes |
-| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
-| Unordered lists up to depth 2 | Yes | Yes | Yes |
-| Tables | Yes | Yes | Yes |
-| `data:` URI images | Yes | No | Degraded fallback to alt text |
-| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
-| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
-| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
-| HWPX API in npm | N/A | Experimental API | Experimental API |
+| Capability | docxly | Pandoc |
+| --- | --- | --- |
+| Embeddable in app | Yes, library-first for Node and browser bundlers | CLI-first with process invocation |
+| Browser-local generation | First-party browser package and WASM path | Possible through pandoc.wasm, not the primary npm workflow |
+| npm distribution | Published package | Not a first-party npm package |
+| HWPX generation | Beta support in npm and Rust, scoped to the approved baseline | Not supported |
+| Broad format conversion | Focused on DOCX and HWPX generation | Wide multi-format conversion |
+| DOCX reference-template workflow | Not a reference.docx workflow | Supported via reference.docx |
 
 Measured on darwin 25.2.0 / arm64 at 2026-03-11T08:19:00.589Z with Node v23.7.0 and Pandoc 3.9.
 
@@ -132,9 +191,10 @@ Measured on darwin 25.2.0 / arm64 at 2026-03-11T08:19:00.589Z with Node v23.7.0 
 - Implemented: fixture-driven integration tests with normalized hash comparison
 - Implemented: strict/fallback handling plus report APIs for unsupported HTML, images, task lists, math, and deep nested lists
 - Implemented: approved HWPX baseline backed by manually validated fixtures
-- Approved HWPX fixtures are the release gate; provisional and quarantined artifacts are not
-- Approved fixture status is separate from strict/compat support claims; ordered lists are compat-only, while tables are supported in strict mode
-- Package-specific details such as the current approved fixture set and Rust API notes live in `packages/core-rs/README.md` and `packages/core-rs/src/generators/hwpx/docs/README.md`
+- Current HWPX CI gates use these approved fixtures: `core-paragraph`, `blockquote-basic`, `code-block-basic`, `core-heading`, `core-inline-style`, `core-link-text`, `core-mixed`, `list-basic`, `list-nested-depth-2`, `ordered-list-basic`, `ordered-list-nested-depth-2`, `table-basic`, `table-alignment`, `style-typography`, `style-centered-layout`, and `style-brand-color`
+- Approved fixture status is separate from strict/compat support claims; ordered-list fixtures are approved compatibility fixtures, while tables are supported in strict mode
+- Provisional and quarantined HWPX artifacts are excluded from the release gate
+- HWPX style options currently apply to body paragraphs and heading paragraphs; future block types such as lists and tables may add more paragraph categories
 
 ## Supported Markdown Today
 
@@ -192,196 +252,47 @@ Notes:
 - Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
 - Internal modules such as parser/model/generator helpers are not part of the public contract
 
-## HWPX Supported Today
+## HWPX Guide
 
-The current HWPX path is narrower than the DOCX rich slice.
+The current HWPX path is narrower than the DOCX rich slice and remains beta on both Rust and npm surfaces.
 
-- approved fixture details: see `packages/core-rs/README.md` and `packages/core-rs/src/generators/hwpx/docs/README.md`
-- strict-supported today:
-  - paragraphs and headings
-  - blockquotes
-  - visible-text emphasis/strong/code/link rendering
-  - unordered lists up to depth 2
-  - tables
-  - document-level HWPX style overrides
-- compat-only semantic support:
-  - ordered lists up to depth 2
-- compat degraded fallback:
-  - images
-  - unsupported rich blocks such as code blocks and thematic breaks
-  - deep nested lists
+- Rust HWPX includes the approved compatibility, list, table, and style baselines.
+- Ordered-list fixtures are approved compatibility fixtures, but they remain compat-only rather than strict-mode guarantees.
+- npm HWPX uses the same core path, but exposes only `title`, `author`, and `strictMode`.
+- images and broader table coverage are still outside the approved contract.
 
-Example HWPX generation:
+Detailed HWPX status, examples, and reference material live in [docs/hwpx.md](./docs/hwpx.md).
 
-```rust
-use std::fs;
+## Public Roadmap
 
-use core_rs::{
-    HwpxOptions, HwpxParagraphAlign, HwpxStyleOptions, generate_hwpx,
-};
+For more detail, see [docs/roadmap.md](./docs/roadmap.md) and [docs/ko/roadmap.md](./docs/ko/roadmap.md).
 
-let hwpx = generate_hwpx(
-    "# Title\n\n본문 **강조** [링크](https://example.com)",
-    HwpxOptions {
-        style: HwpxStyleOptions {
-            body_font: Some("함초롬바탕".to_string()),
-            heading_font: Some("함초롬돋움".to_string()),
-            body_font_size: Some(1050),
-            heading_font_size: Some(1500),
-            text_color: Some("#222222".to_string()),
-            heading_color: Some("#AA2200".to_string()),
-            link_color: Some("#0055AA".to_string()),
-            paragraph_align: Some(HwpxParagraphAlign::Justify),
-        },
-        ..HwpxOptions::default()
-    },
-)?;
+Near-term priorities:
 
-fs::write("output.hwpx", hwpx)?;
-```
+1. Make the DOCX npm path easier to adopt with product-oriented examples for Node, browser, and service workflows.
+2. Expand HWPX from the current approved baseline into a clearer staged contract for images, broader table coverage, and richer layout coverage.
+3. Tighten repository onboarding with contribution docs, issue templates, and release expectations for external contributors.
+4. Clarify packaging strategy for Rust consumers, including whether and when `crates.io` publication should become part of the release flow.
+5. Collect real adoption feedback from integrators before widening the public API surface.
 
-## npm Package
+## Development
 
-The repository also contains an npm package at `packages/npm-core-rs/`.
-
-- package name: `@docxly/core-rs`
-- runtime target: Node + Browser
-- public npm APIs: `generateDocx`, `generateHwpx`, `analyzeMarkdown`, `generateDocxWithReport`, `generateHwpxWithReport`
-- HWPX is exposed as an experimental API in npm, with support differing between strict and compat mode
-
-## Rust Crate Status
-
-`packages/core-rs` is the Rust source of truth, but it is not published to `crates.io` in the
-current release flow.
-
-Use cases today:
-
-- use `@docxly/core-rs` from npm for Node and browser runtimes
-- use the Rust crate from this repository workspace or as a path dependency
-
-Current HWPX status in the Rust crate:
-
-```rust
-use core_rs::{HwpxOptions, generate_hwpx};
-
-let hwpx = generate_hwpx("# Hello\n\nThis is *core* HWPX.", HwpxOptions::default())?;
-assert!(!hwpx.is_empty());
-```
-
-## Mono Repo Commands
-
-Install workspace dependencies from the repository root:
-
-```bash
-npm install
-```
+Development, testing, and workspace-level package details now live in [docs/development.md](./docs/development.md).
 
 Common root commands:
 
 ```bash
-npm run build:web
-npm run test:web
-npm run demo
-npm run build:pages
+npm install
 npm run test:all
-npm run changeset:add
+npm run demo
 ```
 
-Live demo URL:
+## Community
 
-- https://docxly.github.io/core-rs/
-
-What each command does:
-
-- `build:web`: builds the npm WASM wrapper package
-- `test:web`: runs Node, browser bundle, and packed package smoke tests
-- `demo`: builds the Pages artifact and serves the browser demo locally
-- `build:pages`: creates the static GitHub Pages artifact at `packages/npm-core-rs/site-dist`
-- `test:all`: runs Rust lint, Rust tests, and web smoke tests from one root entrypoint
-- `changeset:add`: creates a release note entry that feeds the automated npm version PR workflow
-
-## Release Flow
-
-- Add a changeset for npm-facing changes with `npm run changeset:add`
-- When that changeset lands on `main`, the `Version Packages` workflow opens or updates a version PR
-- That PR updates `packages/npm-core-rs/package.json`, syncs `packages/core-rs/Cargo.toml`, and refreshes `packages/npm-core-rs/package-lock.json`
-- Publishing still happens from the existing tag-based `Release` workflow when a matching `v*.*.*` tag is pushed
-
-## Running Tests
-
-Run the Rust workspace tests from the repository root:
-
-```bash
-cargo test
-```
-
-Run tests for the crate only:
-
-```bash
-cargo test -p core-rs
-```
-
-Run a single integration test target:
-
-```bash
-cargo test -p core-rs --test docx_test
-```
-
-Run strict lint checks for the crate:
-
-```bash
-cargo clippy -p core-rs --all-targets -- -D warnings
-```
-
-## Test Strategy
-
-The project uses golden DOCX fixtures plus normalized hashing instead of comparing raw archive bytes.
-
-Test checks include:
-
-- the generated archive can be unzipped
-- required DOCX entries exist
-- XML files are well-formed
-- `golden.docx` normalizes to the committed `expected/` tree
-- normalized SHA-256 hash matches the committed `hash.txt`
-- generated output normalizes to the same contents as `golden.docx`
-
-Fixture files currently live under:
-
-```text
-packages/core-rs/tests/fixtures/
-```
-
-Each DOCX fixture directory contains:
-
-```text
-input.md
-fixture.toml
-golden.docx
-expected/
-hash.txt
-```
-
-`golden.docx` is a read-only baseline. There is no general-purpose command in the normal workflow that rewrites approved golden fixtures.
-
-## HWPX Reference Material
-
-- `packages/core-rs/src/generators/hwpx/docs/README.md`
-- `packages/core-rs/src/generators/hwpx/docs/schema-md/index.md`
-- `packages/core-rs/src/generators/hwpx/reference/paragraph-only`
-
-These files are contributor-facing HWPX references. They combine curated implementation notes, Markdown conversions of Hancom reference material, and the local approved/reference fixtures used to keep the package contract stable.
-
-## Development Notes
-
-- Keep README content and Git commit messages in English.
-- Prefer adding tests before implementation changes.
-- Keep archive output deterministic so fixture hashes remain stable.
-- Keep new public surface area small. High-level generation functions and option types are the supported API.
-- npm release is gated by a successful WASM build in CI.
-- GitHub Pages deploys the static demo from the mono repo using a dedicated Pages workflow.
-
-## Roadmap
-
-- extend HWPX support from the current core subset to rich blocks
-- extend conformance coverage with spec-based HWPX fixtures
+- Contribution guide: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](./SECURITY.md)
+- Roadmap: [docs/roadmap.md](./docs/roadmap.md)
+- Support matrix: [docs/support-matrix.md](./docs/support-matrix.md)
+- HWPX guide: [docs/hwpx.md](./docs/hwpx.md)
+- Development guide: [docs/development.md](./docs/development.md)
