@@ -1,6 +1,9 @@
 use crate::utils::xml_helper::escape_text;
 
-pub fn build_content_hpf(title: Option<&str>) -> String {
+pub fn build_content_hpf(
+    title: Option<&str>,
+    _profile: super::profile::ResolvedHwpxCompatibilityProfile,
+) -> String {
     let title = match title.unwrap_or("").trim() {
         "" => "<opf:title/>".to_string(),
         value => format!("<opf:title>{}</opf:title>", escape_text(value)),

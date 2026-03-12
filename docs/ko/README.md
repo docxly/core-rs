@@ -17,9 +17,9 @@ Pandoc이 다양한 형식 사이를 변환하는 범용 도구라면, `docxly`�
 
 ## 핵심 수치
 
-- 현재 요약 벤치마크 기준 `docxly`는 `80 ms cold / 2 ms steady`
-- 같은 코퍼스에서 Pandoc은 `284 ms cold / 210 ms steady`
-- 반복 실행 구간에서는 `105x` 빠른 수치가 측정됐습니다.
+- 최신 benchmark 수치는 루트 README의 comparison block과 npm comparison dataset을 기준으로 함께 갱신됩니다.
+- 고정 수치만 따로 인용하기보다, 같은 저장소에 커밋된 비교 데이터와 caveat를 함께 보는 것이 안전합니다.
+- 현재 benchmark는 DOCX generation only, offline Node 환경 기준입니다.
 
 ## 언제 docxly를 선택해야 하나
 

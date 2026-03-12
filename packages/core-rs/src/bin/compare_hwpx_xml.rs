@@ -1,27 +1,13 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;
-use std::fmt;
-use std::fs::File;
-use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use sha2::{Digest, Sha256};
-use zip::read::ZipArchive;
+#[path = "support/archive_fixture.rs"]
+mod archive_fixture;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum NormalizedEntry {
-    Text(String),
-    BinaryHash(String),
-}
-
-impl fmt::Display for NormalizedEntry {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Text(text) => write!(f, "text(len={})", text.len()),
-            Self::BinaryHash(hash) => write!(f, "binary(sha256={hash})"),
-        }
-    }
-}
+use archive_fixture::{
+    FixtureResult, NormalizedEntry, comparison_excludes_for_fixture, filtered_normalized_entries,
+};
 
 #[derive(Debug)]
 struct ArchiveSnapshot {
@@ -50,55 +36,18 @@ fn run() -> Result<(), String> {
     let left_path = PathBuf::from(left);
     let right_path = PathBuf::from(right);
 
-    let left = read_snapshot(&left_path)?;
-    let right = read_snapshot(&right_path)?;
+    let excludes =
+        comparison_excludes(&left_path, &right_path).map_err(|error| error.to_string())?;
+    let left = read_snapshot(&left_path, &excludes).map_err(|error| error.to_string())?;
+    let right = read_snapshot(&right_path, &excludes).map_err(|error| error.to_string())?;
 
     report(&left_path, &left, &right_path, &right);
     Ok(())
 }
 
-fn read_snapshot(path: &Path) -> Result<ArchiveSnapshot, String> {
-    let file =
-        File::open(path).map_err(|error| format!("failed to open {}: {error}", path.display()))?;
-    let mut archive = ZipArchive::new(file)
-        .map_err(|error| format!("failed to open {} as zip: {error}", path.display()))?;
-
-    let mut entries = BTreeMap::new();
-
-    for index in 0..archive.len() {
-        let mut entry = archive.by_index(index).map_err(|error| {
-            format!(
-                "failed to read zip entry {index} from {}: {error}",
-                path.display()
-            )
-        })?;
-        let name = entry.name().to_string();
-
-        let normalized = if is_text_entry(&name) {
-            let mut text = String::new();
-            entry.read_to_string(&mut text).map_err(|error| {
-                format!(
-                    "failed to read text entry {} from {}: {error}",
-                    name,
-                    path.display()
-                )
-            })?;
-            NormalizedEntry::Text(normalize_text(&text))
-        } else {
-            let mut bytes = Vec::new();
-            entry.read_to_end(&mut bytes).map_err(|error| {
-                format!(
-                    "failed to read binary entry {} from {}: {error}",
-                    name,
-                    path.display()
-                )
-            })?;
-            NormalizedEntry::BinaryHash(sha256_hex(&bytes))
-        };
-
-        entries.insert(name, normalized);
-    }
-
+fn read_snapshot(path: &Path, excluded_paths: &[String]) -> FixtureResult<ArchiveSnapshot> {
+    let bytes = std::fs::read(path)?;
+    let entries = filtered_normalized_entries(&bytes, is_text_entry, excluded_paths)?;
     Ok(ArchiveSnapshot { entries })
 }
 
@@ -160,8 +109,8 @@ fn report(left_path: &Path, left: &ArchiveSnapshot, right_path: &Path, right: &A
                     println!("    {summary}");
                 }
                 _ => {
-                    println!("    left:  {left_entry}");
-                    println!("    right: {right_entry}");
+                    println!("    left:  {}", describe_entry(left_entry));
+                    println!("    right: {}", describe_entry(right_entry));
                 }
             }
         }
@@ -184,20 +133,11 @@ fn is_text_entry(name: &str) -> bool {
         || name == "mimetype"
 }
 
-fn normalize_text(text: &str) -> String {
-    text.replace("\r\n", "\n")
-        .lines()
-        .map(str::trim_end)
-        .collect::<Vec<_>>()
-        .join("\n")
-        .trim()
-        .to_string()
-}
-
-fn sha256_hex(bytes: &[u8]) -> String {
-    let mut hasher = Sha256::new();
-    hasher.update(bytes);
-    format!("{:x}", hasher.finalize())
+fn comparison_excludes(left: &Path, right: &Path) -> FixtureResult<Vec<String>> {
+    if let Some(root) = fixture_root_from_path(left).or_else(|| fixture_root_from_path(right)) {
+        return comparison_excludes_for_fixture(&root);
+    }
+    Ok(Vec::new())
 }
 
 fn summarize_text_difference(left: &str, right: &str) -> String {
@@ -227,6 +167,27 @@ fn summarize_text_difference(left: &str, right: &str) -> String {
     )
 }
 
+fn describe_entry(entry: &NormalizedEntry) -> String {
+    match entry {
+        NormalizedEntry::Text(text) => format!("text(len={})", text.len()),
+        NormalizedEntry::BinaryHash(hash) => format!("binary(sha256={hash})"),
+    }
+}
+
 fn usage() -> String {
     "usage: cargo run -p core-rs --bin compare_hwpx_xml -- <left.hwpx> <right.hwpx>".to_string()
+}
+
+fn fixture_root_from_path(path: &Path) -> Option<PathBuf> {
+    let mut current = path.parent();
+    while let Some(dir) = current {
+        if dir.join("fixture.toml").is_file()
+            && dir.join("golden.hwpx").is_file()
+            && dir.join("input.md").is_file()
+        {
+            return Some(dir.to_path_buf());
+        }
+        current = dir.parent();
+    }
+    None
 }

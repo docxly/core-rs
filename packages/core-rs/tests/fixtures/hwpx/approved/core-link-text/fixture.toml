@@ -2,3 +2,5 @@ title = "HWPX Link Fixture"
 author = "Fixture Author"
 strict_mode = true
 determinism = false
+manual_verified = true
+verified_at = "2026-03-11"

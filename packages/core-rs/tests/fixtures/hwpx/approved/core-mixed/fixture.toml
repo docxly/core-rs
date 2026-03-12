@@ -2,3 +2,6 @@ title = "HWPX Mixed Fixture"
 author = "Fixture Author"
 strict_mode = true
 determinism = true
+comparison_excludes = ["Contents/content.hpf", "Preview/PrvImage.png", "version.xml"]
+manual_verified = true
+verified_at = "2026-03-11"

@@ -44,16 +44,22 @@ impl MarkdownParser {
                 rows: Vec::new(),
             })),
             Tag::TableHead => containers.push(Container::TableHead(Vec::new())),
-            Tag::TableRow => containers.push(Container::TableRow(TableRowBuilder { cells: Vec::new() })),
+            Tag::TableRow => {
+                containers.push(Container::TableRow(TableRowBuilder { cells: Vec::new() }))
+            }
             Tag::TableCell => containers.push(Container::TableCell(Vec::new())),
             Tag::Emphasis => inline_stack.push(InlineContext::Emphasis(Vec::new())),
             Tag::Strong => inline_stack.push(InlineContext::Strong(Vec::new())),
-            Tag::Link { dest_url, title, .. } => inline_stack.push(InlineContext::Link {
+            Tag::Link {
+                dest_url, title, ..
+            } => inline_stack.push(InlineContext::Link {
                 url: dest_url.into_string(),
                 title: empty_to_none(title.into_string()),
                 content: Vec::new(),
             }),
-            Tag::Image { dest_url, title, .. } => inline_stack.push(InlineContext::Image {
+            Tag::Image {
+                dest_url, title, ..
+            } => inline_stack.push(InlineContext::Image {
                 url: dest_url.into_string(),
                 title: empty_to_none(title.into_string()),
                 alt: Vec::new(),
@@ -119,7 +125,9 @@ impl MarkdownParser {
             }
             TagEnd::List(_) => {
                 let Some(Container::List(list)) = containers.pop() else {
-                    return Err(CoreRsError::InvalidMarkdown("list close without open".to_string()));
+                    return Err(CoreRsError::InvalidMarkdown(
+                        "list close without open".to_string(),
+                    ));
                 };
                 self.push_block(Block::List(list), blocks, containers)?;
             }
@@ -138,7 +146,9 @@ impl MarkdownParser {
             }
             TagEnd::Table => {
                 let Some(Container::Table(table)) = containers.pop() else {
-                    return Err(CoreRsError::InvalidMarkdown("table close without open".to_string()));
+                    return Err(CoreRsError::InvalidMarkdown(
+                        "table close without open".to_string(),
+                    ));
                 };
                 self.push_block(
                     Block::Table(TableBlock {
@@ -164,7 +174,9 @@ impl MarkdownParser {
                         "table row close without open".to_string(),
                     ));
                 };
-                current_table_mut(containers)?.rows.push(TableRow { cells: row.cells });
+                current_table_mut(containers)?
+                    .rows
+                    .push(TableRow { cells: row.cells });
             }
             TagEnd::TableCell => {
                 let Some(Container::TableCell(cell)) = containers.pop() else {
@@ -211,8 +223,15 @@ impl MarkdownParser {
                 )?;
             }
             TagEnd::Link => {
-                let Some(InlineContext::Link { url, title, content }) = inline_stack.pop() else {
-                    return Err(CoreRsError::InvalidMarkdown("link close without open".to_string()));
+                let Some(InlineContext::Link {
+                    url,
+                    title,
+                    content,
+                }) = inline_stack.pop()
+                else {
+                    return Err(CoreRsError::InvalidMarkdown(
+                        "link close without open".to_string(),
+                    ));
                 };
                 let _ = title;
                 match validate_link_url(&url) {
@@ -232,19 +251,16 @@ impl MarkdownParser {
                         } else {
                             fallback_text
                         };
-                        self.push_fallback_text(
-                            fallback_text,
-                            blocks,
-                            containers,
-                            inline_stack,
-                        )?;
+                        self.push_fallback_text(fallback_text, blocks, containers, inline_stack)?;
                     }
                     Err(error) => return Err(error),
                 }
             }
             TagEnd::Image => {
                 let Some(InlineContext::Image { url, title, alt }) = inline_stack.pop() else {
-                    return Err(CoreRsError::InvalidMarkdown("image close without open".to_string()));
+                    return Err(CoreRsError::InvalidMarkdown(
+                        "image close without open".to_string(),
+                    ));
                 };
                 let alt_text = flatten_inline_text(&alt);
                 match parse_data_uri(&url) {

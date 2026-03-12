@@ -10,7 +10,9 @@ fn list_item_starting_with_blockquote_does_not_create_empty_marker_paragraph() {
     let normalized = normalized_entries(&bytes).unwrap();
     let document_xml = text_entry(&normalized, "word/document.xml");
 
-    assert!(!document_xml.contains("<w:t xml:space=\"preserve\">• </w:t></w:r></w:p><w:p><w:pPr><w:ind w:left=\"1440\""));
+    assert!(!document_xml.contains(
+        "<w:t xml:space=\"preserve\">• </w:t></w:r></w:p><w:p><w:pPr><w:ind w:left=\"1440\""
+    ));
     assert!(document_xml.contains("<w:t xml:space=\"preserve\">• </w:t>"));
     assert!(document_xml.contains("<w:t>quote</w:t>"));
 }
@@ -22,7 +24,9 @@ fn list_item_starting_with_code_block_does_not_create_empty_marker_paragraph() {
     let normalized = normalized_entries(&bytes).unwrap();
     let document_xml = text_entry(&normalized, "word/document.xml");
 
-    assert!(!document_xml.contains("<w:t xml:space=\"preserve\">• </w:t></w:r></w:p><w:p><w:pPr><w:ind w:left=\"1080\""));
+    assert!(!document_xml.contains(
+        "<w:t xml:space=\"preserve\">• </w:t></w:r></w:p><w:p><w:pPr><w:ind w:left=\"1080\""
+    ));
     assert!(document_xml.contains("<w:t xml:space=\"preserve\">• </w:t>"));
     assert!(document_xml.contains("<w:t>code</w:t>"));
 }
@@ -51,7 +55,10 @@ fn blockquote_list_keeps_quote_border_on_list_items() {
     let normalized = normalized_entries(&bytes).unwrap();
     let document_xml = text_entry(&normalized, "word/document.xml");
 
-    assert!(document_xml.contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>"));
+    assert!(
+        document_xml
+            .contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>")
+    );
     assert!(document_xml.contains("quoted item"));
     assert!(
         document_xml.contains("xml:space=\"preserve\">◦ </w:t>")
@@ -66,7 +73,10 @@ fn blockquote_code_block_keeps_quote_border() {
     let normalized = normalized_entries(&bytes).unwrap();
     let document_xml = text_entry(&normalized, "word/document.xml");
 
-    assert!(document_xml.contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>"));
+    assert!(
+        document_xml
+            .contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>")
+    );
     assert!(document_xml.contains("<w:t>code</w:t>"));
 }
 
@@ -97,7 +107,10 @@ fn quoted_table_does_not_inject_hidden_anchor_paragraph() {
 
     assert!(document_xml.contains("<w:tbl>"));
     assert!(!document_xml.contains("\u{200B}"));
-    assert!(document_xml.contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>"));
+    assert!(
+        document_xml
+            .contains("<w:left w:val=\"single\" w:sz=\"8\" w:space=\"8\" w:color=\"B7B7B7\"/>")
+    );
 }
 
 #[test]
@@ -113,7 +126,11 @@ fn nested_blockquote_does_not_duplicate_quote_border_properties() {
 
 #[test]
 fn includes_heading_styles_up_to_level_six() {
-    let bytes = generate_docx("#### Four\n\n##### Five\n\n###### Six", DocxOptions::default()).unwrap();
+    let bytes = generate_docx(
+        "#### Four\n\n##### Five\n\n###### Six",
+        DocxOptions::default(),
+    )
+    .unwrap();
 
     let normalized = normalized_entries(&bytes).unwrap();
     let document_xml = text_entry(&normalized, "word/document.xml");

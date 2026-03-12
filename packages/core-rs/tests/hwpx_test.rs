@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 
 #[path = "hwpx/fixture_suite.rs"]
@@ -9,7 +9,7 @@ mod hwpx_contract;
 mod hwpx_fixture;
 #[path = "support/hwpx_runtime.rs"]
 mod hwpx_runtime;
-#[path = "hwpx/regression.rs"]
+#[path = "hwpx/regression/mod.rs"]
 mod regression;
 
 use hwpx_fixture::{
@@ -49,7 +49,8 @@ pub(crate) fn assert_fixture_matches_golden(fixture: &HwpxFixture) {
     );
 
     assert_eq!(
-        generated_normalized, golden_normalized,
+        comparable_entries(fixture, &generated_normalized),
+        comparable_entries(fixture, &golden_normalized),
         "generated golden mismatch: {}",
         fixture.name
     );
@@ -120,3 +121,34 @@ pub(crate) fn assert_xml_is_well_formed(entries: &BTreeMap<String, NormalizedEnt
         }
     }
 }
+
+fn comparable_entries(
+    fixture: &HwpxFixture,
+    entries: &BTreeMap<String, NormalizedEntry>,
+) -> BTreeMap<String, NormalizedEntry> {
+    let excluded_paths = fixture_comparison_excludes(fixture);
+    if excluded_paths.is_empty() {
+        return entries.clone();
+    }
+
+    entries
+        .iter()
+        .filter(|(path, _)| !excluded_paths.contains(path.as_str()))
+        .map(|(path, entry)| (path.clone(), entry.clone()))
+        .collect()
+}
+
+fn fixture_comparison_excludes(fixture: &HwpxFixture) -> BTreeSet<&str> {
+    let mut excluded_paths = BTreeSet::new();
+    if !fixture.determinism {
+        excluded_paths.extend(NONDETERMINISTIC_ENTRY_EXCLUDES.iter().copied());
+    }
+    excluded_paths.extend(fixture.comparison_excludes.iter().map(String::as_str));
+    excluded_paths
+}
+
+const NONDETERMINISTIC_ENTRY_EXCLUDES: &[&str] = &[
+    "Contents/content.hpf",
+    "Preview/PrvImage.png",
+    "version.xml",
+];

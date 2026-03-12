@@ -92,7 +92,10 @@ pub(crate) fn assert_xml_is_well_formed(entries: &BTreeMap<String, NormalizedEnt
     }
 }
 
-pub(crate) fn text_entry<'a>(entries: &'a BTreeMap<String, NormalizedEntry>, path: &str) -> &'a str {
+pub(crate) fn text_entry<'a>(
+    entries: &'a BTreeMap<String, NormalizedEntry>,
+    path: &str,
+) -> &'a str {
     match entries.get(path).unwrap() {
         NormalizedEntry::Text(text) => text,
         NormalizedEntry::BinaryHash(_) => panic!("entry {path} is binary"),

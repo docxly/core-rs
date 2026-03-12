@@ -12,7 +12,7 @@ pub(super) enum ImageFallbackKind {
 }
 
 #[derive(Debug)]
-pub(super) enum DataImageError {
+pub(crate) enum DataImageError {
     NotDataUrl,
     InvalidDataUri,
     NonBase64,
@@ -29,7 +29,7 @@ impl DataImageError {
         }
     }
 
-    pub(super) fn into_core_error(self) -> CoreRsError {
+    pub(crate) fn into_core_error(self) -> CoreRsError {
         match self {
             Self::NotDataUrl => CoreRsError::UnsupportedFeature("image".to_string()),
             Self::InvalidDataUri => {
@@ -64,7 +64,7 @@ pub(super) fn image_fallback_text(alt_text: &str, url: &str, kind: ImageFallback
     }
 }
 
-pub(super) fn parse_data_uri(url: &str) -> Result<(String, String, Vec<u8>), DataImageError> {
+pub(crate) fn parse_data_uri(url: &str) -> Result<(String, String, Vec<u8>), DataImageError> {
     let Some(rest) = url.strip_prefix("data:") else {
         return Err(DataImageError::NotDataUrl);
     };

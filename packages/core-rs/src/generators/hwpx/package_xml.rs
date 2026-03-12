@@ -1,5 +1,7 @@
 use std::cell::Cell;
 
+use super::profile::ResolvedHwpxCompatibilityProfile;
+
 const SETTINGS_TEMPLATE: &str = include_str!("reference/paragraph-only/settings.xml");
 
 #[derive(Clone, Copy)]
@@ -19,7 +21,8 @@ pub fn mimetype() -> &'static str {
     "application/hwp+zip"
 }
 
-pub fn version_xml() -> String {
+pub fn version_xml(profile: ResolvedHwpxCompatibilityProfile) -> String {
+    let _ = profile;
     include_str!("reference/paragraph-only/version.xml").to_string()
 }
 

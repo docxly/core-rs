@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const packageRoot = path.dirname(fileURLToPath(new URL("../package.json", import.meta.url)));
 const siteRoot = path.join(packageRoot, "site-dist");
-const port = Number(process.env.PORT || 4173);
+const preferredPort = Number(process.env.PORT || 4173);
 const host = process.env.HOST || "127.0.0.1";
 
 const contentTypes = new Map([
@@ -25,7 +25,7 @@ function resolveRequestPath(urlPath) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url || "/", `http://${host}:${port}`);
+  const url = new URL(req.url || "/", "http://localhost");
   const filePath = resolveRequestPath(url.pathname);
 
   if (!filePath.startsWith(siteRoot)) {
@@ -68,6 +68,21 @@ const server = http.createServer(async (req, res) => {
   createReadStream(filePath).pipe(res);
 });
 
-server.listen(port, host, () => {
+let retriedWithEphemeralPort = false;
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE" && !process.env.PORT && !retriedWithEphemeralPort) {
+    retriedWithEphemeralPort = true;
+    console.warn(`port ${preferredPort} is already in use, retrying with a random free port`);
+    server.listen(0, host);
+    return;
+  }
+
+  throw error;
+});
+
+server.listen(preferredPort, host, () => {
+  const address = server.address();
+  const port = typeof address === "object" && address ? address.port : preferredPort;
   console.log(`docxly demo server listening at http://${host}:${port}`);
 });

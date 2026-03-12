@@ -86,6 +86,7 @@ if (wasmBindgen.status !== 0) {
 
 await cp(path.resolve(packageRoot, "src/node.js"), path.resolve(distRoot, "node.js"));
 await cp(path.resolve(packageRoot, "src/browser.js"), path.resolve(distRoot, "browser.js"));
+await cp(path.resolve(packageRoot, "src/shared.js"), path.resolve(distRoot, "shared.js"));
 await cp(path.resolve(packageRoot, "src/index.d.ts"), path.resolve(distRoot, "index.d.ts"));
 
 console.log("Built npm package artifacts into packages/npm-core-rs/dist");

@@ -2,3 +2,5 @@ title = "HWPX Table Candidate"
 author = "Fixture Author"
 strict_mode = false
 determinism = false
+manual_verified = true
+verified_at = "2026-03-11"

@@ -1,4 +1,4 @@
-import { generateDocx, generateHwpx } from "./browser-client.js";
+import { generateDocxWithReport, generateHwpxWithReport } from "./browser-client.js";
 
 const locales = {
   en: {
@@ -14,7 +14,7 @@ This report explains why installation is justified when product teams need faste
 
 > Install docxly when document generation must live inside your application, your browser workflow, or your delivery pipeline without depending on an external conversion service.
 
-- **105x faster than Pandoc** on the current summary DOCX benchmark
+- Faster than Pandoc on the current summary DOCX benchmark
 - Browser-local generation with the same Rust core used in Node
 - HWPX and DOCX supported from the same product surface
 - Open-source package with [public repository](https://github.com/docxly/core-rs)
@@ -31,7 +31,7 @@ If your team generates proposals, reports, exports, or customer-facing files ins
 
 ### 2. Speed changes user experience
 
-The current benchmark headline is simple: docxly measured **105x faster** than Pandoc on the summary DOCX benchmark.
+The current benchmark headline is simple: docxly measured faster than Pandoc on the current summary DOCX benchmark.
 
 - Faster steady-state generation
 - Better fit for interactive product workflows
@@ -102,7 +102,10 @@ Install docxly if your team wants document generation to be a feature of the pro
     ready: (formatLabel) => `Ready to generate ${formatLabel}.`,
     success: (filename, elapsed, byteLength) =>
       `Generation started for ${filename} in ${elapsed} (${byteLength} bytes).`,
+    degraded: (filename, elapsed, byteLength) =>
+      `Generation started for ${filename} in ${elapsed} (${byteLength} bytes), but some unsupported Markdown fell back to visible text.`,
     failed: (elapsed, message) => `Generation failed in ${elapsed}: ${message}`,
+    compatibilityIssues: (issues) => `Compatibility notes: ${issues.join("; ")}`,
   },
   ko: {
     defaultTitle: "Docxly 도입 제안서",
@@ -117,7 +120,7 @@ docxly는 제품 안에서 바로 DOCX와 HWPX를 만들 수 있게 해주는 **
 
 > 문서 생성을 외부 변환 서버에 맡기지 않고 제품 안에서 직접 처리하려면 docxly가 더 잘 맞습니다.
 
-- 요약 DOCX 벤치마크에서 **Pandoc 대비 105배 빠른 반복 생성 성능**
+- 요약 DOCX 벤치마크에서 Pandoc보다 빠른 반복 생성 성능
 - Node와 브라우저에서 같은 Rust 코어 사용
 - 하나의 흐름으로 DOCX와 HWPX 모두 지원
 - [공개 저장소](https://github.com/docxly/core-rs)와 npm 패키지를 함께 제공
@@ -134,7 +137,7 @@ docxly는 제품 안에서 바로 DOCX와 HWPX를 만들 수 있게 해주는 **
 
 ### 2. 응답 속도가 사용자 경험을 바꿉니다
 
-요약 DOCX 벤치마크 기준으로 docxly는 Pandoc보다 **105배 빠르게** 측정됐습니다.
+요약 DOCX 벤치마크 기준으로 docxly는 Pandoc보다 더 빠르게 측정됐습니다.
 
 - 반복 실행 구간에서 더 빠른 응답 속도
 - 미리보기와 즉시 생성이 필요한 화면에 유리
@@ -205,7 +208,10 @@ npm install @docxly/core-rs
     ready: (formatLabel) => `${formatLabel}를 생성할 준비가 되었습니다.`,
     success: (filename, elapsed, byteLength) =>
       `${filename} 파일 생성을 ${elapsed} 만에 시작했습니다. (${byteLength} bytes)`,
+    degraded: (filename, elapsed, byteLength) =>
+      `${filename} 파일 생성을 ${elapsed} 만에 시작했습니다. (${byteLength} bytes) 일부 Markdown은 호환 가능한 보이는 텍스트로 낮춰 처리되었습니다.`,
     failed: (elapsed, message) => `${elapsed} 만에 파일 생성에 실패했습니다: ${message}`,
+    compatibilityIssues: (issues) => `호환성 메모: ${issues.join("; ")}`,
   },
 };
 
@@ -218,6 +224,7 @@ const formatTabs = Array.from(document.querySelectorAll(".format-tab"));
 const formatSummary = document.querySelector("#format-summary");
 const generateButtonLabel = document.querySelector("#generate-button-label");
 const status = document.querySelector("#status");
+const compatibilityNote = document.querySelector("#compatibility-note");
 const copyInstallButton = document.querySelector("#copy-install-button");
 const installCommand = document.querySelector("#install-command");
 const installProof = document.querySelector("#install-proof");
@@ -248,6 +255,11 @@ titleInput.value = ui.defaultTitle;
 function setStatus(message, type = "idle") {
   status.textContent = message;
   status.dataset.state = type;
+}
+
+function setCompatibilityNote(message = "") {
+  compatibilityNote.textContent = message;
+  compatibilityNote.hidden = !message;
 }
 
 function formatElapsedMs(startedAt) {
@@ -339,6 +351,20 @@ function triggerDownload(blob, filename) {
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 }
 
+function summarizeIssues(report) {
+  const features = [];
+  for (const issue of report?.issues ?? []) {
+    const label = issue.message || issue.feature;
+    if (!features.includes(label)) {
+      features.push(label);
+    }
+    if (features.length === 3) {
+      break;
+    }
+  }
+  return features;
+}
+
 function renderComparisonUnavailable() {
   comparisonHeadline.textContent = ui.comparison.unavailableHeadline;
   comparisonDocxlyMs.textContent = ui.comparison.unavailable;
@@ -391,29 +417,40 @@ for (const tab of formatTabs) {
     activeFormat = tab.dataset.format;
     updateFormatUi();
     setStatus(ui.ready(ui.formatLabels[activeFormat]));
+    setCompatibilityNote("");
   });
 }
 
 generateButton.addEventListener("click", async () => {
   generateButton.disabled = true;
   setStatus(ui.statusDescriptions[activeFormat], "pending");
+  setCompatibilityNote("");
   const startedAt = performance.now();
 
   try {
-    const generator = activeFormat === "hwpx" ? generateHwpx : generateDocx;
-    const bytes = await generator(markdownInput.value, {
+    const generator = activeFormat === "hwpx" ? generateHwpxWithReport : generateDocxWithReport;
+    const result = await generator(markdownInput.value, {
       title: titleInput.value || undefined,
       author: authorInput.value || undefined,
       strictMode: strictModeInput.checked,
     });
 
+    const bytes = result.bytes;
     const blob = new Blob([bytes], { type: mimeTypes[activeFormat] });
     const filename = buildFilename(titleInput.value || ui.defaultFilenames[activeFormat], activeFormat);
     triggerDownload(blob, filename);
-    setStatus(ui.success(filename, formatElapsedMs(startedAt), bytes.length), "success");
+    if (result.report?.degraded) {
+      setStatus(ui.degraded(filename, formatElapsedMs(startedAt), bytes.length), "success");
+      setCompatibilityNote(ui.compatibilityIssues(summarizeIssues(result.report)));
+    } else {
+      setStatus(ui.success(filename, formatElapsedMs(startedAt), bytes.length), "success");
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     setStatus(ui.failed(formatElapsedMs(startedAt), message), "error");
+    if (error?.report?.issues?.length) {
+      setCompatibilityNote(ui.compatibilityIssues(summarizeIssues(error.report)));
+    }
   } finally {
     generateButton.disabled = false;
   }

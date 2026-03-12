@@ -1,5 +1,5 @@
-use super::state::{Container, InlineContext, push_inline_merged};
 use super::MarkdownParser;
+use super::state::{Container, InlineContext, push_inline_merged};
 use crate::error::CoreRsError;
 use crate::models::block::Block;
 use crate::models::inline::Inline;
@@ -36,7 +36,13 @@ impl MarkdownParser {
         containers: &mut Vec<Container>,
         inline_stack: &mut Vec<InlineContext>,
     ) -> Result<(), CoreRsError> {
-        self.push_inline_or_code(Inline::HardBreak, Some('\n'), blocks, containers, inline_stack)
+        self.push_inline_or_code(
+            Inline::HardBreak,
+            Some('\n'),
+            blocks,
+            containers,
+            inline_stack,
+        )
     }
 
     pub(super) fn push_inline_or_code(
@@ -76,6 +82,10 @@ impl MarkdownParser {
             return Ok(());
         }
 
+        if Self::push_inline_to_implicit_paragraph(containers, inline.clone()) {
+            return Ok(());
+        }
+
         match inline {
             Inline::Text(text) if !text.is_empty() => {
                 self.push_fallback_text(text, blocks, containers, inline_stack)
@@ -111,7 +121,11 @@ impl MarkdownParser {
         {
             self.push_inline_or_code(Inline::Text(text), None, blocks, containers, inline_stack)
         } else {
-            self.push_block(Block::Paragraph(vec![Inline::Text(text)]), blocks, containers)
+            self.push_block(
+                Block::Paragraph(vec![Inline::Text(text)]),
+                blocks,
+                containers,
+            )
         }
     }
 

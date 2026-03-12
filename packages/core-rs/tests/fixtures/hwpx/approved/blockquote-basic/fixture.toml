@@ -1,4 +1,6 @@
 title = "HWPX Blockquote Candidate"
 author = "Fixture Author"
-strict_mode = false
+strict_mode = true
 determinism = false
+manual_verified = true
+verified_at = "2026-03-11"

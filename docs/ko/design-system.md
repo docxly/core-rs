@@ -165,7 +165,7 @@
 
 기본 설치 근거 문구:
 
-- `Install the embeddable DOCX engine that measured 105x faster than Pandoc on the summary benchmark.`
+- `Install the embeddable DOCX engine backed by the shared benchmark dataset.`
 
 금지:
 

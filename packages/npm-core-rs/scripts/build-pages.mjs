@@ -33,7 +33,7 @@ await cp(path.join(demoRoot, "assets"), path.join(siteRoot, "assets"), { recursi
 await cp(path.join(demoRoot, "ko"), path.join(siteRoot, "ko"), { recursive: true });
 
 const browserClient = await readFile(browserClientSource, "utf8");
-const siteBrowserClient = browserClient.replaceAll("../dist/generated/", "./dist/generated/");
+const siteBrowserClient = browserClient.replaceAll("../dist/", "./dist/");
 await writeFile(path.join(siteRoot, "browser-client.js"), siteBrowserClient);
 
 console.log("Built GitHub Pages demo artifact into packages/npm-core-rs/site-dist");

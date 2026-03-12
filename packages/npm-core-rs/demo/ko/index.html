@@ -24,7 +24,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성과 Pandoc 대비 105배 빠른 벤치마크 근거를 보여줍니다."
+      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성, 그리고 벤치마크 근거를 보여줍니다."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="docxly | 브라우저 문서 생성 데모" />
@@ -35,7 +35,7 @@
     <meta name="twitter:image" content="https://docxly.github.io/core-rs/assets/og-image-ko.png" />
     <meta
       name="twitter:image:alt"
-      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성과 Pandoc 대비 105배 빠른 벤치마크 근거를 보여줍니다."
+      content="docxly 브라우저 데모 미리보기 이미지. HWPX와 DOCX 생성, 그리고 벤치마크 근거를 보여줍니다."
     />
     <link rel="canonical" href="https://docxly.github.io/core-rs/ko/" />
     <link rel="alternate" hreflang="en" href="https://docxly.github.io/core-rs/" />
@@ -132,7 +132,7 @@
             <p class="install-card-eyebrow">설치</p>
             <h2>설치 판단에 필요한 핵심 수치</h2>
             <p id="install-proof" class="install-proof">
-              요약 DOCX 벤치마크에서 Pandoc보다 105배 빠르게 측정됐습니다.
+              공유된 벤치마크 데이터셋을 기준으로 docxly의 DOCX 성능 근거를 확인할 수 있습니다.
             </p>
             <pre><code id="install-command">npm install @docxly/core-rs</code></pre>
             <div class="install-card-actions">
@@ -215,6 +215,9 @@
         </div>
 
         <p id="status" class="status">HWPX를 생성할 준비가 되었습니다.</p>
+        <p id="compatibility-note" class="note" hidden>
+          Strict mode 실패나 compat 저하가 있으면 이 영역에 호환성 정보가 표시됩니다.
+        </p>
         <p class="note">
           이 데모는 브라우저에서 만든 <code>blob:</code> 파일을 바로 내려받습니다. 저장 이름은
           유지되지만, 일부 브라우저에서는 파일 기록에 UUID 형태의 원본 항목이 보일 수 있습니다.

@@ -18,6 +18,12 @@ struct FixtureConfig {
     strict_mode: bool,
     determinism: bool,
     #[serde(default)]
+    comparison_excludes: Vec<String>,
+    #[serde(default)]
+    manual_verified: bool,
+    #[serde(default)]
+    verified_at: Option<String>,
+    #[serde(default)]
     style: FixtureStyleConfig,
 }
 
@@ -41,6 +47,9 @@ pub struct HwpxFixture {
     pub author: String,
     pub strict_mode: bool,
     pub determinism: bool,
+    pub comparison_excludes: Vec<String>,
+    pub manual_verified: bool,
+    pub verified_at: Option<String>,
     pub style: HwpxStyleOptions,
 }
 
@@ -115,6 +124,9 @@ fn discover_fixtures_in(root: PathBuf) -> FixtureResult<Vec<HwpxFixture>> {
             author: config.author,
             strict_mode: config.strict_mode,
             determinism: config.determinism,
+            comparison_excludes: config.comparison_excludes,
+            manual_verified: config.manual_verified,
+            verified_at: config.verified_at,
             style: HwpxStyleOptions {
                 body_font: config.style.body_font,
                 heading_font: config.style.heading_font,
