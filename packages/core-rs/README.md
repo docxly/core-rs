@@ -79,6 +79,16 @@ Current high-level API behavior:
 - `HwpxStyleOptions` currently supports document-level body/heading font, body/heading size, text/link/heading color, and paragraph alignment overrides
 - Custom HWPX fonts are best-effort only; the current HWPX path records font family names but does not embed font binaries
 
+Repository-only debugging path:
+
+```bash
+cargo run -p core-rs --bin decode_hwpx -- --parse path/to/sample.hwpx
+```
+
+- `--parse` prints the current semantic interpretation of the approved HWPX contract.
+- Add `--out <directory>` to extract the raw package for side-by-side inspection.
+- This command is developer tooling, not a stable public API surface.
+
 ## HWPX Supported Today
 
 The current HWPX implementation is narrower than the DOCX rich slice.
@@ -86,15 +96,11 @@ The current HWPX implementation is narrower than the DOCX rich slice.
 | Capability | DOCX | HWPX strict | HWPX compat |
 | --- | --- | --- | --- |
 | Headings and paragraphs | Yes | Yes | Yes |
-| Blockquotes | Yes | Yes | Yes |
 | Inline emphasis, strong, code, links | Yes | Yes | Yes |
 | Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
 | Unordered lists up to depth 2 | Yes | Yes | Yes |
 | Tables | Yes | Yes | Yes |
 | `data:` URI images | Yes | No | Degraded fallback to alt text |
-| Unsupported HTML | Strict: error, compat: literal text fallback | Error | Degraded literal text fallback |
-| Footnotes, task lists, math | Strict: error, compat: visible text fallback | Error | Degraded visible text fallback |
-| Deep nested lists | Strict: error, compat: plain text fallback | Error | Degraded plain text fallback |
 
 - approved compatibility fixtures:
   - `core-paragraph`

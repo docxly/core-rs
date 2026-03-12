@@ -166,6 +166,7 @@
 기본 설치 근거 문구:
 
 - `공유 벤치마크 데이터셋으로 검증하는 임베디드 DOCX 엔진을 설치하세요.`
+- `shared benchmark dataset` 문구를 보조 설명이나 문서 링크 근거에 함께 유지합니다.
 - hero와 설치 카피는 `shared benchmark dataset` 기준 문구와 충돌하지 않게 유지합니다.
 
 금지:

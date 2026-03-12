@@ -53,10 +53,9 @@ pub(crate) fn resolve_compatibility_profile(
 
 fn is_core_paragraph(document: &Document) -> bool {
     !document.blocks.is_empty()
-        && document
-            .blocks
-            .iter()
-            .all(|block| matches!(block, Block::Paragraph(inlines) if is_plain_inline_slice(inlines)))
+        && document.blocks.iter().all(
+            |block| matches!(block, Block::Paragraph(inlines) if is_plain_inline_slice(inlines)),
+        )
 }
 
 fn is_core_inline_style(document: &Document) -> bool {

@@ -158,6 +158,15 @@ Use docxly when document generation must live inside a Node service, browser wor
 | Broad format conversion | Focused on DOCX and HWPX generation | Wide multi-format conversion |
 | DOCX reference-template workflow | Not a reference.docx workflow | Supported via reference.docx |
 
+| Capability | DOCX | HWPX strict | HWPX compat |
+| --- | --- | --- | --- |
+| Headings and paragraphs | Yes | Yes | Yes |
+| Inline emphasis, strong, code, links | Yes | Yes | Yes |
+| Ordered lists up to depth 2 | Yes | No | Yes, semantic contract |
+| Unordered lists up to depth 2 | Yes | Yes | Yes |
+| Tables | Yes | Yes | Yes |
+| `data:` URI images | Yes | No | Degraded fallback to alt text |
+
 Measured on darwin 25.2.0 / arm64 at 2026-03-11T08:19:00.589Z with Node v23.7.0 and Pandoc 3.9.
 
 - This benchmark measures DOCX generation only and does not compare HWPX.
@@ -276,6 +285,18 @@ The current HWPX path is narrower than the DOCX rich slice and remains beta on b
 - images and broader table coverage are still outside the approved contract.
 
 Detailed HWPX status, examples, and reference material live in [docs/hwpx.md](./docs/hwpx.md).
+
+## Experimental API
+
+Repository contributors also have a repo-only HWPX inspection path for debugging approved fixtures and generated archives:
+
+```bash
+cargo run -p core-rs --bin decode_hwpx -- --parse path/to/sample.hwpx
+```
+
+- This is developer tooling, not a stable Rust or npm API contract.
+- `--parse` prints the current semantic interpretation of `content.hpf`, `header.xml`, and `section0.xml`.
+- Use `--out <directory>` when you need the raw archive files on disk alongside that semantic dump.
 
 ## Public Roadmap
 

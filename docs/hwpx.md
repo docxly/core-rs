@@ -8,6 +8,7 @@ This page captures the current HWPX contract for `docxly`.
 | --- | --- | --- |
 | Rust `generate_hwpx` | Beta | Supports the approved HWPX baseline, including the Rust style contract |
 | npm `generateHwpx` | Beta | Uses the same core generation path, but with a narrower public option surface |
+| Internal HWPX parser | Private | Used for approved-fixture reverse parsing and repository debugging only |
 
 ## Approved Baseline
 
@@ -52,6 +53,16 @@ Rust HWPX currently supports:
 - tables inside the approved table fixtures
 - document-level HWPX style overrides through `HwpxStyleOptions`
 
+The current internal HWPX parser is intentionally narrower than a general-purpose HWPX importer. It is designed to reverse-parse the approved `docxly` contract only.
+
+Current parser assumptions:
+
+- single-section packages only
+- quote depth up to 2
+- list depth up to 2
+- tables only inside the approved table fixtures
+- table cells with a single paragraph only
+- no images, equations, charts, notes, or broader control/layout coverage
 npm HWPX currently exposes:
 
 - `title`
@@ -67,6 +78,34 @@ The npm package does not yet expose the Rust HWPX style override surface.
 - wider layout and block coverage from provisional fixtures
 - public npm style overrides matching `HwpxStyleOptions`
 
+## Repository Debugging Path
+
+Repository contributors can inspect generated or approved HWPX files with the internal semantic dump:
+
+```bash
+cargo run -p core-rs --bin decode_hwpx -- --parse path/to/sample.hwpx
+```
+
+Useful variants:
+
+- `cargo run -p core-rs --bin decode_hwpx -- sample.hwpx`
+  Raw archive summary and text-entry dump to stdout
+- `cargo run -p core-rs --bin decode_hwpx -- --parse sample.hwpx`
+  Archive summary plus the internal semantic interpretation
+- `cargo run -p core-rs --bin decode_hwpx -- sample.hwpx --out /tmp/sample`
+  Extracts the raw package for side-by-side inspection
+
+This path is repository tooling only. It is not a stable Rust or npm API contract.
+
+## Validation
+
+Current HWPX validation in the repository covers both generation and reverse parsing:
+
+- approved fixture generation tests
+- approved fixture reverse-parse tests
+- malformed archive and XML rejection tests
+- unsupported-feature rejection tests
+- generated-HWPX round-trip smoke tests for the approved fixture set
 ## npm Example
 
 ```js

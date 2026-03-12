@@ -77,6 +77,7 @@ const bytes = await generateHwpx("# Title\n\n본문 **강조**");
 Current npm HWPX notes:
 
 - `generateHwpx` is beta and narrower than the DOCX path.
+- The package also exposes an experimental HWPX API through `generateHwpx` and `generateHwpxWithReport`.
 - The public npm HWPX options currently expose `title`, `author`, and `strictMode` only.
 - Rust-only HWPX style overrides are not part of the npm public contract yet.
 
